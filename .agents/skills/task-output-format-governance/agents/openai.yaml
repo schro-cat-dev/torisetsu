@@ -1,0 +1,4 @@
+interface:
+  display_name: "Output Formats"
+  short_description: "タスクごとの型と出力形式を守る"
+  default_prompt: "指定されたタスク形式、出力形式、進め方を確認してから作業してください。"

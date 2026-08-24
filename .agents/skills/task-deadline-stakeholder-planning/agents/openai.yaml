@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Planning"
+  short_description: "期限、品質、価値、脱線復帰を整理する"
+  default_prompt: "期限・マイルストーン・関係者価値を確認して、実現可能な進め方にしてください。"
