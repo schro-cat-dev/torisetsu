@@ -1,0 +1,378 @@
+:root {
+  color: #1c2024;
+  background: #f7f8f8;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f7f8f8;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 40px;
+}
+
+.todo-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.todo-header h1,
+.section-heading h2,
+.status-view h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.todo-header h1 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.1;
+}
+
+.version-label {
+  display: inline-block;
+  color: #5e6661;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #4f635b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.header-actions,
+.form-actions,
+.todo-actions,
+.status-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  gap: 16px;
+  align-items: start;
+}
+
+.left-column {
+  display: grid;
+  gap: 16px;
+}
+
+.form-panel,
+.toolbar,
+.list-section,
+.status-view,
+.detail-panel,
+.global-message {
+  border: 1px solid #d8ddda;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.form-panel,
+.status-view,
+.detail-panel {
+  padding: 16px;
+}
+
+.section-heading {
+  margin-bottom: 14px;
+}
+
+.section-heading p,
+.status-view p,
+.todo-description {
+  margin: 4px 0 0;
+  color: #5e6661;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field.full,
+.search-field {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #c9d0cc;
+  border-radius: 6px;
+  padding: 9px 10px;
+  background: #fff;
+  color: #1c2024;
+}
+
+.field textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.button:focus-visible {
+  outline: 3px solid #9fd8c1;
+  outline-offset: 2px;
+}
+
+.field-error,
+.global-message {
+  color: #a33b24;
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.form-actions {
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button.primary {
+  background: #216e54;
+  color: #ffffff;
+}
+
+.button.secondary,
+.button.ghost {
+  border-color: #c9d0cc;
+  background: #ffffff;
+  color: #24312c;
+}
+
+.button.danger {
+  border-color: #d9afa4;
+  background: #fff5f2;
+  color: #8b2f1c;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(140px, 180px) minmax(160px, 200px) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+}
+
+.search-field {
+  grid-column: auto;
+}
+
+.toolbar-button {
+  min-width: 112px;
+}
+
+.global-message {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.todo-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid #e5e9e7;
+}
+
+.todo-item:last-child {
+  border-bottom: 0;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  font-weight: 800;
+}
+
+.checkbox-row input {
+  width: 18px;
+  height: 18px;
+  margin-top: 4px;
+}
+
+.todo-title {
+  overflow-wrap: anywhere;
+}
+
+.todo-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.status-todo,
+.neutral {
+  background: #eef1ef;
+  color: #45504a;
+}
+
+.status-doing,
+.priority-medium {
+  background: #fff2cc;
+  color: #6b4a00;
+}
+
+.status-done,
+.priority-low {
+  background: #def3e7;
+  color: #1c6846;
+}
+
+.priority-high {
+  background: #ffe1dc;
+  color: #8a2d1d;
+}
+
+.detail-panel {
+  position: sticky;
+  top: 16px;
+}
+
+.detail-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.detail-list div {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e9e7;
+}
+
+.detail-list dt {
+  color: #5e6661;
+  font-weight: 700;
+}
+
+.detail-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .content-grid,
+  .field-grid,
+  .toolbar,
+  .todo-item {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .detail-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell {
+    width: min(100% - 20px, 1180px);
+    padding-top: 16px;
+  }
+
+  .todo-actions,
+  .header-actions {
+    width: 100%;
+  }
+
+  .button {
+    flex: 1 1 auto;
+  }
+}

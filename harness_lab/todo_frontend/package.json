@@ -1,0 +1,32 @@
+{
+  "name": "todo-quality-harness",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "api": "node local-api/server.mjs",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest --run",
+    "check:artifact-version": "node tooling/quality-harness/check-artifact-version.mjs",
+    "check:api-contract": "node tooling/quality-harness/check-api-contract.mjs",
+    "check:api-flow": "node tooling/quality-harness/check-api-flow.mjs",
+    "check:a11y-static": "node tooling/quality-harness/check-static-a11y.mjs",
+    "check": "node tooling/quality-harness/run-quality-harness.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.6.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  }
+}

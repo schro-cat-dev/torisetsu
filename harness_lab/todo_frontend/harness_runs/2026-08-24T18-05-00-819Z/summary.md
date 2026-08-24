@@ -1,0 +1,15 @@
+# Quality Harness Summary
+
+Run: 2026-08-24T18-05-00-819Z
+
+| Command | Result |
+|---|---|
+| `npm run typecheck` | OK |
+| `npm run test:unit` | OK |
+| `npm run check:api-contract` | OK |
+| `npm run check:api-flow` | NG (1) |
+
+## 残リスク
+
+- Playwright と実ブラウザ a11y は初回対象外。
+- API はローカル JSON 用の簡易実装。認証とDBは未実装。

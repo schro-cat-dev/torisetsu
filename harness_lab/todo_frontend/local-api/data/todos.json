@@ -1,0 +1,22 @@
+[
+  {
+    "id": "todo-001",
+    "title": "品質ハーネスの最小チェックを通す",
+    "description": "typecheck、unit、API契約、静的a11y、buildを1コマンドで確認する。",
+    "status": "doing",
+    "priority": "high",
+    "dueDate": "2026-08-30",
+    "createdAt": "2026-08-25T00:00:00.000Z",
+    "updatedAt": "2026-08-25T00:00:00.000Z"
+  },
+  {
+    "id": "todo-002",
+    "title": "TODO UIの状態を確認する",
+    "description": "loading、empty、error、savingが画面に出るかを見る。",
+    "status": "todo",
+    "priority": "medium",
+    "dueDate": "2026-08-28",
+    "createdAt": "2026-08-25T00:10:00.000Z",
+    "updatedAt": "2026-08-24T18:13:40.879Z"
+  }
+]

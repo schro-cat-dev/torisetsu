@@ -1,0 +1,8 @@
+node_modules/
+dist/
+harness_runs/**
+!harness_runs/
+!harness_runs/*/
+!harness_runs/*/summary.md
+*.tsbuildinfo
+.DS_Store
