@@ -1,0 +1,4 @@
+interface:
+  display_name: "Runtime Ops"
+  short_description: "起動終了、cleanup、devログを守る"
+  default_prompt: "ローカルで動くシステムの起動、終了、cleanup、devログを確認してください。"

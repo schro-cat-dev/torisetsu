@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harness Docs"
+  short_description: "品質ハーネスの説明粒度をそろえる"
+  default_prompt: "品質ハーネスの観点、確認項目、根拠、実結果、残リスクを具体化してください。"

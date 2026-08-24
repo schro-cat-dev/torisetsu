@@ -11,10 +11,23 @@
 
 ## 起動
 
+リポジトリルートから:
+
+```bash
+node runtime_scripts/todo_frontend_runtime.mjs start
+node runtime_scripts/todo_frontend_runtime.mjs status
+node runtime_scripts/todo_frontend_runtime.mjs stop
+```
+
+TODO データは `stop` しても消えません。
+
+アプリディレクトリから:
+
 ```bash
 npm install
-npm run api
-npm run dev
+npm run start:all
+npm run status:all
+npm run stop:all
 ```
 
 画面:
@@ -34,6 +47,13 @@ http://127.0.0.1:4174/api/todos
 ```bash
 npm run check
 ```
+
+## devログ
+
+- APIログ: `harness_lab/todo_frontend/.runtime/logs/api.stdout.log`
+- Webログ: `harness_lab/todo_frontend/.runtime/logs/web.stdout.log`
+- エラーログ: `harness_lab/todo_frontend/.runtime/logs/*.stderr.log`
+- APIログには `time / level / service / component / event / requestId / status / durationMs / error` を出す。
 
 ## バージョン
 

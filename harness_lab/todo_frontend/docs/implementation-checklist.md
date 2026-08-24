@@ -69,11 +69,22 @@
 - [x] 実行結果を確認する。
 - [ ] 必要ならチェック項目を増やす。
 
-## 8. 完了条件
+## 8. runtime運用
+
+- [x] 1コマンドで API と Web をまとめて起動できる。
+- [x] 同じスクリプトで `start` / `stop` / `status` を実行できる。
+- [x] `stop` で pid / lock を cleanup する。
+- [x] `stop` で `local-api/data/todos.json` を消さない。
+- [x] API の devログに requestId、component、event、status、durationMs を出す。
+- [x] API のエラーログに error name、message、stack を出す。
+- [x] 未管理の既存サービスを起動成功扱いにしない。
+
+## 9. 完了条件
 
 - [x] `npm install` が通る。
 - [x] `npm run check` が通る。
-- [x] `npm run api` と `npm run dev` でローカル起動できる。
+- [x] `node runtime_scripts/todo_frontend_runtime.mjs start` でローカル起動できる。
+- [x] `node runtime_scripts/todo_frontend_runtime.mjs stop` でローカル終了できる。
 - [ ] 画面で TODO の作成、編集、削除、完了切替ができる。
 
 補足:

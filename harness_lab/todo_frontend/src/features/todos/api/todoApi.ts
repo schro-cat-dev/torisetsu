@@ -3,9 +3,11 @@ import type { Todo, TodoInput, TodoStatus } from "../types";
 const apiBase = import.meta.env.VITE_TODO_API_BASE ?? "http://127.0.0.1:4174/api";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const requestId = createRequestId();
   const response = await fetch(`${apiBase}${path}`, {
     headers: {
       "Content-Type": "application/json",
+      "X-Request-Id": requestId,
       ...init?.headers
     },
     ...init
@@ -17,6 +19,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+function createRequestId(): string {
+  if (globalThis.crypto?.randomUUID) {
+    return `web-${globalThis.crypto.randomUUID()}`;
+  }
+
+  return `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 export function fetchTodos(): Promise<Todo[]> {

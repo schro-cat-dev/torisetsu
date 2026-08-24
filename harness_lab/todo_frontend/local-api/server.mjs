@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
+import { performance } from "node:perf_hooks";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,29 +12,62 @@ const port = Number(process.env.TODO_API_PORT ?? 4174);
 const allowedStatuses = new Set(["todo", "doing", "done"]);
 const allowedPriorities = new Set(["low", "medium", "high"]);
 
-async function readTodos() {
-  return JSON.parse(await readFile(dataPath, "utf8"));
+async function readTodos(context) {
+  const startedAt = performance.now();
+  try {
+    const todos = JSON.parse(await readFile(dataPath, "utf8"));
+    log("debug", "storage", "todos.read", {
+      ...context,
+      status: "ok",
+      count: todos.length,
+      durationMs: elapsed(startedAt)
+    });
+    return todos;
+  } catch (error) {
+    logError("storage", "todos.read.error", error, {
+      ...context,
+      durationMs: elapsed(startedAt)
+    });
+    throw error;
+  }
 }
 
-async function writeTodos(todos) {
-  await writeFile(dataPath, `${JSON.stringify(todos, null, 2)}\n`);
+async function writeTodos(todos, context) {
+  const startedAt = performance.now();
+  try {
+    await writeFile(dataPath, `${JSON.stringify(todos, null, 2)}\n`);
+    log("debug", "storage", "todos.write", {
+      ...context,
+      status: "ok",
+      count: todos.length,
+      durationMs: elapsed(startedAt)
+    });
+  } catch (error) {
+    logError("storage", "todos.write.error", error, {
+      ...context,
+      durationMs: elapsed(startedAt)
+    });
+    throw error;
+  }
 }
 
-function sendJson(response, statusCode, body) {
+function sendJson(response, statusCode, body, requestId) {
   response.writeHead(statusCode, {
     "Access-Control-Allow-Origin": "http://127.0.0.1:5173",
     "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type,X-Request-Id",
+    "X-Request-Id": requestId,
     "Content-Type": "application/json; charset=utf-8"
   });
   response.end(JSON.stringify(body));
 }
 
-function sendText(response, statusCode, message) {
+function sendText(response, statusCode, message, requestId) {
   response.writeHead(statusCode, {
     "Access-Control-Allow-Origin": "http://127.0.0.1:5173",
     "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type,X-Request-Id",
+    "X-Request-Id": requestId,
     "Content-Type": "text/plain; charset=utf-8"
   });
   response.end(message);
@@ -47,6 +81,51 @@ async function readJsonBody(request) {
 
   const rawBody = Buffer.concat(chunks).toString("utf8");
   return rawBody ? JSON.parse(rawBody) : {};
+}
+
+function createContext(request, path) {
+  const headerRequestId = request.headers["x-request-id"];
+  const requestId = typeof headerRequestId === "string" && headerRequestId.trim()
+    ? headerRequestId
+    : `api-${randomUUID()}`;
+  return {
+    requestId,
+    method: request.method,
+    path
+  };
+}
+
+function log(level, component, event, fields = {}) {
+  console.log(JSON.stringify({
+    time: new Date().toISOString(),
+    level,
+    service: "todo-api",
+    component,
+    event,
+    ...fields
+  }));
+}
+
+function logError(component, event, error, fields = {}) {
+  const normalized = error instanceof Error
+    ? {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      }
+    : {
+        name: "UnknownError",
+        message: String(error)
+      };
+
+  log("error", component, event, {
+    ...fields,
+    error: normalized
+  });
+}
+
+function elapsed(startedAt) {
+  return Math.round(performance.now() - startedAt);
 }
 
 function validateInput(input) {
@@ -99,22 +178,33 @@ function updateTodo(todo, input) {
 }
 
 const server = createServer(async (request, response) => {
+  const startedAt = performance.now();
+  const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
+  const path = url.pathname;
+  const context = createContext(request, path);
+
+  log("info", "http", "request.start", context);
+  response.once("finish", () => {
+    log("info", "http", "request.finish", {
+      ...context,
+      status: response.statusCode,
+      durationMs: elapsed(startedAt)
+    });
+  });
+
   if (request.method === "OPTIONS") {
-    sendText(response, 204, "");
+    sendText(response, 204, "", context.requestId);
     return;
   }
 
-  const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
-  const path = url.pathname;
-
   try {
     if (request.method === "GET" && path === "/api/health") {
-      sendJson(response, 200, { ok: true });
+      sendJson(response, 200, { ok: true }, context.requestId);
       return;
     }
 
     if (request.method === "GET" && path === "/api/todos") {
-      sendJson(response, 200, await readTodos());
+      sendJson(response, 200, await readTodos(context), context.requestId);
       return;
     }
 
@@ -122,14 +212,25 @@ const server = createServer(async (request, response) => {
       const input = await readJsonBody(request);
       const validationError = validateInput(input);
       if (validationError) {
-        sendText(response, 400, validationError);
+        log("warn", "validation", "todo.create.invalid", {
+          ...context,
+          status: 400,
+          reason: validationError
+        });
+        sendText(response, 400, validationError, context.requestId);
         return;
       }
 
-      const todos = await readTodos();
+      const todos = await readTodos(context);
       const todo = createTodo(input);
-      await writeTodos([todo, ...todos]);
-      sendJson(response, 201, todo);
+      await writeTodos([todo, ...todos], context);
+      log("info", "todo", "todo.create", {
+        ...context,
+        status: 201,
+        todoId: todo.id,
+        totalCount: todos.length + 1
+      });
+      sendJson(response, 201, todo, context.requestId);
       return;
     }
 
@@ -138,21 +239,37 @@ const server = createServer(async (request, response) => {
       const input = await readJsonBody(request);
       const validationError = validateInput(input);
       if (validationError) {
-        sendText(response, 400, validationError);
+        log("warn", "validation", "todo.update.invalid", {
+          ...context,
+          status: 400,
+          reason: validationError,
+          todoId: todoMatch[1]
+        });
+        sendText(response, 400, validationError, context.requestId);
         return;
       }
 
-      const todos = await readTodos();
+      const todos = await readTodos(context);
       const index = todos.findIndex((todo) => todo.id === todoMatch[1]);
       if (index === -1) {
-        sendText(response, 404, "TODOが見つかりません。");
+        log("warn", "todo", "todo.update.notFound", {
+          ...context,
+          status: 404,
+          todoId: todoMatch[1]
+        });
+        sendText(response, 404, "TODOが見つかりません。", context.requestId);
         return;
       }
 
       const updated = updateTodo(todos[index], input);
       todos[index] = updated;
-      await writeTodos(todos);
-      sendJson(response, 200, updated);
+      await writeTodos(todos, context);
+      log("info", "todo", "todo.update", {
+        ...context,
+        status: 200,
+        todoId: updated.id
+      });
+      sendJson(response, 200, updated, context.requestId);
       return;
     }
 
@@ -160,14 +277,25 @@ const server = createServer(async (request, response) => {
     if (statusMatch && request.method === "PATCH") {
       const input = await readJsonBody(request);
       if (!allowedStatuses.has(input.status)) {
-        sendText(response, 400, "状態を確認してください。");
+        log("warn", "validation", "todo.status.invalid", {
+          ...context,
+          status: 400,
+          todoId: statusMatch[1],
+          requestedStatus: input.status
+        });
+        sendText(response, 400, "状態を確認してください。", context.requestId);
         return;
       }
 
-      const todos = await readTodos();
+      const todos = await readTodos(context);
       const index = todos.findIndex((todo) => todo.id === statusMatch[1]);
       if (index === -1) {
-        sendText(response, 404, "TODOが見つかりません。");
+        log("warn", "todo", "todo.status.notFound", {
+          ...context,
+          status: 404,
+          todoId: statusMatch[1]
+        });
+        sendText(response, 404, "TODOが見つかりません。", context.requestId);
         return;
       }
 
@@ -177,29 +305,60 @@ const server = createServer(async (request, response) => {
         updatedAt: new Date().toISOString()
       };
       todos[index] = updated;
-      await writeTodos(todos);
-      sendJson(response, 200, updated);
+      await writeTodos(todos, context);
+      log("info", "todo", "todo.status.update", {
+        ...context,
+        status: 200,
+        todoId: updated.id,
+        todoStatus: updated.status
+      });
+      sendJson(response, 200, updated, context.requestId);
       return;
     }
 
     if (todoMatch && request.method === "DELETE") {
-      const todos = await readTodos();
+      const todos = await readTodos(context);
       const nextTodos = todos.filter((todo) => todo.id !== todoMatch[1]);
       if (todos.length === nextTodos.length) {
-        sendText(response, 404, "TODOが見つかりません。");
+        log("warn", "todo", "todo.delete.notFound", {
+          ...context,
+          status: 404,
+          todoId: todoMatch[1]
+        });
+        sendText(response, 404, "TODOが見つかりません。", context.requestId);
         return;
       }
-      await writeTodos(nextTodos);
-      sendJson(response, 200, { ok: true });
+      await writeTodos(nextTodos, context);
+      log("info", "todo", "todo.delete", {
+        ...context,
+        status: 200,
+        todoId: todoMatch[1],
+        totalCount: nextTodos.length
+      });
+      sendJson(response, 200, { ok: true }, context.requestId);
       return;
     }
 
-    sendText(response, 404, "Not found.");
+    log("warn", "http", "route.notFound", {
+      ...context,
+      status: 404
+    });
+    sendText(response, 404, "Not found.", context.requestId);
   } catch (error) {
-    sendText(response, 500, error instanceof Error ? error.message : "Server error.");
+    logError("http", "request.error", error, {
+      ...context,
+      status: 500,
+      durationMs: elapsed(startedAt)
+    });
+    sendText(response, 500, error instanceof Error ? error.message : "Server error.", context.requestId);
   }
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`TODO API listening on http://127.0.0.1:${port}`);
+  log("info", "server", "server.start", {
+    status: "ok",
+    host: "127.0.0.1",
+    port,
+    url: `http://127.0.0.1:${port}`
+  });
 });
