@@ -21,3 +21,7 @@
   - 参照: `.agents/skills/quality-harness-documentation-governance/SKILL.md`
   - 用途: 品質ハーネス、検証ゲート、check script、summary を作る時。
   - 必須: 観点、確認項目、判断根拠、実現方法、期待結果、実結果、残リスク、次の改善。
+- AI追加作業の事前相談:
+  - 参照: `.agents/skills/task-deadline-stakeholder-planning/SKILL.md`
+  - 用途: ユーザーが明示していない検証、調査、サーバー起動、外部接続、長いコマンドを行う前。
+  - 必須: することリスト、目的、ユーザー依頼との関係、優先度、想定時間、良いこと、やらない場合のリスク。

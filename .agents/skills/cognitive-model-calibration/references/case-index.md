@@ -33,6 +33,7 @@
 - `task-weight-calibration/priority-5/2026-08-22-task-weight-and-clear-dislike.md`
 - `task-weight-calibration/priority-5/2026-08-22-decisive-action.md`
 - `task-weight-calibration/priority-5/2026-08-22-lightweight-quick-check.md`
+- `task-weight-calibration/priority-5/2026-08-25-ai-extra-work-consultation.md`
 - `self-insight-check/priority-5/2026-08-22-strength-weakness-and-cognitive-gap.md`
 - `action-suggestion/priority-5/2026-08-22-adapted-action-suggestion.md`
 - `thinking-pattern-check/priority-5/2026-08-22-cognitive-gap-correction.md`
