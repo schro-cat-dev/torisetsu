@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "api-contract.v1",
+  "name": "todos",
+  "targetFile": "local-api/data/todos.json",
+  "root": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "allowUnknownFields": false,
+      "required": ["id", "title", "description", "status", "priority", "dueDate", "createdAt", "updatedAt"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "nonEmpty": true
+        },
+        "title": {
+          "type": "string",
+          "nonEmpty": true
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["todo", "doing", "done"]
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "dueDate": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

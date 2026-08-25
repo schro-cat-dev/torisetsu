@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "default",
+  "description": "TODO frontend の通常品質確認。型、unit、AIレビューJSONゲート、API契約、APIフロー、静的a11y、buildを順番に確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "artifact-version",
+      "command": "npm",
+      "args": ["run", "check:artifact-version"]
+    },
+    {
+      "name": "harness-genericity",
+      "command": "npm",
+      "args": ["run", "check:harness-genericity"]
+    },
+    {
+      "name": "dev-only-interface-policy",
+      "command": "npm",
+      "args": ["run", "check:dev-only-interface-policy"]
+    },
+    {
+      "name": "ai-review-result",
+      "command": "npm",
+      "args": ["run", "check:ai-review-result"]
+    },
+    {
+      "name": "dependency-boundary",
+      "command": "npm",
+      "args": ["run", "check:dependencies"],
+      "optionalEnv": "HARNESS_ENABLE_DEPENDENCY_BOUNDARY"
+    },
+    {
+      "name": "test-traceability",
+      "command": "npm",
+      "args": ["run", "check:test-traceability"]
+    },
+    {
+      "name": "typecheck",
+      "command": "npm",
+      "args": ["run", "typecheck"]
+    },
+    {
+      "name": "unit",
+      "command": "npm",
+      "args": ["run", "test:unit"]
+    },
+    {
+      "name": "api-contract",
+      "command": "npm",
+      "args": ["run", "check:api-contract"]
+    },
+    {
+      "name": "api-flow",
+      "command": "npm",
+      "args": ["run", "check:api-flow"],
+      "requires": ["api-contract"]
+    },
+    {
+      "name": "static-a11y",
+      "command": "npm",
+      "args": ["run", "check:a11y-static"]
+    },
+    {
+      "name": "build",
+      "command": "npm",
+      "args": ["run", "build"]
+    },
+    {
+      "name": "dev-only-build-artifact-policy",
+      "command": "npm",
+      "args": ["run", "check:dev-only-build-artifact-policy"],
+      "requires": ["build"]
+    },
+    {
+      "name": "browser-e2e",
+      "command": "npm",
+      "args": ["run", "check:browser-e2e"],
+      "requires": ["build"],
+      "optionalEnv": "HARNESS_ENABLE_BROWSER_QUALITY"
+    },
+    {
+      "name": "browser-a11y",
+      "command": "npm",
+      "args": ["run", "check:browser-a11y"],
+      "requires": ["browser-e2e"],
+      "optionalEnv": "HARNESS_ENABLE_BROWSER_QUALITY"
+    }
+  ],
+  "risks": [
+    "Playwright と実ブラウザ a11y は HARNESS_ENABLE_BROWSER_QUALITY=1 のときだけ通常check内で実行する。",
+    "dependency-cruiser は HARNESS_ENABLE_DEPENDENCY_BOUNDARY=1 のときだけ通常check内で実行する。",
+    "AIレビューJSONゲートは生成済みJSONの検査であり、実AI API呼び出しは対象外。",
+    "API はローカル JSON 用の簡易実装。認証とDBは未実装。"
+  ]
+}

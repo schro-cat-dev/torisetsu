@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "file-content-policy.v1",
+  "name": "dev-only-interface-policy",
+  "targets": [
+    {
+      "dir": "src",
+      "extensions": [".ts", ".tsx", ".js", ".jsx", ".mjs"]
+    }
+  ],
+  "forbidden": [
+    {
+      "id": "reserved dev-only prefix _test",
+      "match": "identifier-prefix",
+      "value": "_test"
+    },
+    {
+      "id": "reserved dev-only prefix _debug",
+      "match": "identifier-prefix",
+      "value": "_debug"
+    },
+    {
+      "id": "reserved dev-only prefix _dev",
+      "match": "identifier-prefix",
+      "value": "_dev"
+    },
+    {
+      "id": "reserved dev-only prefix _inspect",
+      "match": "identifier-prefix",
+      "value": "_inspect"
+    }
+  ],
+  "result": {
+    "fileName": "dev-only-interface-policy.results.json"
+  }
+}

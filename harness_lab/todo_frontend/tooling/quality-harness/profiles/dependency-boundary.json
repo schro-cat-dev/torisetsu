@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "dependency-boundary",
+  "description": "src の import 境界と循環依存だけを確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "dependency-boundary",
+      "command": "npm",
+      "args": ["run", "check:dependencies"]
+    }
+  ],
+  "risks": [
+    "dependency-cruiser はJS/TS importの静的解析であり、実行時の動的importやブラウザ操作は対象外。"
+  ]
+}

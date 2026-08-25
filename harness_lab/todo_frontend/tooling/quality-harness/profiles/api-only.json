@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "api-only",
+  "description": "ローカルAPIの契約とCRUDフローだけを短く確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "api-contract",
+      "command": "npm",
+      "args": ["run", "check:api-contract"]
+    },
+    {
+      "name": "api-flow",
+      "command": "npm",
+      "args": ["run", "check:api-flow"],
+      "requires": ["api-contract"]
+    }
+  ],
+  "risks": [
+    "UI表示、build、実ブラウザ操作は対象外。"
+  ]
+}

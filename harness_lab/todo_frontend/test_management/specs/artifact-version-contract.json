@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "test-spec.v1",
+  "theme": "artifact-version-contract",
+  "requirementRef": {
+    "sourceId": "local-md",
+    "key": "artifact-version-contract"
+  },
+  "tester": "json-field-equals",
+  "links": [
+    {
+      "type": "implementation",
+      "path": "package.json"
+    },
+    {
+      "type": "lockfile",
+      "path": "package-lock.json"
+    },
+    {
+      "type": "ledger",
+      "path": "docs/artifact-version-ledger.md"
+    }
+  ],
+  "input": {
+    "checks": [
+      {
+        "file": "package.json",
+        "path": ["version"],
+        "equals": "0.8.0"
+      },
+      {
+        "file": "package-lock.json",
+        "path": ["version"],
+        "equals": "0.8.0"
+      },
+      {
+        "file": "package-lock.json",
+        "path": ["packages", "", "version"],
+        "equals": "0.8.0"
+      }
+    ]
+  }
+}

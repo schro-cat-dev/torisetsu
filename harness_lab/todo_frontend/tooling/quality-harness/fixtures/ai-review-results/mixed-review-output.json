@@ -1,0 +1,40 @@
+{
+  "reviews": [
+    {
+      "file": "src/foo.py",
+      "line": 42,
+      "severity": "HIGH",
+      "policy_id": "ARCH-001",
+      "message": "共有層がAPI層に依存しています。",
+      "suggestion": "共有層からAPI層へのimportを外してください。",
+      "confidence": 0.86
+    },
+    {
+      "file": "src/bar.py",
+      "line": 12,
+      "severity": "LOW",
+      "policy_id": "STYLE-001",
+      "message": "軽微な文言の揺れがあります。",
+      "suggestion": "必要なら別途lintやレビューで扱ってください。",
+      "confidence": 0.95
+    },
+    {
+      "file": "src/baz.py",
+      "line": 7,
+      "severity": "MEDIUM",
+      "policy_id": "DOMAIN-002",
+      "message": "命名がドメインの意味と少しズレています。",
+      "suggestion": "業務用語に合わせた名前へ変更してください。",
+      "confidence": 0.8
+    },
+    {
+      "file": "src/qux.py",
+      "line": 3,
+      "severity": "CRITICAL",
+      "policy_id": "SEC-001",
+      "message": "危険そうに見えますが根拠が弱いです。",
+      "suggestion": "根拠を確認してから指摘してください。",
+      "confidence": 0.79
+    }
+  ]
+}

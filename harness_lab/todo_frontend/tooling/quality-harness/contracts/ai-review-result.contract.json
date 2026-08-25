@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ai-review-result-contract.v1",
+  "name": "minimal-ai-review-json-gate",
+  "samples": [
+    {
+      "name": "mixed-review-output",
+      "inputFile": "tooling/quality-harness/fixtures/ai-review-results/mixed-review-output.json",
+      "expected": {
+        "inputReviewCount": 4,
+        "keptReviewCount": 2,
+        "droppedReviewCount": 2
+      }
+    },
+    {
+      "name": "empty-review-output",
+      "inputFile": "tooling/quality-harness/fixtures/ai-review-results/empty-review-output.json",
+      "expected": {
+        "inputReviewCount": 0,
+        "keptReviewCount": 0,
+        "droppedReviewCount": 0
+      }
+    },
+    {
+      "name": "max-review-output",
+      "inputFile": "tooling/quality-harness/fixtures/ai-review-results/max-review-output.json",
+      "expected": {
+        "inputReviewCount": 6,
+        "keptReviewCount": 5,
+        "droppedReviewCount": 1
+      }
+    }
+  ],
+  "reviewSchema": {
+    "requiredFields": ["file", "line", "severity", "policy_id", "message", "suggestion", "confidence"],
+    "allowedSeverities": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+    "allowUnknownFields": false
+  },
+  "filters": {
+    "minConfidenceInclusive": 0.8,
+    "dropSeverities": ["LOW"],
+    "maxReviews": 5
+  },
+  "result": {
+    "fileName": "ai-review-result-gate.results.json"
+  }
+}

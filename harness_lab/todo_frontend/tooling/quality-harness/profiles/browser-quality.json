@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "browser-quality",
+  "description": "実ブラウザで主要操作とa11yを確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "browser-e2e",
+      "command": "npm",
+      "args": ["run", "check:browser-e2e"]
+    },
+    {
+      "name": "browser-a11y",
+      "command": "npm",
+      "args": ["run", "check:browser-a11y"]
+    }
+  ],
+  "risks": [
+    "Chromiumだけを対象にする。Safari/Firefox/mobile実機は対象外。",
+    "a11yはaxeの自動検出範囲であり、支援技術での手動確認は対象外。"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "external-tool-check.v1",
+  "name": "dependency-boundary",
+  "tool": "dependency-cruiser",
+  "preflightFiles": [
+    "node_modules/dependency-cruiser/bin/dependency-cruise.mjs",
+    "tooling/quality-harness/external-tools/dependency-cruiser/dependency-cruiser.config.cjs"
+  ],
+  "command": {
+    "bin": "node",
+    "args": [
+      "node_modules/dependency-cruiser/bin/dependency-cruise.mjs",
+      "--config",
+      "tooling/quality-harness/external-tools/dependency-cruiser/dependency-cruiser.config.cjs",
+      "--output-type",
+      "err",
+      "--include-only",
+      "^src",
+      "src"
+    ]
+  },
+  "result": {
+    "fileName": "dependency-boundary.results.json",
+    "metadata": {
+      "target": "src",
+      "checks": ["circular", "components-to-api", "components-to-hooks", "routes-to-api", "api-to-ui", "utils-to-runtime-feature-parts"]
+    }
+  }
+}

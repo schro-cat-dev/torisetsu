@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "ui-static",
+  "description": "UI側の型、unit、静的a11y、buildだけを短く確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "dev-only-interface-policy",
+      "command": "npm",
+      "args": ["run", "check:dev-only-interface-policy"]
+    },
+    {
+      "name": "test-traceability",
+      "command": "npm",
+      "args": ["run", "check:test-traceability"]
+    },
+    {
+      "name": "typecheck",
+      "command": "npm",
+      "args": ["run", "typecheck"]
+    },
+    {
+      "name": "unit",
+      "command": "npm",
+      "args": ["run", "test:unit"]
+    },
+    {
+      "name": "static-a11y",
+      "command": "npm",
+      "args": ["run", "check:a11y-static"]
+    },
+    {
+      "name": "build",
+      "command": "npm",
+      "args": ["run", "build"]
+    },
+    {
+      "name": "dev-only-build-artifact-policy",
+      "command": "npm",
+      "args": ["run", "check:dev-only-build-artifact-policy"],
+      "requires": ["build"]
+    }
+  ],
+  "risks": [
+    "API契約、APIフロー、実ブラウザ操作は対象外。"
+  ]
+}

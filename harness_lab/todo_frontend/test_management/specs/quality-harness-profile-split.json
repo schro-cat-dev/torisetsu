@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "test-spec.v1",
+  "theme": "quality-harness-profile-split",
+  "requirementRef": {
+    "sourceId": "local-md",
+    "key": "quality-harness-profile-split"
+  },
+  "tester": "file-contains",
+  "links": [
+    {
+      "type": "implementation",
+      "path": "tooling/quality-harness/run-quality-harness.mjs"
+    },
+    {
+      "type": "manifest",
+      "path": "tooling/quality-harness/profiles/default.json"
+    },
+    {
+      "type": "doc",
+      "path": "docs/genericity-review.md"
+    }
+  ],
+  "input": {
+    "checks": [
+      {
+        "file": "package.json",
+        "contains": [
+          "\"check:api-only\"",
+          "\"check:ui-static\"",
+          "tooling/quality-harness/checks/check-api-contract.mjs"
+        ]
+      },
+      {
+        "file": "docs/genericity-review.md",
+        "contains": [
+          "`profiles/*.json`",
+          "`checks/check-api-contract.mjs`"
+        ]
+      }
+    ]
+  }
+}

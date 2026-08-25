@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .runtime/
+test-results/
+playwright-report/
 harness_runs/**
 !harness_runs/
 !harness_runs/*/

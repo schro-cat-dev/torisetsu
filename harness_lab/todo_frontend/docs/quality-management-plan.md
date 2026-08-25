@@ -21,6 +21,19 @@
 | `artifact-version-ledger.md` | バージョンごとの変更、検証、残リスク | 作成済み |
 | `feedback-workstream.md` | フィードバックを改善へつなげる流れ | 作成済み |
 | `runtime-operations.md` | 起動、終了、cleanup、devログ | 作成済み |
+| `dev-only-test-interface-design.md` | 開発用interfaceを本番へ混ぜない設計 | 作成済み |
+| `test-traceability-json-runner-design.md` | 要件md、JSON spec、tester moduleの分離設計 | 作成済み |
+| `external-tool-boundary.md` | 外部ツールの信頼境界、切り替え、残リスク | 作成済み |
+| `ai-review-json-gate.md` | AIレビューJSONの最小契約と表示前フィルタ | 作成済み |
+| `test_management/manifest.json` | 要件sourceとテストspecの統括リスト | 作成済み |
+| `test_management/issues/*.json` | issue型の要件source | 作成済み |
+| `test_management/github_issues/*.json` | GitHub Issue fixture型の要件source | 作成済み |
+| `tooling/quality-harness/profiles/*.json` | 品質ハーネスの実行セット | 作成済み |
+| `tooling/quality-harness/contracts/*.json` | API contract の入力データ | 作成済み |
+| `tooling/quality-harness/scenarios/*.json` | API flow の入力データ | 作成済み |
+| `tooling/quality-harness/fixtures/*` | 品質ゲート用の入力サンプル | 作成済み |
+| `tooling/quality-harness/external-tools/*` | 外部ツールの隔離設定 | 作成済み |
+| `tooling/quality-harness/checks/*.mjs` | 個別チェックの実体 | 作成済み |
 
 ## 3. 品質ゲート
 
@@ -42,7 +55,7 @@
 - [x] `todoApi.ts` が HTTP 通信をまとめている。
 - [x] `server.mjs` が JSON 保存を扱う。
 - [x] 小さい UI 部品が API を直接叩いていない。
-- [ ] 実ブラウザで主要操作を確認する。
+- [x] 実ブラウザで主要操作を確認する。
 
 ### 3.3 検証ゲート
 
@@ -52,9 +65,19 @@
 - [x] `npm run check:api-flow` が通る。
 - [x] `npm run check:a11y-static` が通る。
 - [x] `npm run check:artifact-version` が通る。
+- [x] `npm run check:dev-only-interface-policy` が通る。
+- [x] `npm run check:dev-only-build-artifact-policy` が通る。
+- [x] `npm run check:harness-genericity` が通る。
+- [x] `npm run check:ai-review-result` が通る。
+- [x] `npm run check:test-traceability` が通る。
 - [x] `npm run build` が通る。
-- [ ] Playwright で主要操作を確認する。
-- [ ] axe などで実ブラウザ a11y を確認する。
+- [x] `npm run check:api-only` で API 側だけ確認できる。
+- [x] `npm run check:traceability` で要件とJSON specの対応だけ確認できる。
+- [x] `npm run check:ui-static` で UI 静的確認だけ実行できる。
+- [x] `npm run check:dependency-boundary` で import 境界と循環依存を確認できる。
+- [x] `npm run check:browser-quality` で実ブラウザE2Eとa11yを確認できる。
+- [x] Playwright で主要操作を確認する。
+- [x] axe などで実ブラウザ a11y を確認する。
 
 ### 3.4 バージョン管理ゲート
 
@@ -81,11 +104,16 @@
 
 | 項目 | 種別 | 優先度 | おすすめ度 | 根拠 |
 |---|---|---:|---:|---|
-| 実ブラウザ E2E | 必須 | 5 | 5 | UI 操作の成功は現在 API フローでしか確認していない |
-| 実ブラウザ a11y | 必須 | 5 | 5 | 静的文字列チェックだけでは不十分 |
+| 実ブラウザ E2E | 対応済み | 5 | 5 | Playwright で作成、検索、完了、削除を確認する |
+| 実ブラウザ a11y | 対応済み | 5 | 5 | axe で実ブラウザ上の自動検出範囲を確認する |
 | コンポーネントテスト | おすすめ | 4 | 4 | 入力エラーや disabled を小さく確認できる |
-| 依存方向チェック | おすすめ | 4 | 4 | 小さい UI が API を直接叩かないルールを守りやすい |
-| ハーネス設定の外出し | おすすめ | 3 | 4 | 別アプリへ流用しやすくなる |
+| 依存方向チェック | 対応済み | 4 | 4 | `dependency-cruiser` で import 境界と循環依存を確認する |
+| ハーネス設定の外出し | 対応済み | 3 | 4 | `profiles/*.json` で実行セットを分けた |
+| 要件sourceとテストの1対1管理 | 対応済み | 5 | 5 | `test_management/manifest.json` で野良テストと漏れを検出する |
+| API contractのschema入力化 | 対応済み | 5 | 5 | `contracts/*.json` で対象データの形を差し替えられる |
+| API flowのscenario JSON化 | 対応済み | 5 | 5 | `scenarios/*.json` でAPI手順を差し替えられる |
+| 汎用runnerの個別path混入検出 | 対応済み | 5 | 5 | `harness-genericity.policy.json` で runner 側の直書きを検出する |
+| AIレビューJSONの最小ゲート | 対応済み | 4 | 5 | `confidence >= 0.8`、`LOW除外`、`最大5件` を機械確認する |
 
 ## 5. 次の進め方
 
@@ -98,8 +126,9 @@
 
 ## 6. 今回の残リスク
 
-- 実ブラウザでの操作確認が未実施。
-- 静的 a11y は簡易チェックであり、実際の支援技術までは確認していない。
+- 実ブラウザ確認は Chromium のみ。Safari、Firefox、mobile実機は未確認。
+- a11y は axe の自動検出範囲。支援技術での手動確認は未実施。
 - 汎用性評価はドキュメント上の判断であり、別アプリへ転用して検証したわけではない。
 - 内部バージョンはまだ Git commit や tag とは結びつけていない。
 - runtime script は、このスクリプトが起動したプロセスだけを停止対象にする。
+- AIレビューJSONゲートは、実際のAI API呼び出しとGitHub投稿までは扱わない。

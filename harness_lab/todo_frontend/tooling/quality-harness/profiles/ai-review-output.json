@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "ai-review-output",
+  "description": "AIレビューJSONの最小契約と表示前フィルタだけを確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "ai-review-result",
+      "command": "npm",
+      "args": ["run", "check:ai-review-result"]
+    }
+  ],
+  "risks": [
+    "Structured Outputsで実際にAIから生成する処理は対象外。",
+    "GitHub PRへのinline自動投稿は対象外。"
+  ]
+}

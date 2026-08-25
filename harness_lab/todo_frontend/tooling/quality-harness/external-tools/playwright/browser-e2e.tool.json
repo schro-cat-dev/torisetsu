@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "external-tool-check.v1",
+  "name": "browser-e2e",
+  "tool": "playwright",
+  "preflightFiles": [
+    "node_modules/@playwright/test/cli.js",
+    "tooling/quality-harness/external-tools/playwright/playwright.config.ts",
+    "tooling/quality-harness/external-tools/playwright/tests/todo-crud.e2e.spec.ts"
+  ],
+  "restoreFiles": [
+    "local-api/data/todos.json"
+  ],
+  "command": {
+    "bin": "node",
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tooling/quality-harness/external-tools/playwright/tests/todo-crud.e2e.spec.ts",
+      "--config",
+      "tooling/quality-harness/external-tools/playwright/playwright.config.ts"
+    ]
+  },
+  "result": {
+    "fileName": "browser-e2e.results.json",
+    "metadata": {
+      "browser": "chromium",
+      "flow": ["create", "search", "complete", "delete"]
+    }
+  }
+}

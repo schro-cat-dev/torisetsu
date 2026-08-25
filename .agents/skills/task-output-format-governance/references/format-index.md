@@ -25,3 +25,7 @@
   - 参照: `.agents/skills/task-deadline-stakeholder-planning/SKILL.md`
   - 用途: ユーザーが明示していない検証、調査、サーバー起動、外部接続、長いコマンドを行う前。
   - 必須: することリスト、目的、ユーザー依頼との関係、優先度、想定時間、良いこと、やらない場合のリスク。
+- 抽象助言・tipsの具体化:
+  - 参照: `.agents/skills/task-output-format-governance/SKILL.md`
+  - 用途: 設計、レビュー、プロンプト、運用、tips の助言を出す時。
+  - 必須: 実データ例、JSON例、コマンド例、しきい値、NG例 / OK例、入力例 / 出力例のうち必要なものを添える。

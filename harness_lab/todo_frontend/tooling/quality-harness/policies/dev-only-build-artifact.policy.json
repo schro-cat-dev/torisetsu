@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "file-content-policy.v1",
+  "name": "dev-only-build-artifact-policy",
+  "targets": [
+    {
+      "dir": "dist",
+      "extensions": [".html", ".js", ".css", ".map"]
+    }
+  ],
+  "forbidden": [
+    {
+      "id": "reserved dev-only prefix _test",
+      "match": "contains",
+      "value": "_test"
+    },
+    {
+      "id": "reserved dev-only prefix _debug",
+      "match": "contains",
+      "value": "_debug"
+    },
+    {
+      "id": "reserved dev-only prefix _dev",
+      "match": "contains",
+      "value": "_dev"
+    },
+    {
+      "id": "reserved dev-only prefix _inspect",
+      "match": "contains",
+      "value": "_inspect"
+    }
+  ],
+  "result": {
+    "fileName": "dev-only-build-artifact-policy.results.json"
+  }
+}

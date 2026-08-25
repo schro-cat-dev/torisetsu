@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "file-content-policy.v1",
+  "name": "harness-genericity-policy",
+  "targets": [
+    {
+      "dir": "tooling/quality-harness",
+      "extensions": [".mjs"]
+    }
+  ],
+  "forbidden": [
+    {
+      "id": "generic runner must not hardcode TODO feature paths",
+      "match": "contains",
+      "value": "src/features/todos"
+    },
+    {
+      "id": "generic runner must not hardcode local TODO data path",
+      "match": "contains",
+      "value": "local-api/data/todos.json"
+    },
+    {
+      "id": "generic runner must not hardcode local API server path",
+      "match": "contains",
+      "value": "local-api/server.mjs"
+    },
+    {
+      "id": "generic runner must not hardcode Playwright CLI path",
+      "match": "contains",
+      "value": "node_modules/@playwright/test/cli.js"
+    },
+    {
+      "id": "generic runner must not hardcode dependency-cruiser CLI path",
+      "match": "contains",
+      "value": "node_modules/dependency-cruiser/bin/dependency-cruise.mjs"
+    },
+    {
+      "id": "generic runner must not hardcode Playwright test files",
+      "match": "contains",
+      "value": "external-tools/playwright/tests"
+    },
+    {
+      "id": "generic runner must not hardcode local host values",
+      "match": "contains",
+      "value": "127.0.0.1"
+    },
+    {
+      "id": "generic runner must not hardcode traceability spec directory",
+      "match": "contains",
+      "value": "test_management/specs"
+    },
+    {
+      "id": "generic runner must not hardcode tester module directory",
+      "match": "contains",
+      "value": "tester-modules"
+    }
+  ],
+  "result": {
+    "fileName": "harness-genericity-policy.results.json"
+  }
+}

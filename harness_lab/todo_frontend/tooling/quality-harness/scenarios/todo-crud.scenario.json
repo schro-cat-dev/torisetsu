@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "api-flow-scenario.v1",
+  "name": "todo-crud",
+  "server": {
+    "command": "node",
+    "args": ["local-api/server.mjs"],
+    "protocol": "http",
+    "host": "127.0.0.1",
+    "portEnv": "TODO_API_PORT",
+    "port": 4275,
+    "basePath": "/api",
+    "healthPath": "/health",
+    "healthTimeoutMs": 5000,
+    "restoreFileAfterRun": "local-api/data/todos.json"
+  },
+  "steps": [
+    {
+      "name": "create-todo",
+      "request": {
+        "method": "POST",
+        "path": "/todos",
+        "body": {
+          "title": "APIフロー確認",
+          "description": "作成、更新、完了、削除を確認する。",
+          "priority": "high",
+          "dueDate": "2026-09-01"
+        }
+      },
+      "expect": {
+        "status": 201,
+        "body": {
+          "assertions": [
+            {
+              "path": "$.id",
+              "type": "string",
+              "nonEmpty": true
+            },
+            {
+              "path": "$.title",
+              "equals": "APIフロー確認"
+            }
+          ]
+        }
+      },
+      "save": {
+        "todoId": "$.id"
+      }
+    },
+    {
+      "name": "update-todo",
+      "request": {
+        "method": "PATCH",
+        "path": "/todos/${todoId}",
+        "body": {
+          "title": "APIフロー確認を更新",
+          "description": "更新できることを確認する。",
+          "priority": "medium",
+          "dueDate": "2026-09-02"
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "assertions": [
+            {
+              "path": "$.title",
+              "equals": "APIフロー確認を更新"
+            },
+            {
+              "path": "$.priority",
+              "equals": "medium"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "complete-todo",
+      "request": {
+        "method": "PATCH",
+        "path": "/todos/${todoId}/status",
+        "body": {
+          "status": "done"
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "assertions": [
+            {
+              "path": "$.status",
+              "equals": "done"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "delete-todo",
+      "request": {
+        "method": "DELETE",
+        "path": "/todos/${todoId}"
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "assertions": [
+            {
+              "path": "$.ok",
+              "type": "boolean",
+              "equals": true
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

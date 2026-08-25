@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "external-tool-check.v1",
+  "name": "browser-a11y",
+  "tool": "playwright-axe",
+  "preflightFiles": [
+    "node_modules/@playwright/test/cli.js",
+    "node_modules/@axe-core/playwright/dist/index.js",
+    "tooling/quality-harness/external-tools/playwright/playwright.config.ts",
+    "tooling/quality-harness/external-tools/playwright/tests/todo-a11y.spec.ts"
+  ],
+  "restoreFiles": [
+    "local-api/data/todos.json"
+  ],
+  "command": {
+    "bin": "node",
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tooling/quality-harness/external-tools/playwright/tests/todo-a11y.spec.ts",
+      "--config",
+      "tooling/quality-harness/external-tools/playwright/playwright.config.ts"
+    ]
+  },
+  "result": {
+    "fileName": "browser-a11y.results.json",
+    "metadata": {
+      "browser": "chromium",
+      "engine": "axe-core",
+      "disabledRules": ["color-contrast"]
+    }
+  }
+}

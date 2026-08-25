@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "requirement-source.github-issue-fixture.v1",
+  "theme": "github-issue-fixture-adapter",
+  "title": "GitHub Issueをfixtureとして要件sourceにできる",
+  "github": {
+    "owner": "example-org",
+    "repo": "example-repo",
+    "number": 124,
+    "url": "https://github.com/example-org/example-repo/issues/124"
+  },
+  "acceptance": [
+    "manifest の requirementSources に github-issue-fixture がある",
+    "外部APIへ接続しなくても GitHub Issue 相当のデータ形を検証できる",
+    "将来 github-issue API adapter へ置き換えるためのsource境界がある"
+  ]
+}

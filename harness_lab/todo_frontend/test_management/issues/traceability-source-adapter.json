@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "requirement-source.issue-file.v1",
+  "theme": "traceability-source-adapter",
+  "title": "要件連携先を md と issue-file の両方で扱う",
+  "issue": {
+    "provider": "local",
+    "id": "TRACE-001",
+    "url": ""
+  },
+  "acceptance": [
+    "manifest が md source と issue-file source を同じ形式で扱える",
+    "spec が requirementRef で sourceId と key を持つ",
+    "外部Issue APIなしでもローカルで構造チェックできる"
+  ]
+}

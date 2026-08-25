@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "artifact-version-contract.v1",
+  "versionFile": "VERSION",
+  "packageFile": "package.json",
+  "appVersion": {
+    "file": "src/appVersion.ts",
+    "pattern": "APP_VERSION\\s*=\\s*\"([^\"]+)\""
+  },
+  "ledgerFile": "docs/artifact-version-ledger.md"
+}

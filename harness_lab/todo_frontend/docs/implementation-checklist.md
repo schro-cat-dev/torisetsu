@@ -17,7 +17,7 @@
 - [x] UI、hook、API、ハーネスの汎用性レビューを作る。
 - [x] 品質管理全体の入口ドキュメントを作る。
 - [x] 成果物バージョン管理とフィードバック改善の入口を作る。
-- [ ] 実ブラウザ確認後、未達条件を各管理ドキュメントへ反映する。
+- [x] 実ブラウザ確認後、未達条件を各管理ドキュメントへ反映する。
 
 ## 3. 成果物バージョン管理
 
@@ -40,6 +40,7 @@
 - [x] `PATCH /api/todos/:id/status` を作る。
 - [x] `DELETE /api/todos/:id` を作る。
 - [x] API 契約チェックを作る。
+- [x] API 契約チェックを schema JSON 入力化する。
 
 ## 5. UI
 
@@ -63,9 +64,23 @@
 
 - [x] unit test を作る。
 - [x] API フロー確認を作る。
+- [x] API フロー確認を scenario JSON 入力化する。
 - [x] 静的 a11y チェックを作る。
 - [x] `npm run check` で結果を `harness_runs/` に残す。
 - [x] 成果物バージョン整合性チェックを作る。
+- [x] runner、profile、個別チェックの階層を分ける。
+- [x] `api-only` と `ui-static` の小さい実行セットを作る。
+- [x] 開発用interfaceの混入guardを作る。
+- [x] 要件md、JSON spec、tester moduleを分ける。
+- [x] `traceability-only` の小さい実行セットを作る。
+- [x] traceability の詳細結果JSONを出す。
+- [x] tester module の metadata / validateInput 契約を作る。
+- [x] build後の dev-only 文字列scanを作る。
+- [x] dependency-cruiser による import 境界チェックを作る。
+- [x] Playwright による実ブラウザE2Eを作る。
+- [x] axe による実ブラウザa11yを作る。
+- [x] AIレビューJSONの最小ゲートを作る。
+- [x] 外部ツールをフラグで切り替えられるようにする。
 - [x] 実行結果を確認する。
 - [ ] 必要ならチェック項目を増やす。
 
@@ -85,8 +100,10 @@
 - [x] `npm run check` が通る。
 - [x] `node runtime_scripts/todo_frontend_runtime.mjs start` でローカル起動できる。
 - [x] `node runtime_scripts/todo_frontend_runtime.mjs stop` でローカル終了できる。
-- [ ] 画面で TODO の作成、編集、削除、完了切替ができる。
+- [x] 画面で TODO の作成、削除、完了切替ができる。
+- [ ] 画面で TODO の編集ができる。
 
 補足:
 - API の作成、更新、完了、削除は `npm run check` 内の API フロー確認で検証済み。
-- 実ブラウザでの画面操作確認は、今回の環境では未実施。
+- 実ブラウザの作成、検索、完了、削除は `npm run check:browser-quality` で確認する。
+- 実ブラウザの編集はまだ専用E2Eに含めていない。

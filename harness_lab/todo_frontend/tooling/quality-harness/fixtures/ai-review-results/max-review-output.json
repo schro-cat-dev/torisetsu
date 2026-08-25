@@ -1,0 +1,58 @@
+{
+  "reviews": [
+    {
+      "file": "src/a.py",
+      "line": 1,
+      "severity": "HIGH",
+      "policy_id": "ARCH-001",
+      "message": "レビュー候補1です。",
+      "suggestion": "修正案1です。",
+      "confidence": 0.95
+    },
+    {
+      "file": "src/b.py",
+      "line": 2,
+      "severity": "HIGH",
+      "policy_id": "ARCH-002",
+      "message": "レビュー候補2です。",
+      "suggestion": "修正案2です。",
+      "confidence": 0.94
+    },
+    {
+      "file": "src/c.py",
+      "line": 3,
+      "severity": "MEDIUM",
+      "policy_id": "DOMAIN-001",
+      "message": "レビュー候補3です。",
+      "suggestion": "修正案3です。",
+      "confidence": 0.93
+    },
+    {
+      "file": "src/d.py",
+      "line": 4,
+      "severity": "CRITICAL",
+      "policy_id": "SEC-001",
+      "message": "レビュー候補4です。",
+      "suggestion": "修正案4です。",
+      "confidence": 0.92
+    },
+    {
+      "file": "src/e.py",
+      "line": 5,
+      "severity": "HIGH",
+      "policy_id": "PERF-001",
+      "message": "レビュー候補5です。",
+      "suggestion": "修正案5です。",
+      "confidence": 0.91
+    },
+    {
+      "file": "src/f.py",
+      "line": 6,
+      "severity": "MEDIUM",
+      "policy_id": "STATE-001",
+      "message": "レビュー候補6です。",
+      "suggestion": "修正案6です。",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "quality-harness-profile.v1",
+  "name": "traceability-only",
+  "description": "要件source、JSON spec、tester module の対応だけを短く確認する。",
+  "stopOnFailure": true,
+  "outputDir": "harness_runs",
+  "commands": [
+    {
+      "name": "dev-only-interface-policy",
+      "command": "npm",
+      "args": ["run", "check:dev-only-interface-policy"]
+    },
+    {
+      "name": "test-traceability",
+      "command": "npm",
+      "args": ["run", "check:test-traceability"]
+    }
+  ],
+  "risks": [
+    "実際のUI操作、APIフロー、buildは対象外。"
+  ]
+}

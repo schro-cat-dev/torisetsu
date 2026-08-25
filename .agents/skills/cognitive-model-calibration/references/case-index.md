@@ -38,3 +38,4 @@
 - `action-suggestion/priority-5/2026-08-22-adapted-action-suggestion.md`
 - `thinking-pattern-check/priority-5/2026-08-22-cognitive-gap-correction.md`
 - `prompt-calibration/priority-5/2026-08-22-request-instruction-mismatch.md`
+- `prompt-calibration/priority-5/2026-08-25-abstract-output-lacks-examples.md`

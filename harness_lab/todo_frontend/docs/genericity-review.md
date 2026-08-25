@@ -57,25 +57,49 @@
 
 | 対象 | 汎用性 | 事実 | 次の改善 |
 |---|---|---|---|
-| `run-quality-harness.mjs` | 中 | command 配列を順に実行して summary を出す | command 定義を JSON 化すると汎用化しやすい |
-| `check-api-contract.mjs` | 低 | `todos.json` 専用 | schema input を外から渡せるようにする |
-| `check-api-flow.mjs` | 低 | TODO CRUD 専用 | scenario 定義を外出しする |
-| `check-static-a11y.mjs` | 低 | 文字列ベースの簡易確認 | axe / Playwright へ置き換える |
+| `run-quality-harness.mjs` | 高 | `profiles/*.json` を読んで順に実行し、summary を出す | profile の schema 確認を強める |
+| `profiles/*.json` | 高 | 実行セットを runner から分離している | profile の用途と対象範囲を増やす |
+| `checks/check-api-contract.mjs` | 高 | `contracts/*.json` を読んで対象ファイルとfield条件を確認する | 対応typeとformatを増やす |
+| `contracts/*.json` | 高 | API contractをデータとして差し替えられる | JSON Schema互換に寄せるか判断する |
+| `checks/check-api-flow.mjs` | 高 | `scenarios/*.json` のstepsを実行する | 認証や複数サーバーscenarioを足す |
+| `scenarios/*.json` | 高 | API flowをデータとして差し替えられる | 変数、JSON path、期待値の種類を増やす |
+| `checks/check-ai-review-result.mjs` | 高 | AIレビューJSONをcontractとfixtureで検査する | 実AI APIの出力保存と接続する |
+| `contracts/ai-review-result.contract.json` | 高 | 必須field、severity、しきい値、最大件数をデータ化している | JSON Schema互換に寄せるか判断する |
+| `fixtures/ai-review-results/*.json` | 高 | 正常、空配列、最大件数をfixtureで確認する | invalid fixtureを追加する |
+| `checks/check-static-a11y.mjs` | 低 | 文字列ベースの簡易確認 | axe / Playwright へ置き換える |
+| `checks/run-external-tool-spec.mjs` | 高 | `external-tool-check.v1` の JSON spec を読み、外部ツールを共通実行する | timeoutや環境変数の契約を増やす |
+| `external-tools/*/*.tool.json` | 高 | dependency-cruiser、Playwright、axe の実行内容をデータとして分離 | 別アプリ用のspecを追加する |
+| `checks/check-test-traceability.mjs` | 高 | manifest、要件source、JSON spec、tester moduleを共通処理でつなぐ | 外部API adapterを足す |
+| `test-runner/tester-modules/*.mjs` | 中 | metadataとvalidateInputを持つ判定module | TypeScript化するか判断する |
+| `policies/harness-genericity.policy.json` | 高 | runner配下の個別path直書きを機械検出する | 禁止値を増やす |
+| `test_management/requirements/*.md` | 中 | md型の要件source | issueや外部sourceと同じ内部表現へ寄せる |
+| `test_management/issues/*.json` | 中 | issue型の要件sourceをローカルで表現している | GitHub Issue API adapterを追加する |
+| `test_management/github_issues/*.json` | 中 | GitHub Issue相当のfixtureを表現している | GitHub API取得を追加する |
+| `test_management/specs/*.json` | 高 | 個別条件をJSONに分離している | 実ブラウザ操作specを追加する |
 | `harness_runs/*/summary.md` | 高 | 実行結果の保存形式は汎用 | input / command / result / risk を増やす |
+| `external-tools/*` | 高 | 外部ツールの設定と実行specをアプリ本体から分離している | ツールごとの信頼境界テンプレートにする |
 
 チェック:
 - [x] ハーネスの汎用化候補を分けた。
-- [ ] `run-quality-harness.mjs` の command 定義を外出しするか判断する。
-- [ ] API contract / API flow を TODO 専用のままにするか判断する。
-- [ ] Playwright 導入タイミングを決める。
+- [x] `run-quality-harness.mjs` の command 定義を profile JSON に外出しした。
+- [x] テスト実行moduleとJSON specを分離した。
+- [x] 要件sourceを md と issue-file に分けられる形にした。
+- [x] API contract を schema入力化した。
+- [x] API flow を scenario JSON化した。
+- [x] AIレビューJSONの最小契約と表示前フィルタを追加した。
+- [x] build後の dev-only 文字列scanを追加した。
+- [x] dependency-cruiser による依存方向チェックを追加した。
+- [x] Playwright による実ブラウザE2Eを追加した。
+- [x] axe による実ブラウザa11yを追加した。
+- [x] 汎用runner本体の個別path直書きを `harness-genericity` で確認する。
 
 ## 6. 今回の方針
 
 - 初回は「過剰な汎用化」をしない。
 - ただし、汎用化できる場所とできない場所は明示する。
-- 次に別アプリを作る場合、再利用できる候補は `run-quality-harness.mjs` と `harness_runs/summary.md`。
+- 次に別アプリを作る場合、再利用できる候補は `run-quality-harness.mjs`、`profiles/*.json`、`contracts/*.json`、`scenarios/*.json`、`check-test-traceability.mjs`、`test-runner/tester-modules/`、`harness_runs/summary.md`。
 
 完了条件:
 - [x] 汎用性の高・中・低を分類した。
 - [x] 次の改善候補を出した。
-- [ ] どれを実際に汎用化するか決める。
+- [x] runner と実行セットを先に汎用化した。

@@ -1,7 +1,7 @@
 {
   "name": "todo-quality-harness",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.8.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -13,11 +13,25 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest --run",
-    "check:artifact-version": "node tooling/quality-harness/check-artifact-version.mjs",
-    "check:api-contract": "node tooling/quality-harness/check-api-contract.mjs",
-    "check:api-flow": "node tooling/quality-harness/check-api-flow.mjs",
-    "check:a11y-static": "node tooling/quality-harness/check-static-a11y.mjs",
-    "check": "node tooling/quality-harness/run-quality-harness.mjs"
+    "check:artifact-version": "node tooling/quality-harness/checks/check-artifact-version.mjs tooling/quality-harness/contracts/artifact-version.contract.json",
+    "check:harness-genericity": "node tooling/quality-harness/checks/run-file-content-policy.mjs tooling/quality-harness/policies/harness-genericity.policy.json",
+    "check:dev-only-interface-policy": "node tooling/quality-harness/checks/run-file-content-policy.mjs tooling/quality-harness/policies/dev-only-interface.policy.json",
+    "check:dev-only-build-artifact-policy": "node tooling/quality-harness/checks/run-file-content-policy.mjs tooling/quality-harness/policies/dev-only-build-artifact.policy.json",
+    "check:ai-review-result": "node tooling/quality-harness/checks/check-ai-review-result.mjs tooling/quality-harness/contracts/ai-review-result.contract.json",
+    "check:dependencies": "node tooling/quality-harness/checks/run-external-tool-spec.mjs tooling/quality-harness/external-tools/dependency-cruiser/dependency-boundary.tool.json",
+    "check:browser-e2e": "node tooling/quality-harness/checks/run-external-tool-spec.mjs tooling/quality-harness/external-tools/playwright/browser-e2e.tool.json",
+    "check:browser-a11y": "node tooling/quality-harness/checks/run-external-tool-spec.mjs tooling/quality-harness/external-tools/playwright/browser-a11y.tool.json",
+    "check:test-traceability": "node tooling/quality-harness/checks/check-test-traceability.mjs test_management/manifest.json",
+    "check:api-contract": "node tooling/quality-harness/checks/check-api-contract.mjs tooling/quality-harness/contracts/todos.contract.json",
+    "check:api-flow": "node tooling/quality-harness/checks/check-api-flow.mjs tooling/quality-harness/scenarios/todo-crud.scenario.json",
+    "check:a11y-static": "node tooling/quality-harness/checks/check-static-a11y.mjs tooling/quality-harness/policies/static-a11y.policy.json",
+    "check": "node tooling/quality-harness/run-quality-harness.mjs",
+    "check:api-only": "node tooling/quality-harness/run-quality-harness.mjs api-only",
+    "check:dependency-boundary": "node tooling/quality-harness/run-quality-harness.mjs dependency-boundary",
+    "check:browser-quality": "node tooling/quality-harness/run-quality-harness.mjs browser-quality",
+    "check:ai-review-output": "node tooling/quality-harness/run-quality-harness.mjs ai-review-output",
+    "check:traceability": "node tooling/quality-harness/run-quality-harness.mjs traceability-only",
+    "check:ui-static": "node tooling/quality-harness/run-quality-harness.mjs ui-static"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -25,10 +39,13 @@
     "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.1",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.6.0",
+    "dependency-cruiser": "^17.4.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^3.2.4"

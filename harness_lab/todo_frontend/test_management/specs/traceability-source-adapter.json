@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "test-spec.v1",
+  "theme": "traceability-source-adapter",
+  "requirementRef": {
+    "sourceId": "local-issue",
+    "key": "traceability-source-adapter"
+  },
+  "tester": "file-contains",
+  "links": [
+    {
+      "type": "implementation",
+      "path": "tooling/quality-harness/checks/check-test-traceability.mjs"
+    },
+    {
+      "type": "manifest",
+      "path": "test_management/manifest.json"
+    },
+    {
+      "type": "doc",
+      "path": "docs/test-traceability-json-runner-design.md"
+    }
+  ],
+  "input": {
+    "checks": [
+      {
+        "file": "test_management/manifest.json",
+        "contains": [
+          "\"requirementSources\"",
+          "\"type\": \"md\"",
+          "\"type\": \"issue-file\""
+        ]
+      },
+      {
+        "file": "docs/test-traceability-json-runner-design.md",
+        "contains": [
+          "`source adapter`",
+          "`issue-file`"
+        ]
+      }
+    ]
+  }
+}

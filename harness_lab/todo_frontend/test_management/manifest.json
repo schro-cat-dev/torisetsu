@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "test-manifest.v2",
+  "requirementSources": [
+    {
+      "id": "local-md",
+      "type": "md",
+      "dir": "test_management/requirements",
+      "extension": ".md"
+    },
+    {
+      "id": "local-issue",
+      "type": "issue-file",
+      "dir": "test_management/issues",
+      "extension": ".json"
+    },
+    {
+      "id": "github-issue-fixture",
+      "type": "github-issue-fixture",
+      "dir": "test_management/github_issues",
+      "extension": ".json"
+    }
+  ],
+  "specDir": "test_management/specs",
+  "testerModuleDir": "tooling/quality-harness/test-runner/tester-modules",
+  "cases": [
+    {
+      "theme": "quality-harness-profile-split",
+      "title": "品質ハーネスを runner / profile / checks に分ける",
+      "requirement": {
+        "sourceId": "local-md",
+        "key": "quality-harness-profile-split"
+      }
+    },
+    {
+      "theme": "artifact-version-contract",
+      "title": "成果物バージョンの契約をそろえる",
+      "requirement": {
+        "sourceId": "local-md",
+        "key": "artifact-version-contract"
+      }
+    },
+    {
+      "theme": "ai-review-json-gate",
+      "title": "AIレビューJSONを最小契約と表示前フィルタで扱う",
+      "requirement": {
+        "sourceId": "local-md",
+        "key": "ai-review-json-gate"
+      }
+    },
+    {
+      "theme": "traceability-source-adapter",
+      "title": "要件連携先を md と issue-file の両方で扱う",
+      "requirement": {
+        "sourceId": "local-issue",
+        "key": "traceability-source-adapter"
+      }
+    },
+    {
+      "theme": "github-issue-fixture-adapter",
+      "title": "GitHub Issueをfixtureとして要件sourceにできる",
+      "requirement": {
+        "sourceId": "github-issue-fixture",
+        "key": "github-issue-fixture-adapter"
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "static-a11y-policy.v1",
+  "name": "todo-static-a11y",
+  "files": [
+    "src/features/todos/components/TodoCreateForm.tsx",
+    "src/features/todos/components/TodoToolbar.tsx",
+    "src/features/todos/components/TodoListSection.tsx"
+  ],
+  "fileRules": [
+    {
+      "whenContains": "<input",
+      "requireContains": "<label",
+      "message": "input has no label nearby."
+    },
+    {
+      "whenContains": "aria-invalid",
+      "requireContains": "aria-describedby",
+      "message": "invalid state has no description."
+    }
+  ],
+  "aggregateRules": [
+    {
+      "anyOf": ["aria-live"],
+      "message": "No aria-live region found for async status."
+    },
+    {
+      "anyOf": ["role=\"alert\"", "aria-live"],
+      "message": "No alert or live region found for errors."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "test-spec.v1",
+  "theme": "ai-review-json-gate",
+  "requirementRef": {
+    "sourceId": "local-md",
+    "key": "ai-review-json-gate"
+  },
+  "tester": "file-contains",
+  "links": [
+    {
+      "type": "implementation",
+      "path": "tooling/quality-harness/checks/check-ai-review-result.mjs"
+    },
+    {
+      "type": "contract",
+      "path": "tooling/quality-harness/contracts/ai-review-result.contract.json"
+    },
+    {
+      "type": "doc",
+      "path": "docs/ai-review-json-gate.md"
+    }
+  ],
+  "input": {
+    "checks": [
+      {
+        "file": "package.json",
+        "contains": [
+          "\"check:ai-review-result\"",
+          "\"check:ai-review-output\""
+        ]
+      },
+      {
+        "file": "tooling/quality-harness/contracts/ai-review-result.contract.json",
+        "contains": [
+          "\"minConfidenceInclusive\": 0.8",
+          "\"dropSeverities\": [\"LOW\"]",
+          "\"maxReviews\": 5"
+        ]
+      },
+      {
+        "file": "docs/ai-review-json-gate.md",
+        "contains": [
+          "\"reviews\": []",
+          "`confidence >= 0.8`",
+          "GitHub PRへの自動投稿はまだしない"
+        ]
+      }
+    ]
+  }
+}

@@ -48,6 +48,36 @@ http://127.0.0.1:4174/api/todos
 npm run check
 ```
 
+用途を絞って確認する場合:
+
+```bash
+npm run check:api-only
+npm run check:dependency-boundary
+npm run check:browser-quality
+npm run check:ai-review-output
+npm run check:harness-genericity
+npm run check:traceability
+npm run check:ui-static
+```
+
+通常の `npm run check` に外部ツールを足す場合:
+
+```bash
+HARNESS_ENABLE_DEPENDENCY_BOUNDARY=1 npm run check
+HARNESS_ENABLE_BROWSER_QUALITY=1 npm run check
+```
+
+品質ハーネスの構成:
+
+- `tooling/quality-harness/run-quality-harness.mjs`: profile を読んで順番に実行する本体。
+- `tooling/quality-harness/profiles/*.json`: 何を確認するかの実行セット。
+- `tooling/quality-harness/checks/*.mjs`: 個別チェック。
+- `tooling/quality-harness/contracts/*.json`: API contract の入力データ。
+- `tooling/quality-harness/scenarios/*.json`: API flow の入力データ。
+- `tooling/quality-harness/fixtures/`: 品質ゲート用の入力サンプル。
+- `tooling/quality-harness/external-tools/`: dependency-cruiser、Playwright、axe の隔離設定。
+- `test_management/`: 要件sourceとJSON specの1対1対応。
+
 ## devログ
 
 - APIログ: `harness_lab/todo_frontend/.runtime/logs/api.stdout.log`
