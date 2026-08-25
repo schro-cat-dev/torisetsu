@@ -40,6 +40,7 @@ flowchart TD
 - ハーネス側の不足が `未対応` として見える。
 - プロンプトや作業ルールに反映すべき点が整理されている。
 - 同じ流れをもう一度試し、仕様差分、Harness検出、人間検出、修正依頼回数の改善が見えている。
+- `以前: 修正5回、3時間` から `改善後: 修正1回、45分、品質条件100%通過` のような改善履歴を記録できる状態になっている。
 
 改善の見方:
 
@@ -53,6 +54,8 @@ flowchart TD
 この数値は固定の合格ラインではなく、Phase 1で目指す状態の例として扱う。重要なのは、差分の総量が減り、人間だけが見つけるズレが減り、修正依頼の回数が減ること。
 
 対象ごとの詳しいベンチマークと閾値は `../benchmark_threshold_design/targets/phase_progress/README.md` を参照する。
+
+Harness改善が実作業に効いたかは `../benchmark_threshold_design/targets/harness_effectiveness/README.md` と `../benchmark_threshold_design/experiments/harness_effectiveness/` に分けて記録する。
 
 ## フェーズ2
 

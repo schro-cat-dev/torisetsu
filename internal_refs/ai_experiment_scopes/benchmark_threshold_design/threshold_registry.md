@@ -17,8 +17,11 @@
 | `phase1.human_only_reduction` | Phase 1進捗 | 人間だけが見つけるズレの減少率 | `>=` | 70 | % | 仮 |
 | `phase1.revision_request_reduction` | Phase 1進捗 | 修正依頼回数の減少率 | `>=` | 50 | % | 仮 |
 | `phase1.harness_detection_ratio` | Phase 1進捗 | Harness検出数 / 仕様差分数 | `>=` | 70 | % | 仮 |
+| `harness_effectiveness.revision_request_reduction` | ハーネス改善効果 | 修正依頼回数の減少率 | `>=` | 60 | % | 仮 |
+| `harness_effectiveness.elapsed_time_reduction` | ハーネス改善効果 | 所要時間の減少率 | `>=` | 50 | % | 仮 |
+| `harness_effectiveness.quality_pass_rate` | ハーネス改善効果 | 品質条件通過率 | `==` | 100 | % | 仮 |
+| `harness_effectiveness.confirmed_history_count` | ハーネス改善効果 | 改善前後を比較できる履歴数 | `>=` | 3 | 本 | 仮 |
 
 ## 注意
 
 上の値は、Phase 1の例をもとにした初期案です。実測が3回以上たまるまでは、合格ラインではなく観察目安として扱う。
-
