@@ -17,6 +17,7 @@
 | 制約と権限境界 | `constraint_permission_boundaries/` | AIに渡す権限、禁止事項、確認条件を整理する |
 | 実験ログ形式 | `experiment_log_schema/` | 実験ごとの記録形式をそろえる |
 | フェーズ計画 | `phase_plan/` | 次に何を試し、どこまでできたら区切るかを管理する |
+| AI協働チートシート | `ai_collaboration_cheatsheet/` | AIが分からない時やズレそうな時に、どう動き、どうボールをパスするかを管理する |
 
 各スコープで実際に試した記録は、原則として各ディレクトリ配下の `experiments/` に置く。
 
@@ -32,6 +33,8 @@ flowchart TD
   Direction --> Prompt
   Constraint --> Prompt
   Architecture["AI内部アーキテクチャ仮説"] --> Direction
+  Collaboration["AI協働チートシート"] --> Direction
+  Collaboration --> Constraint
 
   Prompt --> Evaluation["評価と再現性"]
   Evaluation --> Benchmark["ベンチマーク・閾値設計"]

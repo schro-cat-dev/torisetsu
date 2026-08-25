@@ -102,6 +102,8 @@ AIもユーザーも、それぞれの認知モデルが行動しやすい環境
 
 - [ベンチマーク・閾値設計](internal_refs/ai_experiment_scopes/benchmark_threshold_design/README.md): 対象ごとの評価軸、閾値、版管理、測定結果を分けて管理する入口。
 
+- [AI協働チートシート](internal_refs/ai_experiment_scopes/ai_collaboration_cheatsheet/README.md): AIが分からない時やズレそうな時に、どう動き、どうボールをパスするかを整理する取扱説明書。
+
 ## 方向性を間違えないための仮説メモ
 
 次の内容は、別スレッドのAI側が提示した低確度の仮説メモであり、ユーザー自身の確定見解ではない。現時点で質の高い情報として扱わず、今後の実験で起こり得るズレを先に置いておくための参考メモとして扱う。
