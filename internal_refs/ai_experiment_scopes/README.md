@@ -4,7 +4,7 @@
 
 ## 1. 結論
 
-まずは次の8領域に分ける。
+まずは次の9領域に分ける。
 
 | 領域 | ディレクトリ | 役割 |
 |---|---|---|
@@ -13,6 +13,7 @@
 | 推論の方向づけ | `inference_direction_design/` | プロンプトで何を重視させるかを整理する |
 | プロンプト挙動実験 | `prompt_behavior_experiments/` | 個別プロンプトを作り、出力差分を比較する |
 | 評価と再現性 | `evaluation_reproducibility/` | 実験結果を比較できる形にする |
+| ベンチマーク・閾値設計 | `benchmark_threshold_design/` | 対象ごとの評価軸、閾値、版管理、測定結果を分けて管理する |
 | 制約と権限境界 | `constraint_permission_boundaries/` | AIに渡す権限、禁止事項、確認条件を整理する |
 | 実験ログ形式 | `experiment_log_schema/` | 実験ごとの記録形式をそろえる |
 | フェーズ計画 | `phase_plan/` | 次に何を試し、どこまでできたら区切るかを管理する |
@@ -33,10 +34,11 @@ flowchart TD
   Architecture["AI内部アーキテクチャ仮説"] --> Direction
 
   Prompt --> Evaluation["評価と再現性"]
+  Evaluation --> Benchmark["ベンチマーク・閾値設計"]
+  Benchmark --> Phase["フェーズ計画"]
   Evaluation --> Log["実験ログ形式"]
   Log --> Next["次の改善"]
   Phase["フェーズ計画"] --> Goal
-  Evaluation --> Phase
   Next --> Direction
   Next --> Constraint
 ```

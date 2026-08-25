@@ -55,3 +55,5 @@
 - [AI実験スコープ整理](internal_refs/ai_experiment_scopes/README.md): AI挙動、推論方向づけ、プロンプト実験、評価、制約を分けて管理する入口。
 
 - [フェーズ計画](internal_refs/ai_experiment_scopes/phase_plan/README.md): TODOアプリレビューからフェーズ1終了、次の難しい実タスクへ進む流れ。
+
+- [ベンチマーク・閾値設計](internal_refs/ai_experiment_scopes/benchmark_threshold_design/README.md): 対象ごとの評価軸、閾値、版管理、測定結果を分けて管理する入口。

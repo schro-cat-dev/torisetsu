@@ -52,6 +52,8 @@ flowchart TD
 
 この数値は固定の合格ラインではなく、Phase 1で目指す状態の例として扱う。重要なのは、差分の総量が減り、人間だけが見つけるズレが減り、修正依頼の回数が減ること。
 
+対象ごとの詳しいベンチマークと閾値は `../benchmark_threshold_design/targets/phase_progress/README.md` を参照する。
+
 ## フェーズ2
 
 目的:
