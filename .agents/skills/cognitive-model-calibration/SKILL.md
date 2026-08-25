@@ -1,6 +1,6 @@
 ---
 name: cognitive-model-calibration
-description: "Use when user feedback shows a gap between AI default judgment and the user's cognitive model, especially around fact/observation/interpretation/inference ratios, priority viewpoint, recommendation score, task weight, lightweight/quick execution, thinking pattern checks, prompt/instruction calibration, strength/weakness hints, cognitive gap checks, action suggestions, relationship structure, alternative proposals, or explanation style."
+description: "Use when user feedback shows a gap between AI default judgment and the user's cognitive model, especially around fact/observation/interpretation/inference ratios, priority viewpoint, recommendation score, task weight, lightweight/quick execution, thinking pattern checks, prompt/instruction calibration, strength/weakness hints, cognitive gap checks, action suggestions, relationship structure, alternative proposals, high-level domain/technical direction, tradeoff judgment, or explanation style."
 ---
 
 # Cognitive Model Calibration
@@ -23,6 +23,8 @@ description: "Use when user feedback shows a gap between AI default judgment and
 - ユーザーの考え方にズレ、歪み、変な癖がありそうな原因を推測し、改善案と根拠を出すとき。
 - ユーザーの依頼とAIの動きがズレ、次の指示文を一緒に改善した方がよいとき。
 - 別案を出すときに、背景と根拠の出し方を確認したいとき。
+- 業務ドメインの関連づけ、大枠の技術指針、観点ごとのフレームワーク設計、トレードオフ判断でAIの品質が担保しきれないと感じたとき。
+- その場でユーザーにボールをパスし、ユーザーの返答を次回用ナレッジとして蓄積するとき。
 
 ## 作業手順
 
@@ -48,3 +50,5 @@ description: "Use when user feedback shows a gap between AI default judgment and
 - 軽量・クイックに進める場面では、深掘りより先に小さく動ける形へ寄せる。
 - 依頼と動きがズレた場合は、責任探しではなく、次に伝わる依頼文へ直す作業として扱う。
 - ズレの分解後は、ユーザー案とAI案の両方を出して擦り合わせる。
+- 高レベル判断で品質が担保しきれない場合は、スルーせずユーザーにボールをパスする。
+- ユーザーの返答で方針が補正された場合は、`internal_refs/ai_experiment_scopes/ai_collaboration_cheatsheet/knowledge/` にも短く蓄積する。

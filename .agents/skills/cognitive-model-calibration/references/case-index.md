@@ -25,6 +25,7 @@
 - `thinking-pattern-check`: 認知のズレや歪みの原因推測、改善案、根拠提示。
 - `prompt-calibration`: ユーザー依頼とAIの動きがズレた時の、依頼文と解釈の調整。
 - `information-structure-calibration`: 構造単位での把握、関連付け、運搬、責務境界、人間が概念に込めた意味と実装上の表現、問いの種をAIの認知で変形してしまうズレ。
+- `high-level-decision-handoff`: 業務ドメインの関連づけ、大枠の技術指針、観点ごとのフレームワーク設計、トレードオフ判断でAIの品質が担保しきれない時のボールパスと、ユーザー返答のナレッジ化。
 
 ## 現在のケース
 
@@ -42,3 +43,4 @@
 - `prompt-calibration/priority-5/2026-08-25-abstract-output-lacks-examples.md`
 - `information-structure-calibration/priority-5/2026-08-25-structure-unit-vs-runtime-payload.md`
 - `information-structure-calibration/priority-5/2026-08-25-question-seed-vs-ai-reframing.md`
+- `high-level-decision-handoff/priority-5/2026-08-25-domain-strategy-tradeoff-handoff.md`
