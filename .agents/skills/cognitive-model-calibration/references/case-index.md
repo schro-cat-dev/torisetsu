@@ -24,6 +24,7 @@
 - `action-suggestion`: ユーザー特性に合わせた動き方の提案。
 - `thinking-pattern-check`: 認知のズレや歪みの原因推測、改善案、根拠提示。
 - `prompt-calibration`: ユーザー依頼とAIの動きがズレた時の、依頼文と解釈の調整。
+- `information-structure-calibration`: 構造単位での把握、関連付け、運搬、責務境界、人間が概念に込めた意味と実装上の表現のズレ。
 
 ## 現在のケース
 
@@ -39,3 +40,4 @@
 - `thinking-pattern-check/priority-5/2026-08-22-cognitive-gap-correction.md`
 - `prompt-calibration/priority-5/2026-08-22-request-instruction-mismatch.md`
 - `prompt-calibration/priority-5/2026-08-25-abstract-output-lacks-examples.md`
+- `information-structure-calibration/priority-5/2026-08-25-structure-unit-vs-runtime-payload.md`
