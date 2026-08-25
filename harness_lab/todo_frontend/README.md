@@ -69,6 +69,7 @@ HARNESS_ENABLE_BROWSER_QUALITY=1 npm run check
 
 品質ハーネスの構成:
 
+- `docs/quality-harness-spec.md`: 何を、どの入力で、どう確認し、何をOKとするかの仕様書。
 - `tooling/quality-harness/run-quality-harness.mjs`: profile を読んで順番に実行する本体。
 - `tooling/quality-harness/profiles/*.json`: 何を確認するかの実行セット。
 - `tooling/quality-harness/checks/*.mjs`: 個別チェック。

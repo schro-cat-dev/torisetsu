@@ -17,6 +17,7 @@
 | `component-relation-map.md` | UI、状態、API、保存、品質ハーネスの関係図 | 作成済み |
 | `genericity-review.md` | UI、hook、API、ハーネスの汎用性評価 | 作成済み |
 | `quality-management-plan.md` | 品質管理全体の入口 | このファイル |
+| `quality-harness-spec.md` | 品質ハーネスが何を、どの入力で、どう確認するかの仕様書 | 作成済み |
 | `artifact-versioning.md` | 成果物バージョン管理ルール | 作成済み |
 | `artifact-version-ledger.md` | バージョンごとの変更、検証、残リスク | 作成済み |
 | `feedback-workstream.md` | フィードバックを改善へつなげる流れ | 作成済み |
@@ -36,6 +37,9 @@
 | `tooling/quality-harness/checks/*.mjs` | 個別チェックの実体 | 作成済み |
 
 ## 3. 品質ゲート
+
+品質ハーネスの細かい仕様は `quality-harness-spec.md` を正とする。
+このファイルでは、管理上の入口と進捗だけを扱う。
 
 ### 3.1 設計ゲート
 
@@ -118,11 +122,12 @@
 ## 5. 次の進め方
 
 1. この管理ドキュメント群を読む。
-2. 足りない項目があれば、先にチェックリストへ追加する。
-3. 実装する。
-4. `npm run check` を実行する。
-5. 実行結果を `harness_runs/` で確認する。
-6. 未確認項目を `implementation-checklist.md` とこのファイルに残す。
+2. ハーネス仕様を確認する場合は `quality-harness-spec.md` を読む。
+3. 足りない項目があれば、先にチェックリストへ追加する。
+4. 実装する。
+5. `npm run check` を実行する。
+6. 実行結果を `harness_runs/` で確認する。
+7. 未確認項目を `implementation-checklist.md` とこのファイルに残す。
 
 ## 6. 今回の残リスク
 

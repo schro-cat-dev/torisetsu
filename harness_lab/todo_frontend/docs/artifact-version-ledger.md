@@ -19,6 +19,7 @@ Current version: 0.8.0
 - `fixtures/ai-review-results/*.json`。
 - `profiles/ai-review-output.json`。
 - `docs/ai-review-json-gate.md`。
+- `docs/quality-harness-spec.md`。
 - `test_management/requirements/ai-review-json-gate.md`。
 - `test_management/specs/ai-review-json-gate.json`。
 - `npm run check:ai-review-result`。
@@ -35,6 +36,7 @@ Current version: 0.8.0
 - `npm run check:ui-static`: OK。最新確認: `harness_runs/2026-08-25T04-50-38-984Z-61144/summary.md`。
 - `python3 /Users/yutoseki/.codex/skills/codex-skill-maintenance/scripts/validate_skills.py .agents/skills`: OK。`checked=6 errors=0`。
 - `HARNESS_ENABLE_DEPENDENCY_BOUNDARY=1 HARNESS_ENABLE_BROWSER_QUALITY=1 npm run check`: OK。最新確認: `harness_runs/2026-08-25T04-52-16-755Z-67167/summary.md`。
+- `docs/quality-harness-spec.md` を追加し、各checkの `観点 / 入力 / 確認項目 / 実現方法 / OK条件 / 証跡 / 残リスク` を明文化した。
 
 ### 残リスク
 
