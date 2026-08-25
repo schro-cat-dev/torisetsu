@@ -106,6 +106,10 @@ AIもユーザーも、それぞれの認知モデルが行動しやすい環境
 
 - [AI協働チートシート](internal_refs/ai_experiment_scopes/ai_collaboration_cheatsheet/README.md): AIが分からない時やズレそうな時に、どう動き、どうボールをパスするかを整理する取扱説明書。
 
+## 外部参照
+
+- [ハーネス・採用プラットフォーム外部参照](external_refs/harness_recruiting_platform_references/README.md): SmartHR、OpenCATS、Playwright などを見ながら、TODO修正後の採用プラットフォーム実験を考える入口。
+
 ## 方向性を間違えないための仮説メモ
 
 次の内容は、別スレッドのAI側が提示した低確度の仮説メモであり、ユーザー自身の確定見解ではない。現時点で質の高い情報として扱わず、今後の実験で起こり得るズレを先に置いておくための参考メモとして扱う。
