@@ -6,6 +6,8 @@
 
 利用者ID、skill、タグ、品質評価、グルーピング、蒸留を分けて管理し、チームで使っても個人差と品質差を扱える仕組みにする。
 
+ただし、チーム版でハーネス内部のナレッジを毎回全部読ませると重くなる。ユーザーの窓口として、一覧表から必要なナレッジだけを選び、タスクやスコープごとに切り替えられる層を置く。
+
 ## 2. 目的
 
 - 個人に合う / 合わないを前提として扱う。
@@ -14,6 +16,9 @@
 - skillの強さやアウトプット品質を見て、使う候補を推奨できるようにする。
 - グループ化した情報を整理し、洗練させる。ここではこの工程を `蒸留` と呼ぶ。
 - 情報が増えても、ノイズや意図の歪みで品質が落ちにくい状態にする。
+- 全ナレッジを常時読み込ませず、必要なものだけ選ぶ。
+- タスク開始前、作業途中、スコープ変更時にナレッジセットを切り替えられるようにする。
+- 速度と品質の両方を見て、生産性を最大化する。
 
 ## 3. 非ゴール
 
@@ -23,6 +28,7 @@
 - まだ Codex / Claude の内蔵planningへ直接連携しない。
 - タグや評価を、人への評価として扱わない。
 - 利用者の個人差を、良し悪しの判定にしない。
+- ハーネス内部のナレッジを、毎回すべてAIへ渡さない。
 
 ## 4. 解きたい問題
 
@@ -34,25 +40,35 @@
 | 品質差 | skillごとに出力の強さが違う | 10段階で品質と適合度を記録する |
 | 情報の重複 | 似た判断や質問が散らばる | 一定条件でグルーピングする |
 | 情報の粗さ | まとめただけで使いにくい | 蒸留して、短く使える形にする |
+| 常時読み込みの重さ | ナレッジが増えるほど遅くなり、ノイズも増える | 一覧表から使うものだけ選択する |
+| スコープ切替 | タスクごとに必要な前提やskillが変わる | 実行スコープごとに選択セットを持つ |
 
 ## 5. 全体像
 
 ```mermaid
 flowchart TD
   User["利用者"] --> UserProfile["User Profile"]
+  User --> SelectionPanel["ナレッジ選択窓口"]
+  KnowledgeCatalog["Knowledge Catalog"] --> SelectionPanel
+  SelectionPanel --> ScopeProfile["実行スコープProfile"]
   UserProfile --> SkillLink["User Skill Link"]
   SkillRegistry["Skill Registry"] --> SkillLink
+  SkillRegistry --> KnowledgeCatalog
   SkillRegistry --> Tagging["軽量AIタグ候補"]
   TagRegistry["Tag Registry"] --> Tagging
+  TagRegistry --> KnowledgeCatalog
   Tagging --> TagCheck["既存タグ確認"]
   TagCheck --> Grouping["類似グルーピング"]
   Grouping --> Distillation["蒸留"]
-  Distillation --> RecommendedSet["推奨skillセット"]
+  Distillation --> KnowledgeCatalog
+  ScopeProfile --> RecommendedSet["推奨skillセット"]
+  SelectionPanel --> RecommendedSet
   RecommendedSet --> TaskRun["タスク実行"]
   TaskRun --> Evidence["結果と証跡"]
   Evidence --> AcceptedCache["採用アウトプットキャッシュ"]
   AcceptedCache --> PatternAnalysis["特徴分析"]
   PatternAnalysis --> Distillation
+  AcceptedCache --> KnowledgeCatalog
   Evidence --> SkillScore["skill品質評価"]
   SkillScore --> SkillRegistry
 ```
@@ -70,6 +86,9 @@ flowchart TD
 | Distillation | 束ねた情報を洗練する | 残す内容、削る内容、例外、次版 |
 | Skill Score | skillの強さを見る | 適合度、出力品質、再現性、保守性 |
 | Adopted Output Cache | 採用されたアウトプットを蓄積する | 採用理由、特徴、修正過程、差分 |
+| Knowledge Catalog | 使えるナレッジの一覧表 | knowledgeId、種類、scope、version、status |
+| Selection Panel | タスク前や途中で使うナレッジを選ぶ窓口 | userId、taskId、scopeId、selectedKnowledge |
+| Scope Profile | 実行スコープごとの選択状態 | スコープ目的、使うナレッジ、除外するナレッジ |
 
 ## 7. データ構造案
 
@@ -143,6 +162,53 @@ flowchart TD
       "status": "active"
     }
   ]
+}
+```
+
+### 7.5 Knowledge Catalog
+
+```json
+{
+  "schemaVersion": "team-harness-knowledge-catalog.v1",
+  "items": [
+    {
+      "knowledgeId": "knowledge-design-alignment-v1",
+      "type": "distilled-sheet",
+      "title": "設計レビュー時の観点ズレ確認",
+      "tags": ["design-review", "viewpoint-gap"],
+      "scope": ["design-review", "before-implementation"],
+      "version": "0.1.0",
+      "status": "active",
+      "cost": {
+        "contextSize": "small",
+        "estimatedReadTimeSec": 30
+      },
+      "quality": {
+        "score": 8,
+        "basis": "前回のTODOレビューで、対象、観点、次の行動を分ける説明に改善できた"
+      }
+    }
+  ]
+}
+```
+
+### 7.6 Scope Selection Profile
+
+```json
+{
+  "schemaVersion": "team-harness-scope-selection-profile.v1",
+  "taskId": "task-recruiting-platform-design-001",
+  "scopeId": "ui-requirement-review",
+  "userId": "user-001",
+  "selectedKnowledgeIds": [
+    "knowledge-design-alignment-v1",
+    "skill-alignment-gap-review-v1"
+  ],
+  "excludedKnowledgeIds": [
+    "runtime-start-stop-v1"
+  ],
+  "reason": "今回はUI要件レビューであり、runtime起動の話ではないため",
+  "version": "0.1.0"
 }
 ```
 
@@ -410,3 +476,109 @@ flowchart TD
 まだ実装しない。
 
 まずは設計上の将来展望として置き、チームハーネスの蒸留プロセスと接続する。
+
+## 17. ナレッジ選択窓口
+
+チーム版では、ハーネス内部のナレッジプラットフォームをAIに全部読ませない。
+
+ユーザーが一覧表から必要なものを選び、タスクやスコープに合わせて使う。
+
+### 17.1 役割
+
+| 役割 | 内容 |
+|---|---|
+| 選ぶ | 今のタスクに使うナレッジ、skill、蒸留シート、採用アウトプットを選ぶ |
+| 外す | 今は関係ないナレッジを明示的に外す |
+| 切り替える | タスク、工程、スコープごとに使うセットを変える |
+| 足す | 作業途中で必要になったナレッジを追加する |
+| 版管理する | どのversionを使ったか残す |
+| 改善する | 使った結果を見て、scoreや内容を更新する |
+
+### 17.2 いつ使うか
+
+| タイミング | 使い方 |
+|---|---|
+| タスク開始前 | 今回使うナレッジセットを選ぶ |
+| スコープ変更時 | UI、API、DB、運用などに合わせて切り替える |
+| 途中でズレた時 | 足りないナレッジを追加し、不要なものを外す |
+| レビュー前 | チェックに使うナレッジだけ読む |
+| 改善後 | 採用された出力や改善点を次版へつなぐ |
+
+### 17.3 選択単位
+
+選ぶ単位は、粒度をそろえる。
+
+| 単位 | 例 | 使い所 |
+|---|---|---|
+| skill | `alignment-gap-review` | AIの動き方を変える |
+| distilled-sheet | `設計レビュー時の観点ズレ確認` | 判断軸や質問を短く使う |
+| accepted-output | `採用済みレビュー出力型` | 良かったアウトプットの型を再利用する |
+| checklist | `UI要件レビュー項目` | OK/NGを確認する |
+| policy | `scope外作業禁止` | やってはいけないことを固定する |
+
+### 17.4 選ぶ時の基本ルール
+
+```text
+1. taskId と scopeId を決める
+2. 今の工程を決める
+3. 候補ナレッジを一覧から出す
+4. 使うものを選ぶ
+5. 今は読まないものを外す
+6. version を固定する
+7. 作業途中で必要なら追加する
+8. 結果を見て score や次版候補を更新する
+```
+
+### 17.5 サンプル
+
+```json
+{
+  "schemaVersion": "team-harness-selected-knowledge-set.v1",
+  "taskId": "task-recruiting-platform-design-001",
+  "scopeId": "ui-requirement-review",
+  "phase": "before-implementation",
+  "selected": [
+    {
+      "knowledgeId": "knowledge-design-alignment-v1",
+      "version": "0.1.0",
+      "reason": "UI要件の対象、観点、完了条件を先にそろえるため"
+    },
+    {
+      "knowledgeId": "skill-alignment-gap-review-v1",
+      "version": "0.1.0",
+      "reason": "ユーザー意図とAI出力のズレを早めに見るため"
+    }
+  ],
+  "excluded": [
+    {
+      "knowledgeId": "runtime-start-stop-v1",
+      "reason": "今回はまだローカル起動やlogger設計の工程ではないため"
+    }
+  ],
+  "productivityGoal": {
+    "speed": "使う文脈を絞って読み込みを軽くする",
+    "quality": "必要な判断軸だけは落とさない"
+  }
+}
+```
+
+### 17.6 判断基準
+
+| 判断 | 優先度 | おすすめ度 | 背景 |
+|---|---:|---:|---|
+| ナレッジ選択窓口を置く | 5 | 5 | 全部読ませると重くなり、ノイズも増えるため |
+| タスク前に選択セットを固定する | 5 | 5 | 最小コンテキストで始められるため |
+| 作業途中の追加を許可する | 4 | 5 | 最初の選択だけでは不足することがあるため |
+| versionを固定する | 5 | 5 | 後で結果やズレの原因を追えるため |
+| 自動選択だけに任せる | 2 | 2 | 個人差やチーム事情を外す危険があるため |
+
+ここでの優先度は `チーム作業で速度と品質を両立する視点` で見る。
+
+### 17.7 受け入れ条件
+
+- [ ] ナレッジを全部読ませない方針が明記されている。
+- [ ] 一覧表から選ぶ単位が分かる。
+- [ ] タスク開始前、途中追加、スコープ切替の流れがある。
+- [ ] version管理がある。
+- [ ] 選んだ理由と外した理由を残せる。
+- [ ] 速度と品質の両方を見ることが明記されている。
