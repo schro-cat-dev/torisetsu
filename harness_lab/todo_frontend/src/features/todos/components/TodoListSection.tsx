@@ -1,20 +1,31 @@
-import type { Todo, TodoStatus } from "../types";
+import type { ReactNode } from "react";
+import type { Todo, TodoCategory, TodoStatus } from "../types";
 import { TodoList } from "./TodoList";
 
 type TodoListSectionProps = {
   todos: Todo[];
+  totalCount: number;
+  categories: TodoCategory[];
+  detailBasePath: string;
   isLoading: boolean;
   errorMessage: string;
   onRetry: () => void;
+  openDetailTodoId?: string;
+  onToggleDetail: (todoId: string) => void;
   onStatusChange: (todoId: string, status: TodoStatus) => void;
   onDelete: (todoId: string) => void;
 };
 
 export function TodoListSection({
   todos,
+  totalCount,
+  categories,
+  detailBasePath,
   isLoading,
   errorMessage,
   onRetry,
+  openDetailTodoId,
+  onToggleDetail,
   onStatusChange,
   onDelete
 }: TodoListSectionProps) {
@@ -38,7 +49,18 @@ export function TodoListSection({
 
   return (
     <section className="list-section" aria-label="TODO一覧">
-      <TodoList todos={todos} onStatusChange={onStatusChange} onDelete={onDelete} />
+      <div className="list-summary" aria-label="表示件数">
+        {todos.length} / {totalCount} 件
+      </div>
+      <TodoList
+        todos={todos}
+        categories={categories}
+        detailBasePath={detailBasePath}
+        openDetailTodoId={openDetailTodoId}
+        onToggleDetail={onToggleDetail}
+        onStatusChange={onStatusChange}
+        onDelete={onDelete}
+      />
     </section>
   );
 }
@@ -50,7 +72,7 @@ function StatusView({
 }: {
   title: string;
   message: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <section className="status-view" aria-live="polite">

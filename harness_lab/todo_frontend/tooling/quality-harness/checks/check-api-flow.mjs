@@ -13,8 +13,11 @@ validateScenario(scenario);
 
 const serverConfig = scenario.server;
 const apiBase = `${serverConfig.protocol}://${serverConfig.host}:${serverConfig.port}${serverConfig.basePath}`;
-const dataPath = serverConfig.restoreFileAfterRun ? join(process.cwd(), serverConfig.restoreFileAfterRun) : "";
-const originalData = dataPath ? await readFile(dataPath, "utf8") : "";
+const restoreFilePaths = [
+  ...(serverConfig.restoreFileAfterRun ? [serverConfig.restoreFileAfterRun] : []),
+  ...(serverConfig.restoreFilesAfterRun ?? [])
+];
+const originalFiles = await backupFiles(restoreFilePaths);
 const server = spawn(serverConfig.command, serverConfig.args ?? [], {
   cwd: process.cwd(),
   env: { ...process.env, [serverConfig.portEnv]: String(serverConfig.port) },
@@ -38,9 +41,7 @@ try {
   console.log(`API flow OK: ${scenario.name} ${scenario.steps.length} steps`);
 } finally {
   server.kill();
-  if (dataPath) {
-    await writeFile(dataPath, originalData);
-  }
+  await restoreFiles(originalFiles);
 }
 
 async function runStep(step) {
@@ -141,6 +142,12 @@ function validateScenario(scenarioToValidate) {
   assert(typeof scenarioToValidate.server.basePath === "string", "scenario.server.basePath is required.");
   assert(typeof scenarioToValidate.server.healthPath === "string", "scenario.server.healthPath is required.");
   assert(typeof scenarioToValidate.server.healthTimeoutMs === "number", "scenario.server.healthTimeoutMs must be a number.");
+  if (scenarioToValidate.server.restoreFileAfterRun !== undefined) {
+    assert(typeof scenarioToValidate.server.restoreFileAfterRun === "string", "scenario.server.restoreFileAfterRun must be a string.");
+  }
+  if (scenarioToValidate.server.restoreFilesAfterRun !== undefined) {
+    assert(Array.isArray(scenarioToValidate.server.restoreFilesAfterRun), "scenario.server.restoreFilesAfterRun must be an array.");
+  }
   assert(Array.isArray(scenarioToValidate.steps) && scenarioToValidate.steps.length > 0, "scenario.steps must be a non-empty array.");
 
   const seen = new Set();
@@ -152,6 +159,23 @@ function validateScenario(scenarioToValidate) {
     assert(typeof step.request.path === "string", `${step.name}: request.path is required.`);
     assert(step.expect && typeof step.expect.status === "number", `${step.name}: expect.status is required.`);
     seen.add(step.name);
+  }
+}
+
+async function backupFiles(files) {
+  const backups = [];
+  for (const file of files) {
+    backups.push({
+      file,
+      content: await readFile(join(process.cwd(), file), "utf8")
+    });
+  }
+  return backups;
+}
+
+async function restoreFiles(backups) {
+  for (const backup of backups) {
+    await writeFile(join(process.cwd(), backup.file), backup.content);
   }
 }
 

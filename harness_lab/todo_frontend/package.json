@@ -1,7 +1,7 @@
 {
   "name": "todo-quality-harness",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.8.2",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -22,7 +22,7 @@
     "check:browser-e2e": "node tooling/quality-harness/checks/run-external-tool-spec.mjs tooling/quality-harness/external-tools/playwright/browser-e2e.tool.json",
     "check:browser-a11y": "node tooling/quality-harness/checks/run-external-tool-spec.mjs tooling/quality-harness/external-tools/playwright/browser-a11y.tool.json",
     "check:test-traceability": "node tooling/quality-harness/checks/check-test-traceability.mjs test_management/manifest.json",
-    "check:api-contract": "node tooling/quality-harness/checks/check-api-contract.mjs tooling/quality-harness/contracts/todos.contract.json",
+    "check:api-contract": "node tooling/quality-harness/checks/check-api-contract.mjs tooling/quality-harness/contracts/todos.contract.json tooling/quality-harness/contracts/categories.contract.json",
     "check:api-flow": "node tooling/quality-harness/checks/check-api-flow.mjs tooling/quality-harness/scenarios/todo-crud.scenario.json",
     "check:a11y-static": "node tooling/quality-harness/checks/check-static-a11y.mjs tooling/quality-harness/policies/static-a11y.policy.json",
     "check": "node tooling/quality-harness/run-quality-harness.mjs",

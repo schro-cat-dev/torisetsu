@@ -7,6 +7,9 @@ export function App() {
       <Route path="/" element={<Navigate to="/todos" replace />} />
       <Route path="/todos" element={<TodoPage />} />
       <Route path="/todos/new" element={<TodoPage />} />
+      <Route path="/todos/completed" element={<TodoPage />} />
+      <Route path="/todos/completed/:todoId" element={<TodoPage />} />
+      <Route path="/todos/completed/:todoId/edit" element={<TodoPage />} />
       <Route path="/todos/:todoId" element={<TodoPage />} />
       <Route path="/todos/:todoId/edit" element={<TodoPage />} />
       <Route path="*" element={<Navigate to="/todos" replace />} />

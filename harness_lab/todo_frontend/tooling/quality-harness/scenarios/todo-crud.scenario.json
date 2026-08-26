@@ -11,9 +11,46 @@
     "basePath": "/api",
     "healthPath": "/health",
     "healthTimeoutMs": 5000,
-    "restoreFileAfterRun": "local-api/data/todos.json"
+    "restoreFilesAfterRun": [
+      "local-api/data/todos.json",
+      "local-api/data/categories.json"
+    ]
   },
   "steps": [
+    {
+      "name": "create-category",
+      "request": {
+        "method": "POST",
+        "path": "/categories",
+        "body": {
+          "name": "API分類",
+          "color": "#9333ea"
+        }
+      },
+      "expect": {
+        "status": 201,
+        "body": {
+          "assertions": [
+            {
+              "path": "$.id",
+              "type": "string",
+              "nonEmpty": true
+            },
+            {
+              "path": "$.locked",
+              "equals": false
+            },
+            {
+              "path": "$.color",
+              "equals": "#9333ea"
+            }
+          ]
+        }
+      },
+      "save": {
+        "categoryId": "$.id"
+      }
+    },
     {
       "name": "create-todo",
       "request": {
@@ -23,6 +60,7 @@
           "title": "APIフロー確認",
           "description": "作成、更新、完了、削除を確認する。",
           "priority": "high",
+          "categoryId": "${categoryId}",
           "dueDate": "2026-09-01"
         }
       },
@@ -55,6 +93,7 @@
           "title": "APIフロー確認を更新",
           "description": "更新できることを確認する。",
           "priority": "medium",
+          "categoryId": "category-work",
           "dueDate": "2026-09-02"
         }
       },
@@ -69,6 +108,10 @@
             {
               "path": "$.priority",
               "equals": "medium"
+            },
+            {
+              "path": "$.categoryId",
+              "equals": "category-work"
             }
           ]
         }
@@ -90,6 +133,11 @@
             {
               "path": "$.status",
               "equals": "done"
+            },
+            {
+              "path": "$.completedAt",
+              "type": "string",
+              "nonEmpty": true
             }
           ]
         }

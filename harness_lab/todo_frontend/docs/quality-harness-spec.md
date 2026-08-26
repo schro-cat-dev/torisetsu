@@ -49,9 +49,15 @@ LLM/AI運用ゲート:
 
 最新の外部ツール込み確認:
 
-- `HARNESS_ENABLE_DEPENDENCY_BOUNDARY=1 HARNESS_ENABLE_BROWSER_QUALITY=1 npm run check`
+- `npm run check:dependency-boundary`
 - 結果: OK
-- 証跡: `harness_runs/2026-08-25T04-52-16-755Z-67167/summary.md`
+- 証跡: `harness_runs/2026-08-26T17-30-13-859Z-72878/summary.md`
+
+最新の実ブラウザ確認:
+
+- `npm run check:browser-quality`
+- 結果: OK
+- 証跡: `harness_runs/2026-08-26T17-26-39-427Z-63092/summary.md`
 
 ## 4. 構成
 
@@ -79,7 +85,7 @@ LLM/AI運用ゲート:
 | 入力 | `tooling/quality-harness/contracts/artifact-version.contract.json` |
 | 確認項目 | `VERSION`、`package.json`、`src/appVersion.ts`、`docs/artifact-version-ledger.md` の version |
 | 実現方法 | `npm run check:artifact-version` |
-| OK条件 | すべて `0.8.0` で一致する |
+| OK条件 | すべて `0.8.2` で一致する |
 | 証跡 | `summary.md` の `artifact-version: OK` |
 | 残リスク | Git tag や commit hash との自動対応はまだない |
 
@@ -168,7 +174,7 @@ LLM/AI運用ゲート:
 | check | `unit` |
 | 観点 | 小さいロジックの期待値が壊れていないか |
 | 入力 | `src/**/*.test.*` |
-| 確認項目 | 現在のunit 4 tests |
+| 確認項目 | 現在のunit 9 tests |
 | 実現方法 | `npm run test:unit` |
 | OK条件 | Vitest が全件pass |
 | 証跡 | `summary.md` の `unit: OK` |
@@ -180,10 +186,10 @@ LLM/AI運用ゲート:
 |---|---|
 | check | `api-contract` |
 | 観点 | 保存データの形がAPIの前提とずれていないか |
-| 入力 | `contracts/todos.contract.json`、`local-api/data/todos.json` |
-| 確認項目 | 必須field、unknown field禁止、`status` enum、`priority` enum、date-time |
+| 入力 | `contracts/todos.contract.json`、`contracts/categories.contract.json`、`local-api/data/todos.json`、`local-api/data/categories.json` |
+| 確認項目 | TODOと分類の必須field、unknown field禁止、`status` enum、`priority` enum、date-time |
 | 実現方法 | `npm run check:api-contract` |
-| OK条件 | `todos.json` の全itemがcontractを満たす |
+| OK条件 | `todos.json` と `categories.json` の全itemがcontractを満たす |
 | 証跡 | `summary.md` の `api-contract: OK` |
 | 残リスク | DB制約や認証付きAPIの契約は対象外 |
 
@@ -194,9 +200,9 @@ LLM/AI運用ゲート:
 | check | `api-flow` |
 | 観点 | APIがCRUD手順として実際に動くか |
 | 入力 | `scenarios/todo-crud.scenario.json` |
-| 確認項目 | `POST /todos`、`PATCH /todos/:id`、`PATCH /todos/:id/status`、`DELETE /todos/:id` |
+| 確認項目 | `POST /categories`、`POST /todos`、`PATCH /todos/:id`、`PATCH /todos/:id/status`、`DELETE /todos/:id` |
 | 実現方法 | `npm run check:api-flow` |
-| OK条件 | 4 steps が期待statusとbody assertionを満たす |
+| OK条件 | 5 steps が期待statusとbody assertionを満たす |
 | 証跡 | `summary.md` の `api-flow: OK` |
 | 残リスク | 認証、競合更新、大量データ、ネットワーク遅延は未確認 |
 
@@ -246,11 +252,16 @@ LLM/AI運用ゲート:
 | check | `browser-e2e` |
 | 観点 | ユーザー操作としてTODOの主要操作が動くか |
 | 入力 | `external-tools/playwright/browser-e2e.tool.json` |
-| 確認項目 | create、search、complete、delete |
+| 確認項目 | create modal、category bar、category create、category color、category filter、search、detail inline toggle、edit modal、complete、completed list、delete、作成画面のfield meta表示、不要な `Quality Harness` 文言の非表示 |
 | 実現方法 | `npm run check:browser-e2e` または `HARNESS_ENABLE_BROWSER_QUALITY=1 npm run check` |
 | OK条件 | ChromiumのPlaywright testがpass |
 | 証跡 | `browser-e2e.results.json` |
-| 残リスク | 編集フロー、Firefox、Safari、mobile実機は未確認 |
+| 残リスク | Firefox、Safari、mobile実機は未確認 |
+
+実行上の注意:
+
+- 既存の古いサーバを再利用しないため、Playwright専用ポートを使う。
+- APIのCORS許可元は `TODO_WEB_ORIGIN` でWebポートに合わせる。
 
 ### 5.15 実ブラウザa11y
 
@@ -319,7 +330,6 @@ LLM/AI運用ゲート:
 
 | 未確認 | 理由 | 次にやるなら |
 |---|---|---|
-| 実ブラウザでの編集フロー | 現在のE2Eは create/search/complete/delete が中心 | `browser-e2e` に edit scenario を追加する |
 | Firefox、Safari、mobile実機 | Chromiumのみ確認済み | Playwright project追加、実機smoke追加 |
 | 実AI API呼び出し | 現状は生成済みJSON fixtureの検査 | Structured Outputsで生成し、同じcontractへ通す |
 | GitHub PR自動投稿 | 今は表示前フィルタまで | diff行マッピング、重複排除、posting payloadを別checkで設計する |

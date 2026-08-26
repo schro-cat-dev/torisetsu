@@ -1,18 +1,31 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  createCategory,
   createTodo,
   deleteTodo,
+  fetchCategories,
   fetchTodos,
   updateTodo,
   updateTodoStatus
 } from "../api/todoApi";
-import type { StatusFilter, Todo, TodoInput, TodoSortKey, TodoStatus } from "../types";
+import type {
+  CategoryFilter,
+  StatusFilter,
+  Todo,
+  TodoCategory,
+  TodoCategoryInput,
+  TodoInput,
+  TodoSortKey,
+  TodoStatus
+} from "../types";
 import { getVisibleTodos } from "../utils/todoFilters";
 
 export function useTodos() {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [categories, setCategories] = useState<TodoCategory[]>([]);
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [sortKey, setSortKey] = useState<TodoSortKey>("createdDesc");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -22,11 +35,28 @@ export function useTodos() {
     setIsLoading(true);
     setErrorMessage("");
     try {
-      setTodos(await fetchTodos());
+      const [nextTodos, nextCategories] = await Promise.all([fetchTodos(), fetchCategories()]);
+      setTodos(nextTodos);
+      setCategories(nextCategories);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "TODOを取得できませんでした。");
     } finally {
       setIsLoading(false);
+    }
+  }, []);
+
+  const handleCategoryCreate = useCallback(async (input: TodoCategoryInput) => {
+    setIsSaving(true);
+    setErrorMessage("");
+    try {
+      const category = await createCategory(input);
+      setCategories((current) => [...current, category]);
+      return category;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "分類を追加できませんでした。");
+      throw error;
+    } finally {
+      setIsSaving(false);
     }
   }, []);
 
@@ -55,6 +85,9 @@ export function useTodos() {
     try {
       const updated = await updateTodo(todoId, input);
       setTodos((current) => current.map((todo) => (todo.id === todoId ? updated : todo)));
+      if (categoryFilter !== "all" && categoryFilter !== updated.categoryId) {
+        setCategoryFilter(updated.categoryId);
+      }
       return updated;
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "TODOを更新できませんでした。");
@@ -62,7 +95,7 @@ export function useTodos() {
     } finally {
       setIsSaving(false);
     }
-  }, []);
+  }, [categoryFilter]);
 
   const toggleTodoStatus = useCallback(async (todoId: string, nextStatus: TodoStatus) => {
     const previousTodos = todos;
@@ -74,6 +107,9 @@ export function useTodos() {
     try {
       const updated = await updateTodoStatus(todoId, nextStatus);
       setTodos((current) => current.map((todo) => (todo.id === todoId ? updated : todo)));
+      if (nextStatus === "done") {
+        setStatusFilter("all");
+      }
     } catch (error) {
       setTodos(previousTodos);
       setErrorMessage(error instanceof Error ? error.message : "状態を更新できませんでした。");
@@ -95,23 +131,27 @@ export function useTodos() {
   }, []);
 
   const visibleTodos = useMemo(
-    () => getVisibleTodos(todos, searchText, statusFilter, sortKey),
-    [todos, searchText, statusFilter, sortKey]
+    () => getVisibleTodos(todos, searchText, statusFilter, categoryFilter, sortKey),
+    [todos, searchText, statusFilter, categoryFilter, sortKey]
   );
 
   return {
     todos,
+    categories,
     visibleTodos,
     searchText,
     statusFilter,
+    categoryFilter,
     sortKey,
     isLoading,
     isSaving,
     errorMessage,
     setSearchText,
     setStatusFilter,
+    setCategoryFilter,
     setSortKey,
     loadTodos,
+    handleCategoryCreate,
     handleCreateSubmit,
     handleEditSave,
     toggleTodoStatus,

@@ -1,42 +1,34 @@
 import { Link } from "react-router-dom";
-import type { Todo, TodoInput } from "../types";
-import { TodoCreateForm } from "./TodoCreateForm";
+import type { Todo, TodoCategory } from "../types";
+import { categoryLabel, priorityLabel, statusLabel } from "../utils/todoLabels";
 
 type TodoDetailPanelProps = {
   todo?: Todo;
-  mode: "detail" | "edit";
-  isSaving: boolean;
-  onSave: (todoId: string, input: TodoInput) => Promise<void>;
+  categories: TodoCategory[];
+  editPath?: string;
   onCancel: () => void;
 };
 
-export function TodoDetailPanel({ todo, mode, isSaving, onSave, onCancel }: TodoDetailPanelProps) {
+export function TodoDetailPanel({
+  todo,
+  categories,
+  editPath,
+  onCancel
+}: TodoDetailPanelProps) {
   if (!todo) {
     return (
       <aside className="detail-panel" aria-live="polite">
         <h2>TODOが見つかりません</h2>
         <p>一覧から別のTODOを選んでください。</p>
-        <Link className="button secondary" to="/todos">一覧へ戻る</Link>
-      </aside>
-    );
-  }
-
-  if (mode === "edit") {
-    return (
-      <aside className="detail-panel">
-        <TodoCreateForm
-          mode="edit"
-          initialTodo={todo}
-          isSaving={isSaving}
-          onSubmit={(input) => onSave(todo.id, input)}
-          onCancel={onCancel}
-        />
+        <button type="button" className="button secondary" onClick={onCancel}>
+          一覧へ戻る
+        </button>
       </aside>
     );
   }
 
   return (
-    <aside className="detail-panel">
+    <section className="detail-panel">
       <div className="section-heading">
         <h2>{todo.title}</h2>
         <p>{todo.description || "説明はありません。"}</p>
@@ -44,11 +36,15 @@ export function TodoDetailPanel({ todo, mode, isSaving, onSave, onCancel }: Todo
       <dl className="detail-list">
         <div>
           <dt>状態</dt>
-          <dd>{todo.status}</dd>
+          <dd>{statusLabel(todo.status)}</dd>
         </div>
         <div>
           <dt>優先度</dt>
-          <dd>{todo.priority}</dd>
+          <dd>{priorityLabel(todo.priority)}</dd>
+        </div>
+        <div>
+          <dt>分類</dt>
+          <dd>{categoryLabel(todo.categoryId, categories)}</dd>
         </div>
         <div>
           <dt>期限</dt>
@@ -60,9 +56,15 @@ export function TodoDetailPanel({ todo, mode, isSaving, onSave, onCancel }: Todo
         </div>
       </dl>
       <div className="form-actions">
-        <Link className="button secondary" to="/todos">閉じる</Link>
-        <Link className="button primary" to={`/todos/${todo.id}/edit`}>編集する</Link>
+        <button type="button" className="button secondary" onClick={onCancel}>
+          閉じる
+        </button>
+        {editPath ? (
+          <Link className="button primary" to={editPath}>
+            編集する
+          </Link>
+        ) : null}
       </div>
-    </aside>
+    </section>
   );
 }

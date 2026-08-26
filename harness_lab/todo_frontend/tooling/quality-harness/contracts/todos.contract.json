@@ -7,7 +7,7 @@
     "items": {
       "type": "object",
       "allowUnknownFields": false,
-      "required": ["id", "title", "description", "status", "priority", "dueDate", "createdAt", "updatedAt"],
+      "required": ["id", "title", "description", "status", "priority", "categoryId", "dueDate", "completedAt", "createdAt", "updatedAt"],
       "fields": {
         "id": {
           "type": "string",
@@ -28,7 +28,14 @@
           "type": "string",
           "enum": ["low", "medium", "high"]
         },
+        "categoryId": {
+          "type": "string",
+          "nonEmpty": true
+        },
         "dueDate": {
+          "type": "string"
+        },
+        "completedAt": {
           "type": "string"
         },
         "createdAt": {

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "api-contract.v1",
+  "name": "categories",
+  "targetFile": "local-api/data/categories.json",
+  "root": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "allowUnknownFields": false,
+      "required": ["id", "name", "color", "locked", "createdAt", "updatedAt"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "nonEmpty": true
+        },
+        "name": {
+          "type": "string",
+          "nonEmpty": true
+        },
+        "color": {
+          "type": "string",
+          "nonEmpty": true,
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

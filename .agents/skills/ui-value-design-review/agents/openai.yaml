@@ -1,0 +1,6 @@
+interface:
+  display_name: "UI Value Design Review"
+  short_description: "UIの価値、配置、導線、ノイズを確認する"
+  default_prompt: "Use $ui-value-design-review to review UI value, layout, route behavior, form metadata, and unnecessary visible noise."
+policy:
+  allow_implicit_invocation: true

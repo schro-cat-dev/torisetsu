@@ -25,17 +25,17 @@
       {
         "file": "package.json",
         "path": ["version"],
-        "equals": "0.8.0"
+        "equals": "0.8.2"
       },
       {
         "file": "package-lock.json",
         "path": ["version"],
-        "equals": "0.8.0"
+        "equals": "0.8.2"
       },
       {
         "file": "package-lock.json",
         "path": ["packages", "", "version"],
-        "equals": "0.8.0"
+        "equals": "0.8.2"
       }
     ]
   }

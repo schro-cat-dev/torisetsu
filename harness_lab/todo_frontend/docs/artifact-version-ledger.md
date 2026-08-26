@@ -1,6 +1,89 @@
 # 成果物バージョン台帳
 
-Current version: 0.8.0
+Current version: 0.8.2
+
+## 0.8.2
+
+日付: 2026-08-27
+
+### 目的
+
+- 作成画面をモーダル化し、背景を薄暗くして操作対象を分かりやすくする。
+- 分類を横スクロールのチップで選べるようにし、分類追加と色選択を一覧側にも置く。
+- 完了済みTODOを通常一覧から外し、完了日時の新しい順で専用画面に出す。
+- 件数表示をヘッダーから一覧セクションへ移し、責務を近づける。
+
+### 含まれるもの
+
+- `/todos/new` の作成モーダル。
+- 一覧上部の分類バー、横スクロール、分類追加フォーム。
+- 分類色 `color` と `#RRGGBB` contract。
+- TODOの `completedAt` と完了済み画面 `/todos/completed`。
+- `Quality Harness` のブラウザタイトル削除。
+- 必須/任意badgeをlabel横、文字数を入力欄下の左寄せへ移動。
+
+### 品質確認
+
+- `npm run typecheck`: OK。
+- `npm run test:unit`: OK。9 tests。
+- `npm run check:api-contract`: OK。`todos 8 records`、`categories 4 records`。
+- `npm run check:browser-quality`: OK。最新確認: `harness_runs/2026-08-26T17-26-39-427Z-63092/summary.md`。
+- `npm run check:dependency-boundary`: OK。最新確認: `harness_runs/2026-08-26T17-30-13-859Z-72878/summary.md`。
+- `npm run check`: OK。最新確認: `harness_runs/2026-08-26T17-31-03-340Z-75116/summary.md`。
+- `python3 /Users/yutoseki/.codex/skills/codex-skill-maintenance/scripts/validate_skills.py .agents/skills`: OK。`checked=8 errors=0`。
+- `git diff --check`: OK。
+
+### 残リスク
+
+- 分類の編集/削除は未対応。今回は追加、色選択、選択表示まで。
+- 削除確認は `window.confirm` のまま。
+- Safari、Firefox、mobile実機の確認は未実施。
+
+## 0.8.1
+
+日付: 2026-08-27
+
+### 目的
+
+- 画面フィードバックを受けて、TODO UIの導線、詳細表示、分類管理、入力メタ情報を上方修正する。
+- 利用者UIから内部成果物名のノイズを消す。
+- 分類を固定enumではなく、`categories.json` と `categoryId` で管理する。
+
+### 含まれるもの
+
+- `/todos/new` の作成モード表示。
+- `Quality Harness` と画面上のversion表示の削除。
+- 詳細/編集を選択TODOの直下に表示するUI。
+- 必須/任意、文字数上限、文字数カウントのfield meta化。
+- `categories.json`、`GET /api/categories`、`POST /api/categories`。
+- デフォルト分類 `プライベート / 仕事 / 日常` と `locked: true`。
+- 分類の自由追加と分類フィルター。
+- `重要度が高い + 期限が近い順` の並び替え。
+- `ui-feedback-review-checklist.md` と `ui-feedback-work-log.md`。
+- `ui-value-design-review` skill。
+
+### 品質確認
+
+- `npm run typecheck`: OK。
+- `npm run test:unit`: OK。7 tests。
+- `npm run check:api-contract`: OK。`todos 2 records`、`categories 3 records`。
+- `npm run check:api-flow`: OK。`todo-crud 5 steps`。
+- `npm run check:artifact-version`: OK。`0.8.1`。
+- `npm run check:ui-static`: OK。最新確認: `harness_runs/2026-08-26T16-20-04-279Z-76872/summary.md`。
+- `npm run check:dependency-boundary`: OK。最新確認: `harness_runs/2026-08-26T16-29-12-942Z-2887/summary.md`。
+- `npm run check`: OK。最新確認: `harness_runs/2026-08-26T16-32-15-593Z-11779/summary.md`。
+- `npm run check:browser-quality`: OK。最新確認: `harness_runs/2026-08-26T16-28-51-123Z-1776/summary.md`。
+- `python3 /Users/yutoseki/.codex/skills/codex-skill-maintenance/scripts/validate_skills.py .agents/skills`: OK。`checked=8 errors=0`。
+- `git diff --check`: OK。
+
+### 残リスク
+
+- ブラウザ確認は Chromium のみ。
+- a11y は axe の自動検出範囲のみ。`color-contrast`、読み上げ、手動キーボード確認は未実施。
+- 削除確認は `window.confirm` のまま。
+- 検索、絞り込み、並び替えのURL query同期は未対応。
+- 分類は追加だけ対応。分類の編集/削除は未対応。
+- 本番DB、認証、権限管理は対象外。
 
 ## 0.8.0
 

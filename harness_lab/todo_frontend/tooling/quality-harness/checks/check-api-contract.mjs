@@ -1,31 +1,33 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const contractPath = process.argv[2];
+const contractPaths = process.argv.slice(2);
 
-if (!contractPath) {
-  throw new Error("Usage: <api-contract-checker> <contract.json>");
+if (contractPaths.length === 0) {
+  throw new Error("Usage: <api-contract-checker> <contract.json> [contract.json...]");
 }
-const contract = JSON.parse(await readFile(join(process.cwd(), contractPath), "utf8"));
 
-validateContract(contract);
+for (const contractPath of contractPaths) {
+  const contract = JSON.parse(await readFile(join(process.cwd(), contractPath), "utf8"));
+  validateContract(contract);
 
-const targetPath = join(process.cwd(), contract.targetFile);
-const records = JSON.parse(await readFile(targetPath, "utf8"));
+  const targetPath = join(process.cwd(), contract.targetFile);
+  const records = JSON.parse(await readFile(targetPath, "utf8"));
 
-if (contract.root.type === "array") {
-  if (!Array.isArray(records)) {
-    throw new Error(`${contract.targetFile} must be an array.`);
+  if (contract.root.type === "array") {
+    if (!Array.isArray(records)) {
+      throw new Error(`${contract.targetFile} must be an array.`);
+    }
+
+    for (const [index, record] of records.entries()) {
+      validateObject(record, contract.root.items, `${contract.name}[${index}]`);
+    }
+
+    console.log(`API contract OK: ${contract.name} ${records.length} records`);
+  } else {
+    validateObject(records, contract.root, contract.name);
+    console.log(`API contract OK: ${contract.name}`);
   }
-
-  for (const [index, record] of records.entries()) {
-    validateObject(record, contract.root.items, `${contract.name}[${index}]`);
-  }
-
-  console.log(`API contract OK: ${contract.name} ${records.length} records`);
-} else {
-  validateObject(records, contract.root, contract.name);
-  console.log(`API contract OK: ${contract.name}`);
 }
 
 function validateContract(contractToValidate) {
@@ -63,6 +65,9 @@ function validateField(value, schema, path) {
     assert(typeof value === "string", `${path} must be a string.`);
     if (schema.nonEmpty) {
       assert(value.trim().length > 0, `${path} must not be empty.`);
+    }
+    if (schema.pattern) {
+      assert(new RegExp(schema.pattern).test(value), `${path} must match ${schema.pattern}.`);
     }
     if (schema.format === "date-time") {
       assert(!Number.isNaN(Date.parse(value)), `${path} must be a valid date-time.`);

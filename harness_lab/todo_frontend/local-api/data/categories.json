@@ -1,0 +1,34 @@
+[
+  {
+    "id": "category-private",
+    "name": "プライベート",
+    "color": "#2563eb",
+    "locked": true,
+    "createdAt": "2026-08-25T00:00:00.000Z",
+    "updatedAt": "2026-08-25T00:00:00.000Z"
+  },
+  {
+    "id": "category-work",
+    "name": "仕事",
+    "color": "#16a34a",
+    "locked": true,
+    "createdAt": "2026-08-25T00:00:00.000Z",
+    "updatedAt": "2026-08-25T00:00:00.000Z"
+  },
+  {
+    "id": "category-daily",
+    "name": "日常",
+    "color": "#ea580c",
+    "locked": true,
+    "createdAt": "2026-08-25T00:00:00.000Z",
+    "updatedAt": "2026-08-25T00:00:00.000Z"
+  },
+  {
+    "id": "category-f642553c-f546-4adb-852c-9c9850e05e12",
+    "name": "ねこ",
+    "color": "#2563eb",
+    "locked": false,
+    "createdAt": "2026-08-26T16:49:39.958Z",
+    "updatedAt": "2026-08-26T16:49:39.958Z"
+  }
+]

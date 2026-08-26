@@ -7,10 +7,14 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataPath = join(__dirname, "data", "todos.json");
+const categoriesPath = join(__dirname, "data", "categories.json");
 const port = Number(process.env.TODO_API_PORT ?? 4174);
+const corsOrigin = process.env.TODO_WEB_ORIGIN ?? "http://127.0.0.1:5173";
 
 const allowedStatuses = new Set(["todo", "doing", "done"]);
 const allowedPriorities = new Set(["low", "medium", "high"]);
+const defaultCategoryColor = "#2563eb";
+const colorPattern = /^#[0-9a-fA-F]{6}$/;
 
 async function readTodos(context) {
   const startedAt = performance.now();
@@ -25,6 +29,45 @@ async function readTodos(context) {
     return todos;
   } catch (error) {
     logError("storage", "todos.read.error", error, {
+      ...context,
+      durationMs: elapsed(startedAt)
+    });
+    throw error;
+  }
+}
+
+async function readCategories(context) {
+  const startedAt = performance.now();
+  try {
+    const categories = JSON.parse(await readFile(categoriesPath, "utf8")).map(normalizeCategory);
+    log("debug", "storage", "categories.read", {
+      ...context,
+      status: "ok",
+      count: categories.length,
+      durationMs: elapsed(startedAt)
+    });
+    return categories;
+  } catch (error) {
+    logError("storage", "categories.read.error", error, {
+      ...context,
+      durationMs: elapsed(startedAt)
+    });
+    throw error;
+  }
+}
+
+async function writeCategories(categories, context) {
+  const startedAt = performance.now();
+  try {
+    await writeFile(categoriesPath, `${JSON.stringify(categories, null, 2)}\n`);
+    log("debug", "storage", "categories.write", {
+      ...context,
+      status: "ok",
+      count: categories.length,
+      durationMs: elapsed(startedAt)
+    });
+  } catch (error) {
+    logError("storage", "categories.write.error", error, {
       ...context,
       durationMs: elapsed(startedAt)
     });
@@ -53,7 +96,7 @@ async function writeTodos(todos, context) {
 
 function sendJson(response, statusCode, body, requestId) {
   response.writeHead(statusCode, {
-    "Access-Control-Allow-Origin": "http://127.0.0.1:5173",
+    "Access-Control-Allow-Origin": corsOrigin,
     "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type,X-Request-Id",
     "X-Request-Id": requestId,
@@ -64,7 +107,7 @@ function sendJson(response, statusCode, body, requestId) {
 
 function sendText(response, statusCode, message, requestId) {
   response.writeHead(statusCode, {
-    "Access-Control-Allow-Origin": "http://127.0.0.1:5173",
+    "Access-Control-Allow-Origin": corsOrigin,
     "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type,X-Request-Id",
     "X-Request-Id": requestId,
@@ -128,7 +171,7 @@ function elapsed(startedAt) {
   return Math.round(performance.now() - startedAt);
 }
 
-function validateInput(input) {
+function validateInput(input, categories) {
   if (typeof input.title !== "string" || !input.title.trim()) {
     return "タイトルを入力してください。";
   }
@@ -145,11 +188,66 @@ function validateInput(input) {
     return "優先度を確認してください。";
   }
 
+  if (typeof input.categoryId !== "string" || !categories.some((category) => category.id === input.categoryId)) {
+    return "分類を確認してください。";
+  }
+
   if (typeof input.dueDate !== "string") {
     return "期限は文字列で送信してください。";
   }
 
   return "";
+}
+
+function validateCategoryInput(input, categories) {
+  const name = typeof input.name === "string" ? input.name.trim() : "";
+
+  if (!name) {
+    return "分類名を入力してください。";
+  }
+
+  if (name.length > 24) {
+    return "分類名は24文字以内にしてください。";
+  }
+
+  if (categories.some((category) => category.name.toLowerCase() === name.toLowerCase())) {
+    return "同じ分類がすでにあります。";
+  }
+
+  if (typeof input.color !== "string" || !colorPattern.test(input.color)) {
+    return "分類色を確認してください。";
+  }
+
+  return "";
+}
+
+function createCategory(input) {
+  const now = new Date().toISOString();
+  return {
+    id: `category-${randomUUID()}`,
+    name: input.name.trim(),
+    color: input.color,
+    locked: false,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
+function normalizeCategory(category) {
+  return {
+    ...category,
+    color: typeof category.color === "string" && colorPattern.test(category.color)
+      ? category.color
+      : defaultCategoryColor
+  };
+}
+
+function normalizeTodo(todo) {
+  return {
+    ...todo,
+    categoryId: todo.categoryId || "category-private",
+    completedAt: todo.completedAt ?? ""
+  };
 }
 
 function createTodo(input) {
@@ -160,7 +258,9 @@ function createTodo(input) {
     description: input.description.trim(),
     status: "todo",
     priority: input.priority,
+    categoryId: input.categoryId,
     dueDate: input.dueDate,
+    completedAt: "",
     createdAt: now,
     updatedAt: now
   };
@@ -172,6 +272,7 @@ function updateTodo(todo, input) {
     title: input.title.trim(),
     description: input.description.trim(),
     priority: input.priority,
+    categoryId: input.categoryId,
     dueDate: input.dueDate,
     updatedAt: new Date().toISOString()
   };
@@ -204,13 +305,46 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === "GET" && path === "/api/todos") {
-      sendJson(response, 200, await readTodos(context), context.requestId);
+      const todos = (await readTodos(context)).map(normalizeTodo);
+      sendJson(response, 200, todos.map(normalizeTodo), context.requestId);
+      return;
+    }
+
+    if (request.method === "GET" && path === "/api/categories") {
+      sendJson(response, 200, await readCategories(context), context.requestId);
+      return;
+    }
+
+    if (request.method === "POST" && path === "/api/categories") {
+      const input = await readJsonBody(request);
+      const categories = await readCategories(context);
+      const validationError = validateCategoryInput(input, categories);
+      if (validationError) {
+        log("warn", "validation", "category.create.invalid", {
+          ...context,
+          status: 400,
+          reason: validationError
+        });
+        sendText(response, 400, validationError, context.requestId);
+        return;
+      }
+
+      const category = createCategory(input);
+      await writeCategories([...categories, category], context);
+      log("info", "category", "category.create", {
+        ...context,
+        status: 201,
+        categoryId: category.id,
+        totalCount: categories.length + 1
+      });
+      sendJson(response, 201, category, context.requestId);
       return;
     }
 
     if (request.method === "POST" && path === "/api/todos") {
       const input = await readJsonBody(request);
-      const validationError = validateInput(input);
+      const categories = await readCategories(context);
+      const validationError = validateInput(input, categories);
       if (validationError) {
         log("warn", "validation", "todo.create.invalid", {
           ...context,
@@ -223,7 +357,7 @@ const server = createServer(async (request, response) => {
 
       const todos = await readTodos(context);
       const todo = createTodo(input);
-      await writeTodos([todo, ...todos], context);
+      await writeTodos([todo, ...todos.map(normalizeTodo)], context);
       log("info", "todo", "todo.create", {
         ...context,
         status: 201,
@@ -237,7 +371,8 @@ const server = createServer(async (request, response) => {
     const todoMatch = path.match(/^\/api\/todos\/([^/]+)$/);
     if (todoMatch && request.method === "PATCH") {
       const input = await readJsonBody(request);
-      const validationError = validateInput(input);
+      const categories = await readCategories(context);
+      const validationError = validateInput(input, categories);
       if (validationError) {
         log("warn", "validation", "todo.update.invalid", {
           ...context,
@@ -249,7 +384,7 @@ const server = createServer(async (request, response) => {
         return;
       }
 
-      const todos = await readTodos(context);
+      const todos = (await readTodos(context)).map(normalizeTodo);
       const index = todos.findIndex((todo) => todo.id === todoMatch[1]);
       if (index === -1) {
         log("warn", "todo", "todo.update.notFound", {
@@ -299,10 +434,13 @@ const server = createServer(async (request, response) => {
         return;
       }
 
+      const currentTodo = normalizeTodo(todos[index]);
+      const now = new Date().toISOString();
       const updated = {
-        ...todos[index],
+        ...currentTodo,
         status: input.status,
-        updatedAt: new Date().toISOString()
+        completedAt: input.status === "done" ? currentTodo.completedAt || now : "",
+        updatedAt: now
       };
       todos[index] = updated;
       await writeTodos(todos, context);
@@ -317,7 +455,7 @@ const server = createServer(async (request, response) => {
     }
 
     if (todoMatch && request.method === "DELETE") {
-      const todos = await readTodos(context);
+      const todos = (await readTodos(context)).map(normalizeTodo);
       const nextTodos = todos.filter((todo) => todo.id !== todoMatch[1]);
       if (todos.length === nextTodos.length) {
         log("warn", "todo", "todo.delete.notFound", {

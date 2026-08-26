@@ -29,3 +29,7 @@
   - 参照: `.agents/skills/task-output-format-governance/SKILL.md`
   - 用途: 設計、レビュー、プロンプト、運用、tips の助言を出す時。
   - 必須: 実データ例、JSON例、コマンド例、しきい値、NG例 / OK例、入力例 / 出力例のうち必要なものを添える。
+- UI価値/導線レビュー:
+  - 参照: `.agents/skills/ui-value-design-review/SKILL.md`
+  - 用途: フロントエンドUI、配置、導線、詳細表示、入力欄、不要文言、画面フィードバックを扱う時。
+  - 必須: 提供価値、ルートと変化、配置、責務、入力項目、ノイズ、ハーネス化に分ける。

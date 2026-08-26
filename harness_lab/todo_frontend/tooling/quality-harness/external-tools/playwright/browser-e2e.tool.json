@@ -8,10 +8,16 @@
     "tooling/quality-harness/external-tools/playwright/tests/todo-crud.e2e.spec.ts"
   ],
   "restoreFiles": [
-    "local-api/data/todos.json"
+    "local-api/data/todos.json",
+    "local-api/data/categories.json"
   ],
   "command": {
     "bin": "node",
+    "env": {
+      "PLAYWRIGHT_TODO_API_PORT": "4276",
+      "PLAYWRIGHT_TODO_WEB_PORT": "5276",
+      "PLAYWRIGHT_REUSE_EXISTING_SERVER": "0"
+    },
     "args": [
       "node_modules/@playwright/test/cli.js",
       "test",
@@ -24,7 +30,7 @@
     "fileName": "browser-e2e.results.json",
     "metadata": {
       "browser": "chromium",
-      "flow": ["create", "search", "complete", "delete"]
+      "flow": ["category-create", "create", "category-filter", "search", "detail", "edit", "complete", "delete"]
     }
   }
 }

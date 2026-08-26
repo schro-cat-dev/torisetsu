@@ -1,21 +1,32 @@
 import { Link } from "react-router-dom";
-import { APP_VERSION } from "../../../appVersion";
 
 type TodoHeaderProps = {
-  totalCount: number;
-  visibleCount: number;
+  isCreateMode: boolean;
+  isCompletedMode: boolean;
 };
 
-export function TodoHeader({ totalCount, visibleCount }: TodoHeaderProps) {
+export function TodoHeader({ isCreateMode, isCompletedMode }: TodoHeaderProps) {
   return (
     <header className="todo-header">
       <div>
-        <p className="eyebrow">Quality Harness</p>
-        <h1>TODO管理 <span className="version-label">v{APP_VERSION}</span></h1>
+        <h1>TODO管理</h1>
       </div>
-      <div className="header-actions" aria-label="TODO件数">
-        <span>{visibleCount} / {totalCount} 件</span>
-        <Link className="button secondary" to="/todos/new">新規作成</Link>
+      <div className="header-actions" aria-label="TODO操作">
+        {isCompletedMode ? (
+          <Link className="button secondary" to="/todos">
+            未完了を見る
+          </Link>
+        ) : null}
+        {!isCreateMode && !isCompletedMode ? (
+          <>
+            <Link className="button secondary" to="/todos/completed">
+              完了済み
+            </Link>
+            <Link className="button primary" to="/todos/new">
+              新規作成
+            </Link>
+          </>
+        ) : null}
       </div>
     </header>
   );

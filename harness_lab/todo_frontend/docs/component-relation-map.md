@@ -11,21 +11,24 @@ graph TD
   Routes --> TodoPage
 
   TodoPage --> TodoHeader
-  TodoPage --> TodoCreateFormCreate["TodoCreateForm create"]
+  TodoPage --> TodoCategoryBar
   TodoPage --> TodoToolbar
   TodoPage --> TodoListSection
-  TodoPage --> TodoDetailPanel
+  TodoPage --> CreateModal["Modal: TodoCreateForm create"]
+  TodoPage --> EditModal["Modal: TodoCreateForm edit"]
 
   TodoListSection --> StatusView
   TodoListSection --> TodoList
   TodoList --> TodoListItem
-  TodoDetailPanel --> TodoCreateFormEdit["TodoCreateForm edit"]
+  TodoListItem --> TodoDetailPanel
 ```
 
 チェック:
 - [x] `TodoPage` が主要 UI の親になっている。
+- [x] `TodoCategoryBar` が分類選択と分類追加を持つ。
 - [x] `TodoListSection` が表示状態を切り替えている。
-- [x] `TodoDetailPanel` が編集時に `TodoCreateForm` を再利用している。
+- [x] `TodoDetailPanel` は対象 `TodoListItem` の行内トグルとして表示する。
+- [x] 編集時はモーダル内で `TodoCreateForm` を再利用している。
 - [ ] 作成用と編集用の `TodoCreateForm` 再利用が分かりやすいか確認する。
 
 ## 2. 状態とイベントの流れ
@@ -33,22 +36,29 @@ graph TD
 ```mermaid
 flowchart LR
   TodoCreateForm -->|onSubmit| TodoPage
+  TodoCreateForm -->|onCategoryCreate| TodoPage
+  TodoCategoryBar -->|category select/create| TodoPage
   TodoToolbar -->|filter/sort/search change| TodoPage
+  TodoListItem -->|summary click| TodoPage
   TodoListItem -->|onStatusChange| TodoPage
   TodoListItem -->|onDelete| TodoPage
-  TodoDetailPanel -->|onSave/onCancel| TodoPage
+  TodoDetailPanel -->|close/edit link| TodoPage
 
   TodoPage --> useTodos
   useTodos --> todoApi
   todoApi --> LocalAPI["local-api/server.mjs"]
   LocalAPI --> todosJson["local-api/data/todos.json"]
+  LocalAPI --> categoriesJson["local-api/data/categories.json"]
 ```
 
 チェック:
 - [x] 小さい UI 部品は API を直接叩かない。
 - [x] UI イベントは `TodoPage` 経由で `useTodos` へ渡る。
+- [x] カード本文クリックは詳細トグルに使い、checkboxと操作ボタンは詳細トグルに巻き込まない。
 - [x] API 通信は `todoApi.ts` にまとまっている。
-- [x] 保存先は `todos.json` に限定している。
+- [x] TODO本体は `todos.json` に保存している。
+- [x] 分類一覧は `categories.json` に保存している。
+- [x] 完了日時は `completedAt` として `todos.json` に保存している。
 - [ ] API エラー時の復旧導線を画面で確認する。
 
 ## 3. API と保存の関係
@@ -59,13 +69,17 @@ sequenceDiagram
   participant Hook as useTodos
   participant Client as todoApi.ts
   participant API as local-api/server.mjs
-  participant JSON as todos.json
+  participant TodosJSON as todos.json
+  participant CategoriesJSON as categories.json
 
   UI->>Hook: create/update/delete/status event
+  UI->>Hook: category create event
   Hook->>Client: API function call
   Client->>API: HTTP request
-  API->>JSON: read/write
-  JSON-->>API: saved todos
+  API->>TodosJSON: read/write todos
+  API->>CategoriesJSON: read/write categories
+  TodosJSON-->>API: saved todos
+  CategoriesJSON-->>API: saved categories
   API-->>Client: JSON response
   Client-->>Hook: parsed result
   Hook-->>UI: state update
@@ -73,11 +87,13 @@ sequenceDiagram
 
 チェック:
 - [x] `GET /api/todos` がある。
+- [x] `GET /api/categories` がある。
+- [x] `POST /api/categories` がある。
 - [x] `POST /api/todos` がある。
 - [x] `PATCH /api/todos/:id` がある。
 - [x] `PATCH /api/todos/:id/status` がある。
 - [x] `DELETE /api/todos/:id` がある。
-- [x] `check-api-flow.mjs` で作成、更新、完了、削除を確認している。
+- [x] `check-api-flow.mjs` で分類作成、TODO作成、更新、完了、削除を確認している。
 
 ## 4. 品質ハーネスの関係
 
@@ -148,7 +164,7 @@ flowchart TD
 - UI は hook を呼んでよい。
 - hook は API client を呼んでよい。
 - API client は HTTP だけを扱う。
-- local API は JSON 保存だけを扱う。
+- local API は TODO JSON と分類 JSON の保存だけを扱う。
 - 小さい UI コンポーネントは API client を直接呼ばない。
 
 違反チェック:

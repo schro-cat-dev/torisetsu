@@ -1,4 +1,4 @@
-import type { Todo, TodoInput, TodoStatus } from "../types";
+import type { Todo, TodoCategory, TodoCategoryInput, TodoInput, TodoStatus } from "../types";
 
 const apiBase = import.meta.env.VITE_TODO_API_BASE ?? "http://127.0.0.1:4174/api";
 
@@ -31,6 +31,17 @@ function createRequestId(): string {
 
 export function fetchTodos(): Promise<Todo[]> {
   return request<Todo[]>("/todos");
+}
+
+export function fetchCategories(): Promise<TodoCategory[]> {
+  return request<TodoCategory[]>("/categories");
+}
+
+export function createCategory(input: TodoCategoryInput): Promise<TodoCategory> {
+  return request<TodoCategory>("/categories", {
+    method: "POST",
+    body: JSON.stringify(input)
+  });
 }
 
 export function createTodo(input: TodoInput): Promise<Todo> {

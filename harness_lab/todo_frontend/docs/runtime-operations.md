@@ -36,6 +36,7 @@ npm run stop:all
 | devログ | 対応済み | API が構造化ログを出す | `.runtime/logs/api.stdout.log` |
 | エラーログ | 対応済み | API が error name / message / stack を出す | `.runtime/logs/api.stdout.log` |
 | 未管理サービス検出 | 対応済み | 既に health が通るが pid 管理外なら start を失敗扱いにする | 古いプロセスの誤認を防ぐ |
+| URL提示前のcleanup | 対応済み | `status` → 必要なら `stop` → `start` → `status` | 古いpidや古いサーバを見ていないことを確認する |
 
 ## 4. データ保護
 
@@ -56,3 +57,21 @@ time / level / service / component / event / requestId / status / durationMs / e
 ```text
 harness_lab/todo_frontend/.runtime/logs/
 ```
+
+## 6. URL提示前の手順
+
+```bash
+npm run status:all
+npm run stop:all
+npm run start:all
+npm run status:all
+```
+
+確認すること:
+
+- `api health=true`
+- `web health=true`
+- 権限付きで起動した場合は、同じ権限文脈で `status` と `curl` を確認する
+- Web URL: `http://127.0.0.1:5173/todos`
+- API health URL: `http://127.0.0.1:4174/api/health`
+- `stop` で `local-api/data/*.json` は消さない

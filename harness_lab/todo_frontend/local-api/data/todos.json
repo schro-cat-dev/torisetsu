@@ -5,9 +5,11 @@
     "description": "typecheck、unit、API契約、静的a11y、buildを1コマンドで確認する。",
     "status": "doing",
     "priority": "high",
+    "categoryId": "category-work",
     "dueDate": "2026-08-30",
+    "completedAt": "",
     "createdAt": "2026-08-25T00:00:00.000Z",
-    "updatedAt": "2026-08-25T00:00:00.000Z"
+    "updatedAt": "2026-08-27T00:10:00.000Z"
   },
   {
     "id": "todo-002",
@@ -15,8 +17,82 @@
     "description": "loading、empty、error、savingが画面に出るかを見る。",
     "status": "todo",
     "priority": "medium",
+    "categoryId": "category-daily",
     "dueDate": "2026-08-28",
+    "completedAt": "",
     "createdAt": "2026-08-25T00:10:00.000Z",
-    "updatedAt": "2026-08-24T18:13:40.879Z"
+    "updatedAt": "2026-08-27T00:10:00.000Z"
+  },
+  {
+    "id": "todo-003",
+    "title": "分類バーの使いやすさを見る",
+    "description": "分類の追加、色、横スクロール、選択中の見え方を確認する。",
+    "status": "todo",
+    "priority": "medium",
+    "categoryId": "category-private",
+    "dueDate": "2026-09-02",
+    "completedAt": "",
+    "createdAt": "2026-08-27T00:11:00.000Z",
+    "updatedAt": "2026-08-27T00:11:00.000Z"
+  },
+  {
+    "id": "todo-004",
+    "title": "新規作成モーダルの表示を確認する",
+    "description": "背景が暗くなり、作成フォームだけに集中できるかを見る。",
+    "status": "doing",
+    "priority": "high",
+    "categoryId": "category-work",
+    "dueDate": "2026-09-01",
+    "completedAt": "",
+    "createdAt": "2026-08-27T00:12:00.000Z",
+    "updatedAt": "2026-08-27T00:12:00.000Z"
+  },
+  {
+    "id": "todo-005",
+    "title": "完了済み一覧の並び順を確認する",
+    "description": "完了した順にカードが並ぶか、通常一覧から外れるかを確認する。",
+    "status": "todo",
+    "priority": "high",
+    "categoryId": "category-work",
+    "dueDate": "2026-09-04",
+    "completedAt": "",
+    "createdAt": "2026-08-27T00:13:00.000Z",
+    "updatedAt": "2026-08-27T02:18:00.000Z"
+  },
+  {
+    "id": "todo-006",
+    "title": "入力欄の必須表示を確認する",
+    "description": "必須/任意の表示位置、文字数カウント、上限超過の見え方を見る。",
+    "status": "todo",
+    "priority": "medium",
+    "categoryId": "category-daily",
+    "dueDate": "2026-09-05",
+    "completedAt": "",
+    "createdAt": "2026-08-27T00:14:00.000Z",
+    "updatedAt": "2026-08-27T02:18:00.000Z"
+  },
+  {
+    "id": "todo-007",
+    "title": "ねこ用のメモを整理する",
+    "description": "追加分類が通常分類と同じように表示、選択、保存できるかを見る。",
+    "status": "todo",
+    "priority": "low",
+    "categoryId": "category-f642553c-f546-4adb-852c-9c9850e05e12",
+    "dueDate": "",
+    "completedAt": "",
+    "createdAt": "2026-08-27T00:15:00.000Z",
+    "updatedAt": "2026-08-27T02:18:00.000Z"
+  },
+  {
+    "id": "todo-008",
+    "title": "E2Eの削除確認を見直す",
+    "description": "対象アイテムそのものが消えたことを確認するテストにする。",
+    "status": "doing",
+    "priority": "high",
+    "categoryId": "category-work",
+    "dueDate": "2026-09-06",
+    "completedAt": "",
+    "createdAt": "2026-08-27T00:16:00.000Z",
+    "updatedAt": "2026-08-27T02:18:00.000Z"
   }
 ]

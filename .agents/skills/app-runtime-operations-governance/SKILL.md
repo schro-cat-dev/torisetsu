@@ -27,6 +27,9 @@ description: "Use when creating, modifying, reviewing, or documenting a runnable
 - `stop` は pid、temp、lock、port などの作業用リソースを片付ける。
 - `stop` は local JSON、DB、ユーザー作成データ、検証用の保存データを消さない。
 - データ削除が必要な場合は `reset` などの別コマンドに分け、実行前に明示する。
+- ユーザーへURLを提示する前は、`status` で古いpidや未管理サービスを確認し、必要なら `stop` で管理ファイルをcleanupしてから `start` する。
+- URLを提示する時は、APIとWebの `health=true` を確認してから出す。
+- sandbox外の権限付きで起動した場合は、URL確認も同じ権限文脈で `status` と `curl` を見る。通常sandboxの `status` が false でも、権限差による見え方の可能性がある。
 
 最低限の形:
 
@@ -35,6 +38,17 @@ description: "Use when creating, modifying, reviewing, or documenting a runnable
 <script> stop
 <script> status
 ```
+
+URL提示前の形:
+
+```text
+<script> status
+<script> stop
+<script> start
+<script> status
+```
+
+`stop` は保存データを消さない前提で使う。
 
 ## 3. devログ
 
