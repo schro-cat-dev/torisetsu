@@ -1,0 +1,178 @@
+{
+  "schemaVersion": "design-traceability-map.v1",
+  "project": "todo-sample",
+  "generatedFor": "design-traceability-framework-draft",
+  "notes": [
+    "This is a sample. It is not wired to a real harness yet.",
+    "X1-Y1 style IDs are type model references, not runtime trace IDs."
+  ],
+  "flows": [
+    {
+      "flowId": "F1",
+      "name": "create-todo",
+      "purpose": "Create one TODO from user input.",
+      "kind": "create",
+      "tags": ["todo", "write", "ui-api", "validation"],
+      "routineOrder": ["X1", "Y1", "Y2", "Y3", "Y4", "X5"],
+      "allowedFiles": [
+        "src/api/createTodoRoute.ts",
+        "src/features/todos/createTodoHandler.ts",
+        "src/features/todos/validateCreateTodo.ts",
+        "src/features/todos/createTodoCore.ts",
+        "src/features/todos/todoRepository.ts",
+        "contracts/X1-Y1.create-todo-http-input.schema.json",
+        "contracts/X1-Y1-Y2.create-todo-raw-input.schema.json",
+        "contracts/X1-Y1-Y2-Y3.validated-create-todo-input.schema.json",
+        "tests/_test_X1-Y1_required-title.test.ts",
+        "tests/_test_X1-Y1-Y2_empty-title.test.ts",
+        "tests/_test_X1-Y1-Y2-Y3_trimmed-title.test.ts"
+      ],
+      "typeModelRefs": [
+        "X1-Y1",
+        "X1-Y1-Y2",
+        "X1-Y1-Y2-Y3",
+        "X1-Y1-Y2-Y3-Y4",
+        "X1-Y1-Y2-Y3-Y4-X5"
+      ]
+    }
+  ],
+  "routines": [
+    {
+      "id": "X1",
+      "does": "Receive API request.",
+      "module": "src/api/createTodoRoute.ts",
+      "function": "handleCreateTodo",
+      "calls": ["Y1"]
+    },
+    {
+      "id": "Y1",
+      "does": "Convert request into raw input.",
+      "module": "src/features/todos/createTodoHandler.ts",
+      "function": "createTodoHandler",
+      "calls": ["Y2"]
+    },
+    {
+      "id": "Y2",
+      "does": "Validate input.",
+      "module": "src/features/todos/validateCreateTodo.ts",
+      "function": "validateCreateTodo",
+      "calls": ["Y3"]
+    },
+    {
+      "id": "Y3",
+      "does": "Create TODO by domain core.",
+      "module": "src/features/todos/createTodoCore.ts",
+      "function": "createTodoCore",
+      "calls": ["Y4"]
+    },
+    {
+      "id": "Y4",
+      "does": "Save TODO.",
+      "module": "src/features/todos/todoRepository.ts",
+      "function": "saveTodo",
+      "calls": ["X5"]
+    },
+    {
+      "id": "X5",
+      "does": "Return API response.",
+      "module": "src/api/createTodoRoute.ts",
+      "function": "toCreateTodoResponse",
+      "calls": []
+    }
+  ],
+  "typeModels": [
+    {
+      "ref": "X1-Y1",
+      "from": "X1",
+      "to": "Y1",
+      "name": "CreateTodoHttpInput",
+      "means": "Data received from API.",
+      "schema": "contracts/X1-Y1.create-todo-http-input.schema.json",
+      "tests": ["_test_X1-Y1_required-title"]
+    },
+    {
+      "ref": "X1-Y1-Y2",
+      "from": "Y1",
+      "to": "Y2",
+      "name": "CreateTodoRawInput",
+      "means": "Raw input before validation.",
+      "schema": "contracts/X1-Y1-Y2.create-todo-raw-input.schema.json",
+      "tests": ["_test_X1-Y1-Y2_empty-title"]
+    },
+    {
+      "ref": "X1-Y1-Y2-Y3",
+      "from": "Y2",
+      "to": "Y3",
+      "name": "ValidatedCreateTodoInput",
+      "means": "Input after validation.",
+      "schema": "contracts/X1-Y1-Y2-Y3.validated-create-todo-input.schema.json",
+      "tests": ["_test_X1-Y1-Y2-Y3_trimmed-title"]
+    },
+    {
+      "ref": "X1-Y1-Y2-Y3-Y4",
+      "from": "Y3",
+      "to": "Y4",
+      "name": "TodoToSave",
+      "means": "TODO object before persistence.",
+      "schema": "contracts/X1-Y1-Y2-Y3-Y4.todo-to-save.schema.json",
+      "tests": ["_test_X1-Y1-Y2-Y3-Y4_status-default"]
+    },
+    {
+      "ref": "X1-Y1-Y2-Y3-Y4-X5",
+      "from": "Y4",
+      "to": "X5",
+      "name": "CreateTodoResponse",
+      "means": "API response after save.",
+      "schema": "contracts/X1-Y1-Y2-Y3-Y4-X5.create-todo-response.schema.json",
+      "tests": ["_test_X1-Y1-Y2-Y3-Y4-X5_response-shape"]
+    }
+  ],
+  "tests": [
+    {
+      "id": "_test_X1-Y1_required-title",
+      "targetRef": "X1-Y1",
+      "checks": "title exists in API input",
+      "expected": "missing title is rejected"
+    },
+    {
+      "id": "_test_X1-Y1-Y2_empty-title",
+      "targetRef": "X1-Y1-Y2",
+      "checks": "empty title is rejected",
+      "expected": "empty title returns validation error"
+    },
+    {
+      "id": "_test_X1-Y1-Y2-Y3_trimmed-title",
+      "targetRef": "X1-Y1-Y2-Y3",
+      "checks": "title is trimmed before core",
+      "expected": "validated title has no surrounding spaces"
+    }
+  ],
+  "fixTargets": [
+    {
+      "fixId": "FIX-001",
+      "reason": "Empty title can be saved.",
+      "targetRefs": ["X1-Y1-Y2"],
+      "allowedFiles": [
+        "src/features/todos/validateCreateTodo.ts",
+        "contracts/X1-Y1-Y2.create-todo-raw-input.schema.json",
+        "tests/_test_X1-Y1-Y2_empty-title.test.ts"
+      ],
+      "expectedTests": ["_test_X1-Y1-Y2_empty-title"],
+      "status": "planned"
+    }
+  ],
+  "evidence": [
+    {
+      "fixId": "FIX-001",
+      "commit": "abc1234",
+      "targetRefs": ["X1-Y1-Y2"],
+      "behaviorChange": "Empty title is rejected.",
+      "testResults": [
+        {
+          "testId": "_test_X1-Y1-Y2_empty-title",
+          "result": "ok"
+        }
+      ]
+    }
+  ]
+}

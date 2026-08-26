@@ -4,7 +4,7 @@
 
 ## 1. 結論
 
-まずは次の9領域に分ける。
+まずは次の11領域に分ける。
 
 | 領域 | ディレクトリ | 役割 |
 |---|---|---|
@@ -18,6 +18,7 @@
 | 実験ログ形式 | `experiment_log_schema/` | 実験ごとの記録形式をそろえる |
 | フェーズ計画 | `phase_plan/` | 次に何を試し、どこまでできたら区切るかを管理する |
 | AI協働チートシート | `ai_collaboration_cheatsheet/` | AIが分からない時やズレそうな時に、どう動き、どうボールをパスするかを管理する |
+| 設計追跡フレームワーク | `design_traceability_framework/` | 設計、実装、型、テスト、修正履歴をID対応表で決定論的に辿る |
 
 各スコープで実際に試した記録は、原則として各ディレクトリ配下の `experiments/` に置く。
 
@@ -38,6 +39,8 @@ flowchart TD
 
   Prompt --> Evaluation["評価と再現性"]
   Evaluation --> Benchmark["ベンチマーク・閾値設計"]
+  Evaluation --> Traceability["設計追跡フレームワーク"]
+  Traceability --> Benchmark
   Benchmark --> Phase["フェーズ計画"]
   Evaluation --> Log["実験ログ形式"]
   Log --> Next["次の改善"]
