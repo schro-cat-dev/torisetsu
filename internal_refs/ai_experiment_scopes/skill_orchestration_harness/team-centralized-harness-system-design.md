@@ -8,6 +8,8 @@
 
 ただし、チーム版でハーネス内部のナレッジを毎回全部読ませると重くなる。ユーザーの窓口として、一覧表から必要なナレッジだけを選び、タスクやスコープごとに切り替えられる層を置く。
 
+利用者側は、裏側の複雑な仕組みを意識しなくてよい状態を目指す。例として、`今回DB設計` を選ぶと推奨セットが出て、利用者は2つほど選び、作業中に必要なら1つ追加するくらいの軽さにする。
+
 ## 2. 目的
 
 - 個人に合う / 合わないを前提として扱う。
@@ -19,6 +21,7 @@
 - 全ナレッジを常時読み込ませず、必要なものだけ選ぶ。
 - タスク開始前、作業途中、スコープ変更時にナレッジセットを切り替えられるようにする。
 - 速度と品質の両方を見て、生産性を最大化する。
+- 利用者が仕組みを強く意識しなくても、必要なセットを選んで動けるようにする。
 
 ## 3. 非ゴール
 
@@ -42,6 +45,7 @@
 | 情報の粗さ | まとめただけで使いにくい | 蒸留して、短く使える形にする |
 | 常時読み込みの重さ | ナレッジが増えるほど遅くなり、ノイズも増える | 一覧表から使うものだけ選択する |
 | スコープ切替 | タスクごとに必要な前提やskillが変わる | 実行スコープごとに選択セットを持つ |
+| 利用者負荷 | 仕組みを理解しないと使えない | 軽い入口と推奨セットで迷いを減らす |
 
 ## 5. 全体像
 
@@ -51,6 +55,10 @@ flowchart TD
   User --> SelectionPanel["ナレッジ選択窓口"]
   KnowledgeCatalog["Knowledge Catalog"] --> SelectionPanel
   SelectionPanel --> ScopeProfile["実行スコープProfile"]
+  ScopeProfile --> ExecutionInstance["実行インスタンス"]
+  MetadataSet["Metadata Set"] --> KnowledgeCatalog
+  SimilarityEvaluator["Similarity Evaluator"] --> SelectionPanel
+  MetadataSet --> SimilarityEvaluator
   UserProfile --> SkillLink["User Skill Link"]
   SkillRegistry["Skill Registry"] --> SkillLink
   SkillRegistry --> KnowledgeCatalog
@@ -61,15 +69,21 @@ flowchart TD
   TagCheck --> Grouping["類似グルーピング"]
   Grouping --> Distillation["蒸留"]
   Distillation --> KnowledgeCatalog
+  Distillation --> MetadataSet
   ScopeProfile --> RecommendedSet["推奨skillセット"]
   SelectionPanel --> RecommendedSet
+  RecommendedSet --> ExecutionInstance
+  ExecutionInstance --> TaskRun
   RecommendedSet --> TaskRun["タスク実行"]
   TaskRun --> Evidence["結果と証跡"]
   Evidence --> AcceptedCache["採用アウトプットキャッシュ"]
   AcceptedCache --> PatternAnalysis["特徴分析"]
   PatternAnalysis --> Distillation
   AcceptedCache --> KnowledgeCatalog
+  AcceptedCache --> MetadataSet
   Evidence --> SkillScore["skill品質評価"]
+  Evidence --> VersionUpdate["version更新候補"]
+  VersionUpdate --> KnowledgeCatalog
   SkillScore --> SkillRegistry
 ```
 
@@ -89,6 +103,10 @@ flowchart TD
 | Knowledge Catalog | 使えるナレッジの一覧表 | knowledgeId、種類、scope、version、status |
 | Selection Panel | タスク前や途中で使うナレッジを選ぶ窓口 | userId、taskId、scopeId、selectedKnowledge |
 | Scope Profile | 実行スコープごとの選択状態 | スコープ目的、使うナレッジ、除外するナレッジ |
+| Metadata Set | 本体情報に結びつく検索・評価用情報 | tags、scope、quality、difficulty、relation |
+| Similarity Evaluator | 近さを見る評価機構 | tag一致、scope一致、目的一致、品質差分 |
+| Execution Instance | その時のケース用に調整した実行単位 | baseSet、差分、追加、除外、結果 |
+| Version Manager | 更新履歴と版を管理する | version、変更理由、適用条件、前版との差分 |
 
 ## 7. データ構造案
 
@@ -209,6 +227,38 @@ flowchart TD
   ],
   "reason": "今回はUI要件レビューであり、runtime起動の話ではないため",
   "version": "0.1.0"
+}
+```
+
+### 7.7 Execution Instance
+
+```json
+{
+  "schemaVersion": "team-harness-execution-instance.v1",
+  "instanceId": "instance-db-design-20260827-001",
+  "baseSetId": "db-design-basic-set-v1",
+  "taskId": "task-recruiting-platform-design-001",
+  "caseContext": {
+    "domain": "recruiting-platform",
+    "scope": "db-design",
+    "constraints": ["role-based-access", "audit-required"]
+  },
+  "diffFromBase": [
+    {
+      "type": "added",
+      "knowledgeId": "audit-log-checklist-v1",
+      "reason": "採用プラットフォームでは監査ログが必要になったため"
+    },
+    {
+      "type": "excluded",
+      "knowledgeId": "simple-local-storage-policy-v1",
+      "reason": "今回は本番想定のDB設計であり、local保存の話ではないため"
+    }
+  ],
+  "result": {
+    "status": "drafted",
+    "versionCandidate": "db-design-basic-set-v1.1"
+  }
 }
 ```
 
@@ -483,7 +533,118 @@ flowchart TD
 
 ユーザーが一覧表から必要なものを選び、タスクやスコープに合わせて使う。
 
-### 17.1 役割
+利用者側は、裏側のタグ、score、version、蒸留、キャッシュを細かく意識しなくてよい。
+
+目指す操作感:
+
+```text
+1. 利用者が「今回DB設計」を選ぶ
+2. 推奨セットが出る
+3. 利用者が2つ選ぶ
+4. 作業する
+5. 必要なら途中で1つ追加する
+6. 結果と使ったversionだけ裏側に残る
+```
+
+この軽さを保つ理由:
+
+- 使う人が仕組みを覚えなくてよい。
+- 開始までの時間を短くできる。
+- 裏側では必要なナレッジを選ぶので、品質を落としにくい。
+- 途中追加できるため、最初に全部決め切らなくてよい。
+
+### 17.1 推奨セットとは何か
+
+推奨セットは、用途別のスターターセットとして扱う。
+
+テンプレに近いが、出力テンプレだけではない。
+
+含めるもの:
+
+| 種類 | 役割 | DB設計の例 |
+|---|---|---|
+| checklist | 見落としを防ぐ | entity、relation、制約、削除影響を見る |
+| skill | AIの動き方を決める | 設計ズレ確認、責務分離確認 |
+| policy | やらないことを固定する | 個人情報や認証情報を雑に保存しない |
+| sample | 判断例を見る | users / roles / permissions の例 |
+| output-shape | 最後の出力型をそろえる | ER案、テーブル一覧、未決事項、確認質問 |
+
+DB設計の推奨セット例:
+
+```json
+{
+  "schemaVersion": "team-harness-recommended-set.v1",
+  "setId": "db-design-basic-set-v1",
+  "label": "DB設計の基本セット",
+  "taskType": "db-design",
+  "items": [
+    {
+      "knowledgeId": "entity-relationship-checklist-v1",
+      "type": "checklist",
+      "purpose": "何のデータを、どういう関係で持つかを見る"
+    },
+    {
+      "knowledgeId": "permission-boundary-checklist-v1",
+      "type": "checklist",
+      "purpose": "誰が何にアクセスできるかを見る"
+    },
+    {
+      "knowledgeId": "data-lifecycle-policy-v1",
+      "type": "policy",
+      "purpose": "作成、更新、削除、監査の扱いを先に見る"
+    }
+  ],
+  "defaultPickCount": 2,
+  "optionalAdditions": [
+    {
+      "knowledgeId": "audit-log-checklist-v1",
+      "when": "監査や業務ログが必要になった時"
+    }
+  ]
+}
+```
+
+利用者に見せる時は、ここまで細かく出さない。
+
+```text
+DB設計の基本セット
+- データ同士の関係を見る
+- 権限境界を見る
+- 削除や監査が必要なら途中で足す
+```
+
+### 17.2 利用者側と裏側を分ける
+
+| 層 | 見えるもの | 隠すもの |
+|---|---|---|
+| 利用者側 | タスク種別、推奨セット、選択、途中追加 | tag生成、score計算、version照合、蒸留候補 |
+| ハーネス側 | knowledgeId、scopeId、version、score、除外理由 | なし。証跡として保持する |
+
+サンプル:
+
+```json
+{
+  "schemaVersion": "team-harness-user-facing-selection.v1",
+  "input": "今回DB設計",
+  "recommendedSets": [
+    {
+      "setId": "db-design-basic-set-v1",
+      "label": "DB設計の基本セット",
+      "items": [
+        "entity-relationship-checklist-v1",
+        "permission-boundary-checklist-v1"
+      ],
+      "reason": "データ構造と権限境界を先にそろえるため"
+    }
+  ],
+  "userAction": {
+    "selectedSetId": "db-design-basic-set-v1",
+    "addedLater": ["audit-log-checklist-v1"]
+  }
+}
+```
+
+### 17.3 役割
 
 | 役割 | 内容 |
 |---|---|
@@ -494,7 +655,7 @@ flowchart TD
 | 版管理する | どのversionを使ったか残す |
 | 改善する | 使った結果を見て、scoreや内容を更新する |
 
-### 17.2 いつ使うか
+### 17.4 いつ使うか
 
 | タイミング | 使い方 |
 |---|---|
@@ -504,7 +665,7 @@ flowchart TD
 | レビュー前 | チェックに使うナレッジだけ読む |
 | 改善後 | 採用された出力や改善点を次版へつなぐ |
 
-### 17.3 選択単位
+### 17.5 選択単位
 
 選ぶ単位は、粒度をそろえる。
 
@@ -516,7 +677,7 @@ flowchart TD
 | checklist | `UI要件レビュー項目` | OK/NGを確認する |
 | policy | `scope外作業禁止` | やってはいけないことを固定する |
 
-### 17.4 選ぶ時の基本ルール
+### 17.6 選ぶ時の基本ルール
 
 ```text
 1. taskId と scopeId を決める
@@ -529,7 +690,7 @@ flowchart TD
 8. 結果を見て score や次版候補を更新する
 ```
 
-### 17.5 サンプル
+### 17.7 サンプル
 
 ```json
 {
@@ -562,7 +723,7 @@ flowchart TD
 }
 ```
 
-### 17.6 判断基準
+### 17.8 判断基準
 
 | 判断 | 優先度 | おすすめ度 | 背景 |
 |---|---:|---:|---|
@@ -574,7 +735,7 @@ flowchart TD
 
 ここでの優先度は `チーム作業で速度と品質を両立する視点` で見る。
 
-### 17.7 受け入れ条件
+### 17.9 受け入れ条件
 
 - [ ] ナレッジを全部読ませない方針が明記されている。
 - [ ] 一覧表から選ぶ単位が分かる。
@@ -582,3 +743,168 @@ flowchart TD
 - [ ] version管理がある。
 - [ ] 選んだ理由と外した理由を残せる。
 - [ ] 速度と品質の両方を見ることが明記されている。
+
+## 18. 類似性評価
+
+類似性は、本体情報だけで直接見るのではなく、本体情報に結びついたメタ情報セットで見る。
+
+ここでの本体情報は、skill、checklist、policy、sample、accepted-output、distilled-sheet などを指す。
+
+メタ情報セットは、それらを探す、比べる、推奨するための補助情報として扱う。
+
+### 18.1 基本構造
+
+```text
+本体情報
+  └─ メタ情報セット
+       ├─ tags
+       ├─ scope
+       ├─ taskType
+       ├─ quality
+       ├─ difficulty
+       ├─ owner
+       └─ relation
+```
+
+サンプル:
+
+```json
+{
+  "schemaVersion": "team-harness-knowledge-metadata.v1",
+  "knowledgeId": "entity-relationship-checklist-v1",
+  "bodyRef": "knowledge/checklists/entity-relationship.md",
+  "metadata": {
+    "tags": ["db-design", "entity", "relation"],
+    "scope": ["before-implementation", "data-modeling"],
+    "taskType": "db-design",
+    "qualityScore": 8,
+    "difficulty": 3,
+    "relation": {
+      "similarTo": ["data-lifecycle-policy-v1"],
+      "oftenUsedWith": ["permission-boundary-checklist-v1"],
+      "conflictsWith": []
+    }
+  }
+}
+```
+
+### 18.2 近さを見る評価軸
+
+| 評価軸 | 見ること | 例 |
+|---|---|---|
+| tag近さ | 同じタグや近いタグがあるか | `db-design` と `data-modeling` |
+| scope近さ | 使う工程が近いか | `before-implementation` 同士 |
+| taskType近さ | タスク種類が近いか | `db-design` 同士 |
+| 併用実績 | 一緒に使われたことがあるか | entity と permission |
+| 品質近さ | scoreが近いか、十分高いか | `qualityScore >= 7` |
+| 除外条件 | 一緒に使うとノイズになるか | runtime系はDB設計初期では外す |
+
+### 18.3 評価の出し方
+
+最初は単純な点数でよい。
+
+```json
+{
+  "schemaVersion": "team-harness-similarity-result.v1",
+  "sourceKnowledgeId": "entity-relationship-checklist-v1",
+  "candidateKnowledgeId": "permission-boundary-checklist-v1",
+  "score": 0.82,
+  "basis": {
+    "tagMatch": 0.7,
+    "scopeMatch": 1.0,
+    "taskTypeMatch": 1.0,
+    "oftenUsedTogether": 0.8,
+    "quality": 0.8
+  },
+  "recommendation": "show-as-related"
+}
+```
+
+### 18.4 使い所
+
+- 推奨セットを作る時。
+- 途中追加候補を出す時。
+- 類似タグをまとめる時。
+- 蒸留対象のgroupを作る時。
+- 使われなくなったナレッジを見直す時。
+
+### 18.5 注意
+
+- 類似スコアだけで自動採用しない。
+- 本体情報とメタ情報は混ぜない。
+- メタ情報は、探す、比べる、推奨するための補助として扱う。
+- 近いものをまとめる時も、大事な差分は消さない。
+
+## 19. ケース差分とインスタンス管理
+
+推奨セットは、そのまま毎回固定で使うものではない。
+
+その時々のケース、状況、制約との差分を見て調整する。
+
+ただし、本体やコアをその場の都合で変えない。
+
+変えるのは、前提、周辺状況、追加するナレッジ、除外するナレッジ、評価重みなどの実行インスタンス側の情報にする。
+
+そのために、`base version` と `execution instance` を分ける。
+
+| 種類 | 意味 | 例 |
+|---|---|---|
+| base version | 再利用する基本セット | `db-design-basic-set-v1` |
+| execution instance | 今回のケース用に調整した実行単位 | `instance-db-design-20260827-001` |
+| diff | baseから何を足した/外したか | audit-logを追加、local保存を除外 |
+| version candidate | 結果から次版に入れる候補 | `db-design-basic-set-v1.1` |
+
+### 19.1 変えてよいもの / 変えないもの
+
+| 扱い | 対象 | 例 |
+|---|---|---|
+| 変えない | コア、本体、基本の責務 | DB設計で entity / relation / constraint を見ること |
+| 調整する | 前提、周辺状況、制約 | 採用プラットフォームなので監査ログを見る |
+| 追加する | 今回だけ必要なナレッジ | `audit-log-checklist-v1` |
+| 外す | 今回は関係ないナレッジ | local保存系policy |
+| 更新候補にする | 複数回効いた改善 | DB設計セットに監査観点をoptionalとして追加 |
+
+コアを変えたい場合は、実行インスタンスではなく base version の設計変更として扱う。
+
+その場合は、理由、影響範囲、変更前/変更後、既存ケースへの影響を確認してから進める。
+
+### 19.2 調整の流れ
+
+```text
+1. base version を選ぶ
+2. 今回のケースや状況を見る
+3. baseとの差分を出す
+4. 必要なナレッジを足す
+5. 不要なナレッジを外す
+6. execution instance として保存する
+7. 作業結果を見る
+8. よかった変更は version update 候補にする
+```
+
+### 19.3 見る差分
+
+| 差分 | 見ること | 例 |
+|---|---|---|
+| ドメイン差分 | 業務領域が違う | TODOと採用プラットフォームでは監査要件が違う |
+| スコープ差分 | 今回の作業範囲が違う | DB設計だけか、API設計も含むか |
+| 制約差分 | 法務、セキュリティ、運用制約が違う | 個人情報、権限、監査ログ |
+| 利用者差分 | 利用者の進め方や理解度が違う | 詳細設計から入りたい、まず動かしたい |
+| 品質差分 | 求める品質水準が違う | PoCか、本番前提か |
+
+### 19.4 更新できるもの
+
+- 推奨セットの内容。
+- メタ情報セット。
+- 類似性評価の重み。
+- checklistの項目。
+- policyの禁止事項。
+- output-shape。
+- accepted-output cache。
+
+### 19.5 注意
+
+- その場の調整を、すぐ全体ルールに昇格しない。
+- まず execution instance として保存する。
+- 複数回効いた変更だけ、base version の更新候補にする。
+- 編集、更新、version管理ができることを前提にする。
+- コア変更と周辺調整を混ぜない。
