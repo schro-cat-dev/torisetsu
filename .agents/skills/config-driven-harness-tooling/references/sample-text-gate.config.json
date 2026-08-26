@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "text-quality-gate.v1",
+  "gateId": "sample-config-driven-tooling",
+  "targets": [
+    {
+      "id": "sample-target",
+      "path": ".agents/skills/config-driven-harness-tooling/references/sample-target.md"
+    }
+  ],
+  "rules": [
+    {
+      "ruleId": "must-mention-config",
+      "type": "mustInclude",
+      "value": "config",
+      "message": "configから具体ルールを渡す説明が必要"
+    },
+    {
+      "ruleId": "must-mention-reusable-runner",
+      "type": "regexMustMatch",
+      "pattern": "runner本体.*使い回す|使い回す.*runner本体",
+      "message": "runner本体を使い回す説明が必要"
+    },
+    {
+      "ruleId": "must-not-be-todo-only",
+      "type": "mustNotInclude",
+      "value": "TODO専用runner",
+      "message": "TODO専用runnerにしてはいけない"
+    },
+    {
+      "ruleId": "todo-only-max-zero",
+      "type": "maxOccurrences",
+      "value": "TODO専用",
+      "max": 0,
+      "message": "TODO専用という対象固有表現は0回にする"
+    }
+  ]
+}

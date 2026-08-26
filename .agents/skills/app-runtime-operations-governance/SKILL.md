@@ -24,7 +24,9 @@ description: "Use when creating, modifying, reviewing, or documenting a runnable
 - ローカルでも、必要がないならサーバーを立てない。
 - まず、サーバーなしで目的を達成できるか見る。
 - docs確認、静的check、unit test、コード読解、軽い設計相談だけで足りる場合は、サーバー起動をしない。
+- Reactなどのフロントエンドでも、ビルド済みの静的画面確認だけで足りる場合は、`file/path` や静的HTML確認を候補にする。
 - サーバー起動は、API連携、route遷移、ブラウザevent、保存処理、実ブラウザE2E、複数サービス連携の確認に必要な時だけ使う。
+- API、裏側のJSON保存、SPAのroute fallback、devログ、E2E証跡が関係する場合は、ローカルサーバを1つの中継点にした方が管理コストが下がることがある。
 - 起動前に、`目的`、`必要な理由`、`サーバなしの代替`、`ROI` を短く確認する。
 - 1つのスクリプトで全サービスを起動できるようにする。
 - 同じスクリプトに `start`、`stop`、`status` を用意する。
@@ -61,9 +63,21 @@ URL提示前の形:
 |---|---|---|
 | docsだけ更新 | 起動しない | ファイル確認で十分 |
 | CSSの軽微な相談 | 原則起動しない | 方針確認だけなら不要 |
+| 静的画面の見た目だけ確認 | `file/path` や静的HTMLを先に候補 | サーバなしで足りる可能性がある |
 | クリック範囲の確認 | 起動する | ブラウザeventを見る必要がある |
 | API保存の確認 | 起動する | 実際の保存結果を見る必要がある |
+| React + API + JSON保存 | 起動する寄り | ブラウザ制約、route、保存、ログを同じ入口で追える |
 | URLだけ提示 | 起動済みならstatus確認だけ | 新規起動は不要なことがある |
+
+判断の目安:
+
+| 確認したいこと | 軽い候補 | サーバが有効な条件 |
+|---|---|---|
+| 見た目 | 静的HTML、build成果物、screenshot | CSSやasset pathがdev server前提 |
+| 画面操作 | browserでfile/path表示 | event、modal、route、状態保存まで見る |
+| データ | fixtureやunit test | API、JSON保存、DB、同期を見る |
+| エラー | static check | サーバ側ログ、requestId、保存失敗を見る |
+| E2E | なし、または限定確認 | Playwrightなどで実ブラウザとAPIを通す |
 
 ## 3. devログ
 

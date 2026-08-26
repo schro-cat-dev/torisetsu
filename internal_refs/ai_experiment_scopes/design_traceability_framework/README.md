@@ -56,6 +56,13 @@ F1: TODO作成
 | `X1-Y1-Y2` | データ型定義モデルの参照番号 | 実行時trace IDではない |
 | `_test_X1-Y1-Y2_empty-title` | `X1-Y1-Y2` を確認するテスト | 汎用ログIDではない |
 
+他ドキュメントへ写す時の注意:
+
+- `F2` のようなIDは `flowId` として扱う。
+- `X1-Y1-Y2` のようなIDは `typeModelRef` として扱う。
+- `ID` とだけ書いてまとめない。
+- 例: `flowId: F2 / typeModelRef: X1-Y1-Y2` のように役割名もセットで書く。
+
 ## 4. 人間が読む対応表
 
 例: TODO作成

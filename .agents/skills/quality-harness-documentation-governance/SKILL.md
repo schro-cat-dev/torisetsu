@@ -44,6 +44,13 @@ description: "Use when creating, modifying, reviewing, or documenting a quality 
 - NG: `本番SaaS品質ではない`
 - OK: `今回の品質評価はローカル実験用TODOアプリとしての評価。外部公開・本番運用は対象外`
 
+`5 / 5 に足りないもの` を書く時:
+
+- 抽象語だけで終わらせない。
+- `何をするか`、`どう確認するか`、`OKの例` をセットにする。
+- 例: `mobile確認が必要` だけではなく、`375px幅で作成modal、詳細toggle、分類バーを確認し、分類バー以外が横にはみ出さないことを見る` と書く。
+- 例: `失敗ケースが必要` だけではなく、`空タイトル、81文字タイトル、API 500、title click誤動作を入れて、期待どおり止まるかを見る` と書く。
+
 ## 3. 未対応の扱い
 
 ここでの `未対応` は、品質ハーネス説明の不足だけを指す。
@@ -99,6 +106,36 @@ runtime、logger、起動終了の不足は、この skill に混ぜない。
 
 runner本体に残してよい固定値と、JSONへ逃がす固定値を分ける。
 
+遵守するべきルールとして作るツールや、ハーネスに組み込むツールは、基本的に汎用性を担保する。
+
+| 分けるもの | 持たせる内容 | 例 |
+|---|---|---|
+| ツール本体 | 共通処理、入力検証、結果出力 | JSONを読む、schemaVersionを見る、OK/NGを返す |
+| config / policy / scenario / contract | 具体的なルール、対象scope、path、しきい値、期待値 | `TodoListItem`、`80文字上限`、`API 500時の期待結果` |
+| loader | 外部入力を内部表現へそろえる | JSONを読んでrunnerへ渡す |
+| result | 実行結果と証跡 | `status: ok`、失敗箇所、実行時刻 |
+
+ここでの `外部から渡す` は、configやデータを実行時に注入するという意味で扱う。
+
+ツール本体に対象ごとの分岐を増やさない。
+
+実装や具体サンプルが必要な場合は、`.agents/skills/config-driven-harness-tooling/SKILL.md` を読む。
+
+OK例:
+- `run-file-content-policy.mjs` は共通runner。
+- `dev-only-interface.policy.json` は対象path、禁止prefix、許可例を持つ。
+- 新しいpolicyを追加しても、runner本体は変えない。
+
+NG例:
+- `run-file-content-policy.mjs` の中に `src/features/todos`、`_test`、`80` など対象固有の値を書く。
+- TODO用、採用プラットフォーム用、DB用で似たrunnerを毎回作る。
+
+受け入れ条件:
+- 新しい対象やルールを追加するとき、ツール本体のdiffがゼロに近い。
+- 変えるのは config、policy、scenario、contract 側で済む。
+- 実行結果は同じ形式で保存される。
+- 速度、品質、再現性、低コスト化に効く説明がある。
+
 | 種類 | 扱い | 例 |
 |---|---|---|
 | 入力契約 | runnerに残してよい | `file-content-policy.v1`、`external-tool-check.v1`、許可field一覧 |
@@ -138,3 +175,37 @@ AIレビュー、AIコメント、AI指摘を品質ハーネスで扱う場合�
 - 変更前: AIが出したレビュー文をそのまま表示、またはPRに投稿する。
 - 変更後: `check-ai-review-result.mjs` のようなrunnerで contract と fixture を検査し、表示前に低confidenceと `LOW` を落とす。
 - 確認方法: `npm run check:ai-review-result` のような軽い専用checkを作る。
+
+## 8. ハーネス価値の説明
+
+ハーネスの価値を `業務速度が上がる` だけで説明して終わらせない。
+
+業務速度の改善は重要だが、次も明示する。
+
+| 要素 | 書くこと | 例 |
+|---|---|---|
+| 暗黙知 | 何をチートシート化するか | UIクリック範囲、設計判断、DB削除影響 |
+| 対象との関連 | どの対象、scope、flow、componentに結びつくか | `TodoListItem`、`F2`、`ui` |
+| 観点 | どの見方で確認するか | 提供価値、責務、依存関係、UX、a11y |
+| チェックリスト | 何を見ればOKか | title clickでdoneにならない |
+| 再利用module | 何を使い回せるか | JSON contract checker、browser flow checker |
+| 検索用メタ情報 | AIが探すための手がかり | `tags`、`scope`、`qualityScore`、`relatedFlowIds` |
+| 品質チェック機構 | どの範囲を取り出して確認するか | `TodoListItem` のクリック分離だけE2E |
+
+2層で見る:
+
+| 層 | 見るもの | 例 |
+|---|---|---|
+| 第1層 | 対象、スコープ、処理フロー、ID | `todo_frontend`、`ui`、`F2` |
+| 第2層 | 観点、タグ、暗黙知、チェックリスト、品質ゲート | `event-propagation`、`click-area`、`browser-e2e` |
+
+OK例:
+- `ハーネスで速度を上げる` だけではなく、`TodoListItem / ui / F2 に対して、click-area の暗黙知と browser-e2e を紐づけ、title clickでdoneにならないことを見る` と書く。
+
+NG例:
+- `暗黙知を管理する`
+- `検索しやすくする`
+- `品質保証する`
+
+理由:
+- 対象、観点、確認方法がないと、次に何を作るか分からないため。

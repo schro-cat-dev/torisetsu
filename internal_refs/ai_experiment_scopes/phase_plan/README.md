@@ -17,6 +17,10 @@ flowchart TD
   Measure --> Improve
 ```
 
+次回の具体タスク:
+
+- [次回することリスト 2026-08-28 / 2026-08-29](next-action-checklist-2026-08-28-29.md)
+
 ## フェーズ1
 
 目的:
