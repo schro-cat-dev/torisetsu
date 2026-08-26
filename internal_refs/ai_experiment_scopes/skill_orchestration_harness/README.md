@@ -30,6 +30,7 @@ Codex や Claude などの内蔵 planning は便利だが、粒度が粗いと�
 | ファイル | 役割 |
 |---|---|
 | `SKILL_DRAFT.md` | 将来skill化するためのドラフト。まだactive skillではない |
+| `team-centralized-harness-system-design.md` | チームで一元化して使うハーネスの詳細設計ドラフト |
 | `samples/todo-design-orchestration.md` | TODO設計タスクでのステート、skill順序、出力例 |
 
 ## 現時点の扱い

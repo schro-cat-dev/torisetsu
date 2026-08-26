@@ -11,6 +11,10 @@
 | `individual-harness-goal.md` | 個人の思考、設計、実装、改善を速く強く回すための目標 |
 | `team-harness-goal.md` | 技量差、前提差、職種差があるチームでも事故りにくくするための目標 |
 
+関連設計:
+
+- [チーム一元化ハーネス 詳細設計ドラフト](../skill_orchestration_harness/team-centralized-harness-system-design.md)
+
 ## 扱い
 
 - 現時点ではドラフト。
