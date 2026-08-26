@@ -110,6 +110,8 @@ F1: TODO作成
 
 完全なサンプルは [todo-id-correspondence-map.json](samples/todo-id-correspondence-map.json) に置く。
 
+`alignment-gap-review` と接続して、上位スコープ、処理フロー、`X1-Y1` 形式のデータ型定義モデル参照、複数観点チェックを同時に見る詳細設計は [alignment-gap-review-tool-design.md](alignment-gap-review-tool-design.md) に置く。
+
 ## 6. 修正時の使い方
 
 バグ例:
