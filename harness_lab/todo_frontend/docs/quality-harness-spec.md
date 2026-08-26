@@ -18,6 +18,7 @@
 - ローカル TODO アプリの型、unit、API契約、APIフロー、UI静的確認、実ブラウザ確認。
 - ハーネス自体の汎用性、要件とテストの対応、AIレビューJSONの最小ゲート。
 - 外部ツールを使う確認の信頼境界と切り替え。
+- push/PR前にAIが差分を読み、概念境界の混同をOK/NG判定する運用ゲート。
 
 対象外:
 
@@ -40,6 +41,12 @@
 | `npm run check:browser-quality` | 実ブラウザだけ確認 | browser E2E、browser a11y | `browser-*.results.json` |
 | `npm run check:ai-review-output` | AIレビューJSONだけ確認 | schema、field、confidence、severity、最大件数 | `ai-review-result-gate.results.json` |
 
+LLM/AI運用ゲート:
+
+| ゲート | 目的 | 実行する主な確認 | 証跡 |
+|---|---|---|---|
+| pre-push/PR AI概念境界ゲート | push/PR前に、通常checkでは見えにくい概念の混同をAIが読む | 人間の違和感、観察、解釈、機械判定が混ざっていないか | `docs/pre-push-ai-concept-gate.md`、最終報告、必要なら会話ログ |
+
 最新の外部ツール込み確認:
 
 - `HARNESS_ENABLE_DEPENDENCY_BOUNDARY=1 HARNESS_ENABLE_BROWSER_QUALITY=1 npm run check`
@@ -57,6 +64,7 @@
 | `scenarios/*.json` | APIの手順、host、port、restore対象を定義する | CRUD以外のAPIへ広げられる |
 | `policies/*.json` | 禁止文字列、対象dir、対象拡張子を定義する | ルールだけを差し替え可能 |
 | `external-tools/*.tool.json` | 外部toolのCLI、config、test file、restore fileを定義する | runnerから外部tool詳細を分離 |
+| `docs/pre-push-ai-check-cheatsheet.md` | AIへ渡すpre-push/PR前チェック表 | LLMが見る順番と出力型を固定する |
 | `test_management/manifest.json` | 要件sourceとJSON specの対応を管理する | md、issue-file、GitHub issue fixtureに対応 |
 | `harness_runs/*` | 実行結果とsummaryを保存する | 後から確認できる証跡 |
 
@@ -257,6 +265,19 @@
 | 証跡 | `browser-a11y.results.json` |
 | 残リスク | color contrast、支援技術での手動確認、モバイル操作は未確認 |
 
+### 5.16 pre-push/PR AI概念境界ゲート
+
+| 項目 | 内容 |
+|---|---|
+| check | `pre-push-ai-concept-gate` |
+| 観点 | 人間の語感、違和感、概念上のズレを、Harnessの機械判定と混ぜていないか |
+| 入力 | ユーザー依頼、`git diff`、関連docs、実行結果、未解決メモ |
+| 確認項目 | 概念境界、判定条件への変換、証跡、スコープ、次の行動 |
+| 実現方法 | `docs/pre-push-ai-check-cheatsheet.md` をAIへ渡し、push/PR 前に差分を読んで `OK / NG / USER_CONFIRM` と理由を報告する |
+| OK条件 | 人間の観察と機械判定が分かれ、Harness化するものは判定条件へ変換されている |
+| 証跡 | `docs/pre-push-ai-concept-gate.md`、`docs/pre-push-ai-check-cheatsheet.md`、最終報告、必要なら `internal_refs/chat_logs/*` |
+| 残リスク | 現時点では手動のAI判断。CIで自動実行する仕組みやJSON出力契約は未実装 |
+
 ## 6. optional check
 
 通常の `npm run check` では、外部依存が重いものは環境変数で切り替える。
@@ -304,4 +325,3 @@
 | GitHub PR自動投稿 | 今は表示前フィルタまで | diff行マッピング、重複排除、posting payloadを別checkで設計する |
 | 本番DB、認証、権限 | ローカルJSON APIの実験対象外 | DB contract、認証flow、権限matrixを追加する |
 | 支援技術での手動a11y | 自動検出の範囲外 | keyboard、screen reader、色以外の状態伝達を別台帳で確認する |
-

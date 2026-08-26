@@ -26,6 +26,8 @@
 | `test-traceability-json-runner-design.md` | 要件md、JSON spec、tester moduleの分離設計 | 作成済み |
 | `external-tool-boundary.md` | 外部ツールの信頼境界、切り替え、残リスク | 作成済み |
 | `ai-review-json-gate.md` | AIレビューJSONの最小契約と表示前フィルタ | 作成済み |
+| `pre-push-ai-concept-gate.md` | push/PR前にAIが概念境界をOK/NG判定する運用ゲート | 作成済み |
+| `pre-push-ai-check-cheatsheet.md` | pre-push/PR前AIチェックでAIへ渡す確認表 | 作成済み |
 | `test_management/manifest.json` | 要件sourceとテストspecの統括リスト | 作成済み |
 | `test_management/issues/*.json` | issue型の要件source | 作成済み |
 | `test_management/github_issues/*.json` | GitHub Issue fixture型の要件source | 作成済み |
@@ -102,6 +104,15 @@
 - [x] エラー時に error name、message、stack を確認できる。
 - [x] 未管理の既存サービスを起動成功扱いにしない。
 
+### 3.6 pre-push/PR AI判定ゲート
+
+- [x] 人間の語感、違和感、概念上のズレを、Harnessの機械判定と分ける。
+- [x] Harness化する場合は、機械で確認できる判定条件へ変換してから扱う。
+- [x] push/PR前にAIが `OK / NG` と理由を出す運用ゲートを仕様化する。
+- [x] AIへ渡すチェック用チートシートを別ファイルに分ける。
+- [ ] AI判定結果をJSONで保存する。
+- [ ] GitHub PRコメントやCIへ連携する。
+
 ## 4. 追加すべき品質チェック
 
 優先度とおすすめ度は 5 が高い。
@@ -118,6 +129,8 @@
 | API flowのscenario JSON化 | 対応済み | 5 | 5 | `scenarios/*.json` でAPI手順を差し替えられる |
 | 汎用runnerの個別path混入検出 | 対応済み | 5 | 5 | `harness-genericity.policy.json` で runner 側の直書きを検出する |
 | AIレビューJSONの最小ゲート | 対応済み | 4 | 5 | `confidence >= 0.8`、`LOW除外`、`最大5件` を機械確認する |
+| pre-push/PR AI概念境界ゲート | 運用対応 | 5 | 5 | LLMが、通常checkでは見えにくい概念の混同を読めるため |
+| AIチェックチートシート | 対応済み | 5 | 5 | AIに見る順番と出力型を渡すと、判断のブレを減らせるため |
 
 ## 5. 次の進め方
 
@@ -127,7 +140,8 @@
 4. 実装する。
 5. `npm run check` を実行する。
 6. 実行結果を `harness_runs/` で確認する。
-7. 未確認項目を `implementation-checklist.md` とこのファイルに残す。
+7. push/PR前に `pre-push-ai-check-cheatsheet.md` をAIに渡し、`pre-push-ai-concept-gate.md` の観点でOK/NGを出す。
+8. 未確認項目を `implementation-checklist.md` とこのファイルに残す。
 
 ## 6. 今回の残リスク
 
@@ -137,3 +151,4 @@
 - 内部バージョンはまだ Git commit や tag とは結びつけていない。
 - runtime script は、このスクリプトが起動したプロセスだけを停止対象にする。
 - AIレビューJSONゲートは、実際のAI API呼び出しとGitHub投稿までは扱わない。
+- pre-push/PR AI概念境界ゲートは、現時点では手動のAI判断。JSON保存、CI連携、PRコメント化は未実装。
