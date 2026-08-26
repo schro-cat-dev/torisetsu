@@ -11,7 +11,18 @@
 - 別プロジェクトのskillをそのまま移植した状態ではない。
 - 今回の不足は、レビュー文書とskillの対応表がなかったこと。
 
-## 2. レビュー文書
+## 2. 次回の最初に見る順番
+
+| 順番 | 見るもの | 目的 |
+|---:|---|---|
+| 1 | `.agents/skills/ui-value-design-review/SKILL.md` | UIフィードバックを、価値、設計パターン、UX観点、ハーネス条件へ変換する |
+| 2 | `.agents/skills/ui-value-design-review/references/ui-tacit-knowledge-cheatsheet.md` | 暗黙知を、状況、原文、観点、修正、価値、ハーネス条件へ分ける |
+| 3 | `ui-feedback-review-checklist.md` | ユーザー指摘、修正方向、確認方法、状態を見る |
+| 4 | `component-purpose-checklist.md` | UI部品ごとの目的、背景、効果、定量条件を見る |
+| 5 | `component-relation-map.md` | 画面、状態、API、保存、ハーネスの関係を見る |
+| 6 | `quality-harness-spec.md` | どの確認を機械で保証しているかを見る |
+
+## 3. レビュー文書
 
 | ファイル | 何を見るか | 今回の使い所 |
 |---|---|---|
@@ -24,8 +35,9 @@
 | `pre-push-ai-check-cheatsheet.md` | AIへ渡す確認表 | push前にAIが何を見るかを固定する |
 | `artifact-version-ledger.md` | versionごとの変更、検証、残リスク | `0.8.2` の修正内容と証跡を残す |
 | `ui-feedback-work-log.md` | 作業時間と遅くなった理由 | 次回の作業分割を改善する |
+| `.agents/skills/ui-value-design-review/references/ui-tacit-knowledge-cheatsheet.md` | UI暗黙知をどう残すか | ユーザーの違和感を次回使える判断材料に変換する |
 
-## 3. repo内skill
+## 4. repo内skill
 
 | skill | 役割 | 優先度 | おすすめ度 | 備考 |
 |---|---|---:|---:|---|
@@ -35,7 +47,7 @@
 | `task-output-format-governance` | ユーザー指定の出力型、粒度、具体例を守る | 5 | 5 | 既存 |
 | `cognitive-model-calibration` | 認知ズレ、説明粒度、具体例不足をケース化する | 5 | 5 | 既存 |
 
-## 4. 今回のskill出力
+## 5. 今回のskill出力
 
 `ui-value-design-review` で、ユーザーフィードバックを次の形へ変換した。
 
@@ -57,7 +69,7 @@ TDD/E2E修正ケース:
 |---|---|---|
 | 削除後の確認対象を `page.getByText` から `.todo-item` に変更 | `.agents/skills/ui-value-design-review/references/2026-08-27-e2e-locator-correction-case.md` | 完了条件に近い対象を確認し、テストの曖昧さを減らす |
 
-## 5. 現時点の未完了
+## 6. 現時点の未完了
 
 - Safari、Firefox、mobile実機の確認は今回の対象外。
 - 分類の編集/削除は未対応。今回は分類追加と紐づけまで。
