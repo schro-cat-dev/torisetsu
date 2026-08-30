@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "model-drift-grader-result.v1",
+  "generatedAt": "2026-08-30T23:26:02.970Z",
+  "graderId": "2026-08-31.model-drift-fixture-ok-grader",
+  "configPath": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/configs/grader-fixture-ok.config.json",
+  "status": "PASS",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "rawRunFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/raw-run-ok.json",
+  "observationFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/observations/2026-08-31.smoke.fixture.ok.observation.json",
+  "summary": {
+    "caseCount": 5,
+    "failedCaseCount": 0,
+    "contractPassRate": 1,
+    "sourceTraceRate": 1,
+    "taskRubricScore": 100
+  },
+  "caseResults": [
+    {
+      "caseId": "drift.contract.schema_convert.001",
+      "category": "contract",
+      "status": "PASS",
+      "contractPassed": true,
+      "sourceTraceRate": 1,
+      "sourceClaims": 0,
+      "tracedSourceClaims": 0,
+      "criticalUnsupportedClaims": 0,
+      "rubric": {
+        "earned": 5,
+        "total": 5,
+        "passed": true,
+        "scoreRate": 1,
+        "details": [
+          {
+            "id": "task_fit",
+            "score": 5,
+            "maxScore": 5,
+            "passScore": 4,
+            "passed": true,
+            "criteria": "The JSON preserves all important requirements without adding unsupported functions."
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 180,
+        "outputTokens": 86,
+        "totalTokens": 266
+      },
+      "latencyMs": 900,
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      },
+      "violations": []
+    },
+    {
+      "caseId": "drift.source_trace.local_excerpt.001",
+      "category": "source_trace",
+      "status": "PASS",
+      "contractPassed": true,
+      "sourceTraceRate": 1,
+      "sourceClaims": 3,
+      "tracedSourceClaims": 3,
+      "criticalUnsupportedClaims": 0,
+      "rubric": {
+        "earned": 5,
+        "total": 5,
+        "passed": true,
+        "scoreRate": 1,
+        "details": [
+          {
+            "id": "source_fit",
+            "score": 5,
+            "maxScore": 5,
+            "passScore": 4,
+            "passed": true,
+            "criteria": "All material claims are supported by the provided source IDs and do not invent missing data."
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 250,
+        "outputTokens": 130,
+        "totalTokens": 380
+      },
+      "latencyMs": 1300,
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      },
+      "violations": []
+    },
+    {
+      "caseId": "drift.task_plan.milestone_checklist.001",
+      "category": "task_plan",
+      "status": "PASS",
+      "contractPassed": true,
+      "sourceTraceRate": 1,
+      "sourceClaims": 0,
+      "tracedSourceClaims": 0,
+      "criticalUnsupportedClaims": 0,
+      "rubric": {
+        "earned": 10,
+        "total": 10,
+        "passed": true,
+        "scoreRate": 1,
+        "details": [
+          {
+            "id": "milestone_executability",
+            "score": 5,
+            "maxScore": 5,
+            "passScore": 4,
+            "passed": true,
+            "criteria": "Milestones can be executed in order and directly map to the requested CLI."
+          },
+          {
+            "id": "done_criteria_quality",
+            "score": 5,
+            "maxScore": 5,
+            "passScore": 4,
+            "passed": true,
+            "criteria": "Done criteria are concrete enough to verify with commands or output files."
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 210,
+        "outputTokens": 160,
+        "totalTokens": 370
+      },
+      "latencyMs": 1500,
+      "humanRevision": {
+        "measured": true,
+        "minutes": 1
+      },
+      "violations": []
+    },
+    {
+      "caseId": "drift.ambiguity.no_guess.001",
+      "category": "ambiguity",
+      "status": "PASS",
+      "contractPassed": true,
+      "sourceTraceRate": 1,
+      "sourceClaims": 0,
+      "tracedSourceClaims": 0,
+      "criticalUnsupportedClaims": 0,
+      "rubric": {
+        "earned": 5,
+        "total": 5,
+        "passed": true,
+        "scoreRate": 1,
+        "details": [
+          {
+            "id": "no_guess",
+            "score": 5,
+            "maxScore": 5,
+            "passScore": 4,
+            "passed": true,
+            "criteria": "The answer separates unknowns, assumptions, and safe minimal actions without inventing project facts."
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 190,
+        "outputTokens": 120,
+        "totalTokens": 310
+      },
+      "latencyMs": 1100,
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      },
+      "violations": []
+    },
+    {
+      "caseId": "drift.cost.concise_output.001",
+      "category": "cost",
+      "status": "PASS",
+      "contractPassed": true,
+      "sourceTraceRate": 1,
+      "sourceClaims": 0,
+      "tracedSourceClaims": 0,
+      "criticalUnsupportedClaims": 0,
+      "rubric": {
+        "earned": 5,
+        "total": 5,
+        "passed": true,
+        "scoreRate": 1,
+        "details": [
+          {
+            "id": "concise_decision",
+            "score": 5,
+            "maxScore": 5,
+            "passScore": 4,
+            "passed": true,
+            "criteria": "The answer gives a clear decision with short reasons and executable next steps."
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 170,
+        "outputTokens": 92,
+        "totalTokens": 262
+      },
+      "latencyMs": 900,
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      },
+      "violations": []
+    }
+  ]
+}

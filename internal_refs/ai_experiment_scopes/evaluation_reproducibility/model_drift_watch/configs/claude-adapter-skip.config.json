@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "model-drift-adapter-config.v1",
+  "runId": "2026-08-31.smoke.claude.skip",
+  "executionMode": "skip",
+  "provider": "anthropic",
+  "apiKeyEnv": "ANTHROPIC_API_KEY",
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "anthropicVersion": "2023-06-01",
+  "model": "claude-opus-5",
+  "modelGroup": "anthropic.high",
+  "watchType": "smoke",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "settings": {
+    "temperature": 0,
+    "maxOutputTokens": 1200
+  },
+  "output": {
+    "rawRunFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/raw_runs/2026-08-31.smoke.claude.skip.raw-run.json",
+    "failStatuses": ["ERROR"]
+  }
+}

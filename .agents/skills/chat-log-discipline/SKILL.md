@@ -1,6 +1,6 @@
 ---
 name: chat-log-discipline
-description: "Use when working in this repository, responding to user requests, or updating repository instructions: always record each user message and the AI response/work summary in internal_refs/chat_logs."
+description: "Use when working in this repository, responding to user requests, updating repository instructions, or recording individual verification logs: always record each user message and the AI response/work summary in internal_refs/chat_logs."
 ---
 
 # Chat Log Discipline
@@ -19,6 +19,38 @@ description: "Use when working in this repository, responding to user requests, 
 5. ユーザーのメッセージが複数ある場合は、メッセージ単位で分けて時系列に並べる。
 6. ユーザーが「必ず守る」「今後も」「ルールとして」などを明示した指示は、ログだけでなく `AGENTS.md` または該当 skill にも反映する。
 7. 最終回答の前に、当該ターンのログ追記が完了していることを確認する。
+
+## 個別検証ログ
+
+モデル比較、プロンプト比較、モジュール単位の設計・実装比較など、後で振り返る検証作業では、全体チャットログとは別に個別検証ログも残す。
+
+個別検証ログの置き場所:
+
+- `internal_refs/ai_experiment_scopes/prompt_behavior_experiments/experiments/`
+- `internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/`
+
+個別検証ログに残すもの:
+
+- 検証ID。
+- 対象モジュール。
+- 使用モデル。
+- 開始時刻、終了時刻、所要時間。
+- ユーザー指示回数。
+- AIからの確認回数。
+- 修正依頼回数。
+- 人間レビュー時間。
+- 入力prompt。
+- 出力成果物。
+- 通過したチェックリスト。
+- 失敗、ブレ、追加修正。
+- 次回の改善。
+
+注意:
+
+- 個別検証ログは、会話全文の保存場所ではない。
+- ユーザー発言の原文保存は、引き続き `internal_refs/chat_logs/YYYY-MM-DD.md` を正とする。
+- 個別検証ログには、比較と振り返りに必要な情報だけを入れる。
+- 同じ検証内で複数モデルを比較する場合は、モデルごとにrunを分け、同じ評価項目で記録する。
 
 ## 推奨フォーマット
 

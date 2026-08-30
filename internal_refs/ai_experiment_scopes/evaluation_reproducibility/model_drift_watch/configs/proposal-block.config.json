@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "model-drift-proposal-generator-config.v1",
+  "proposalId": "2026-08-31.status-block-proposal",
+  "source": {
+    "checkResultFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/status_fixtures/2026-08-31.status-block.check-result.json"
+  },
+  "allowedSourceStatuses": ["ACTION", "BLOCK"],
+  "rules": [
+    {
+      "checkId": "model_drift.contract_pass_rate_drop",
+      "target": "schema",
+      "reason": "出力契約の通過率がbaselineより落ちた",
+      "changeSummary": "caseごとのexpectedContractとprompt内の出力形式条件を照合し、required fields、extra field禁止、Markdown禁止を明示する",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.source_trace_rate_drop",
+      "target": "prompt",
+      "reason": "根拠追跡率がbaselineより落ちた",
+      "changeSummary": "claimごとにsourceIdsを必須にする指示をpromptへ追加し、allowedSourceIds外の根拠を禁止する",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.task_score_drop",
+      "target": "prompt",
+      "reason": "task rubric scoreがbaselineより落ちた",
+      "changeSummary": "milestone、checklist、done criteria、riskの粒度条件をpromptへ追加する",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.token_increase_rate",
+      "target": "routing",
+      "reason": "token使用量がbaselineより増えた",
+      "changeSummary": "短文・定型caseは低cost model候補へroutingし、maxOutputTokensをcase gradingに合わせる",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.latency_increase_rate",
+      "target": "routing",
+      "reason": "latencyがbaselineより増えた",
+      "changeSummary": "latencyが重要なcaseを分け、軽量modelまたは低reasoning設定へroutingする",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.false_refusal_or_fallback_rate",
+      "target": "prompt",
+      "reason": "正当タスクで拒否またはfallbackが増えた",
+      "changeSummary": "正当なローカル検証作業であること、禁止操作をしないこと、必要時は確認することをpromptへ明示する",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.human_revision_minutes_increase_rate",
+      "target": "prompt",
+      "reason": "人間の修正時間がbaselineより増えた",
+      "changeSummary": "完了報告に未完了理由、残作業、証跡を必須化し、人間の確認コストを減らす",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.critical_unsupported_claims",
+      "target": "prompt",
+      "reason": "重要claimに根拠なしがある",
+      "changeSummary": "根拠なしの重要claimをBLOCK扱いにし、sourceIdsがない場合は断定ではなく未確認として出す",
+      "requiresHumanApproval": true
+    },
+    {
+      "checkId": "model_drift.conclusion_conflict_count",
+      "target": "threshold",
+      "reason": "同一caseで結論が揺れた",
+      "changeSummary": "同じcaseを追加で2回再実行し、揺れが続く場合だけthresholdまたはrouting変更を提案する",
+      "requiresHumanApproval": true
+    }
+  ],
+  "output": {
+    "proposalFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/proposals/2026-08-31.status-block.proposal.json",
+    "failStatuses": []
+  }
+}

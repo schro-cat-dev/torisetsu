@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "model-drift-case-schema-check-config.v1",
+  "checkId": "2026-08-31.model-drift-smoke-case-schema-check",
+  "targetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "expected": {
+    "caseSetSchemaVersion": "model-drift-case-set.v1",
+    "caseSetId": "model-drift-smoke.v1",
+    "caseCount": 5,
+    "requiredCaseIds": [
+      "drift.contract.schema_convert.001",
+      "drift.source_trace.local_excerpt.001",
+      "drift.task_plan.milestone_checklist.001",
+      "drift.ambiguity.no_guess.001",
+      "drift.cost.concise_output.001"
+    ],
+    "allowedCategories": [
+      "contract",
+      "source_trace",
+      "task_plan",
+      "ambiguity",
+      "cost"
+    ],
+    "requiredTopLevelFields": [
+      "schemaVersion",
+      "caseSetId",
+      "title",
+      "description",
+      "createdAt",
+      "cases"
+    ],
+    "requiredCaseFields": [
+      "caseId",
+      "category",
+      "watchPurpose",
+      "prompt",
+      "expectedContract",
+      "grading"
+    ],
+    "requiredExpectedContractFields": [
+      "format",
+      "requiredFields",
+      "fieldTypes",
+      "allowExtraFields",
+      "forbidMarkdown"
+    ],
+    "requiredGradingFields": [
+      "contractRequired",
+      "sourceTraceRequired",
+      "maxOutputTokens",
+      "rubric"
+    ],
+    "requiredRubricFields": [
+      "id",
+      "maxScore",
+      "passScore",
+      "criteria"
+    ]
+  },
+  "output": {
+    "file": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/schema_checks/2026-08-31.smoke-case-schema-check.result.json",
+    "failStatuses": ["FAIL"]
+  }
+}

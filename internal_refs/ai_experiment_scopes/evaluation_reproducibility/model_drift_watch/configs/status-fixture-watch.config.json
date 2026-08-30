@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "model-drift-check-config.v1",
+  "name": "status-fixture-watch",
+  "inputs": {
+    "baselineFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/status-baseline-observation.json",
+    "currentFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/status-current-watch-observation.json"
+  },
+  "thresholds": [
+    {
+      "id": "model_drift.contract_pass_rate_drop",
+      "metric": "contractPassRateDrop",
+      "operator": "<=",
+      "value": 0,
+      "unit": "pt",
+      "severity": "ACTION",
+      "message": "出力契約の通過率がbaselineより落ちた"
+    },
+    {
+      "id": "model_drift.source_trace_rate_drop",
+      "metric": "sourceTraceRateDrop",
+      "operator": "<=",
+      "value": 0.05,
+      "unit": "pt",
+      "severity": "WATCH",
+      "message": "根拠追跡率がbaselineより落ちた"
+    },
+    {
+      "id": "model_drift.task_score_drop",
+      "metric": "taskScoreDrop",
+      "operator": "<=",
+      "value": 5,
+      "unit": "pt",
+      "severity": "WATCH",
+      "message": "task rubric scoreがbaselineより落ちた"
+    },
+    {
+      "id": "model_drift.token_increase_rate",
+      "metric": "tokenIncreaseRate",
+      "operator": "<=",
+      "value": 0.2,
+      "unit": "rate",
+      "severity": "WATCH",
+      "message": "token使用量がbaselineより増えた"
+    },
+    {
+      "id": "model_drift.latency_increase_rate",
+      "metric": "latencyIncreaseRate",
+      "operator": "<=",
+      "value": 0.3,
+      "unit": "rate",
+      "severity": "WATCH",
+      "message": "latencyがbaselineより増えた"
+    },
+    {
+      "id": "model_drift.false_refusal_or_fallback_rate",
+      "metric": "falseRefusalOrFallbackRate",
+      "operator": "<=",
+      "value": 0.05,
+      "unit": "rate",
+      "severity": "ACTION",
+      "message": "正当タスクで拒否またはfallbackが増えた"
+    },
+    {
+      "id": "model_drift.human_revision_minutes_increase_rate",
+      "metric": "humanRevisionMinutesIncreaseRate",
+      "operator": "<=",
+      "value": 0.2,
+      "unit": "rate",
+      "severity": "ACTION",
+      "message": "人間の修正時間がbaselineより増えた"
+    },
+    {
+      "id": "model_drift.critical_unsupported_claims",
+      "metric": "criticalUnsupportedClaims",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "BLOCK",
+      "message": "重要claimに根拠なしがある"
+    },
+    {
+      "id": "model_drift.conclusion_conflict_count",
+      "metric": "conclusionConflictCount",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "ACTION",
+      "message": "同一caseで結論が揺れた"
+    }
+  ],
+  "actions": [
+    {
+      "status": "OK",
+      "items": ["採用モデル、prompt、schema、しきい値を維持する"]
+    },
+    {
+      "status": "WATCH",
+      "items": ["同じcaseを次回も実行する", "悪化したmetricを個別検証ログに観察メモとして残す"]
+    },
+    {
+      "status": "ACTION",
+      "items": ["prompt、出力schema、model routing、しきい値のどれを直すか分けて確認する", "修正案は自動適用せず、proposalとして残す"]
+    },
+    {
+      "status": "BLOCK",
+      "items": ["対象用途で一時採用停止する", "人間レビュー必須に切り替える"]
+    }
+  ],
+  "output": {
+    "file": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/status_fixtures/2026-08-31.status-watch.check-result.json",
+    "failStatuses": []
+  }
+}

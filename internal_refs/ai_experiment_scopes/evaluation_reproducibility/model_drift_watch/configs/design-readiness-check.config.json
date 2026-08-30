@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "model-drift-design-readiness-check-config.v1",
+  "checkId": "2026-08-31.model-drift-design-readiness",
+  "targets": [
+    {
+      "file": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/README.md",
+      "requiredText": [
+        "## 目的",
+        "## 概要",
+        "## 誰が何を判断するために使うか",
+        "## 初期対象モデル",
+        "## この仕組みがOKになる状態",
+        "## 保存先",
+        "## 初版ツール"
+      ]
+    },
+    {
+      "file": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/core_design.md",
+      "requiredText": [
+        "## 何をするためのものか",
+        "## 対象モデル",
+        "## この仕組みが満たすべき要件",
+        "## 完了したら何がOKになるか",
+        "## 完了扱いにしない例",
+        "## データの流れ"
+      ]
+    },
+    {
+      "file": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/v1_completion_contract.md",
+      "requiredText": [
+        "## このv1は何を完成させるものか",
+        "## v1対象モデル",
+        "## v1の入力と出力",
+        "## v1の合格ライン",
+        "## v1完了条件",
+        "## V1-01/V1-02の最低品質",
+        "## 完了判定"
+      ]
+    },
+    {
+      "file": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/feedback_loop.md",
+      "requiredText": [
+        "## 目的",
+        "## 何をする文書か",
+        "## 入力",
+        "## 出力",
+        "## どこを直すかの分類",
+        "## proposalのOK/NG"
+      ]
+    }
+  ],
+  "output": {
+    "file": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/schema_checks/2026-08-31.design-readiness-check.result.json",
+    "failStatuses": ["FAIL"]
+  }
+}

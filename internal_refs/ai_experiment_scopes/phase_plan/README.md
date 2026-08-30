@@ -13,7 +13,7 @@ flowchart TD
   Improve --> Repeat["同じ流れをもう一度試す"]
   Repeat --> Phase1Done["問題なければフェーズ1終了"]
   Phase1Done --> Recruiting["採用プラットフォーム実験へ進む"]
-  Recruiting --> Measure["適切に実施できる仕組みか測る"]
+  Recruiting --> Measure["採用実験の入力、判定、証跡がそろうか測る"]
   Measure --> Improve
 ```
 

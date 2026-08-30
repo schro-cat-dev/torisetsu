@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "model-drift-grader-config.v1",
+  "graderId": "2026-08-31.model-drift-fixture-ok-grader",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "rawRunFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/raw-run-ok.json",
+  "output": {
+    "observationFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/observations/2026-08-31.smoke.fixture.ok.observation.json",
+    "graderResultFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/grader_results/2026-08-31.smoke.fixture.ok.grader-result.json",
+    "failStatuses": ["FAIL"]
+  }
+}

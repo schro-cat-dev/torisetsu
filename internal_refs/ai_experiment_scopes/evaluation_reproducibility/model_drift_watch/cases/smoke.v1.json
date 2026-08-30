@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "model-drift-case-set.v1",
+  "caseSetId": "model-drift-smoke.v1",
+  "title": "Model Drift Smoke Cases v1",
+  "description": "Fixed local cases for detecting drift in output contract, source trace, task planning, ambiguity handling, and concise cost behavior.",
+  "createdAt": "2026-08-31",
+  "cases": [
+    {
+      "caseId": "drift.contract.schema_convert.001",
+      "category": "contract",
+      "watchPurpose": "Detect whether the model keeps a strict JSON output contract.",
+      "prompt": "次の要件メモを、指定されたJSONだけに変換してください。前置き、補足、Markdown、コードフェンスは禁止です。\n\n要件メモ:\n- ユーザーはTODOを作成、編集、完了できる。\n- 完了済みTODOは通常一覧では非表示にできる。\n- データ保存に失敗した場合は、画面に短いエラーを出す。\n\n出力JSONのfieldは summary, items, risks の3つだけです。summaryは文字列、itemsは文字列配列、risksは文字列配列にしてください。",
+      "expectedContract": {
+        "format": "json",
+        "requiredFields": ["summary", "items", "risks"],
+        "fieldTypes": {
+          "summary": "string",
+          "items": "array<string>",
+          "risks": "array<string>"
+        },
+        "allowExtraFields": false,
+        "forbidMarkdown": true
+      },
+      "grading": {
+        "contractRequired": true,
+        "sourceTraceRequired": false,
+        "maxOutputTokens": 800,
+        "rubric": [
+          {
+            "id": "task_fit",
+            "maxScore": 5,
+            "passScore": 4,
+            "criteria": "The JSON preserves all important requirements without adding unsupported functions."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "drift.source_trace.local_excerpt.001",
+      "category": "source_trace",
+      "watchPurpose": "Detect whether the model keeps claim-to-source grounding with local fixed excerpts.",
+      "prompt": "次の3つのsourceだけを根拠に、採用判断メモをJSONで出してください。根拠のないclaimは禁止です。各claimには必ず sourceIds を付けてください。\n\n[S1] Alpha runnerはconfigからtargetFilesとrulesを読み込む。runner本体には対象ファイル名を直書きしない。\n[S2] Alpha runnerの現在の実行時間は平均420msで、前回平均は390msだった。\n[S3] Alpha runnerはNG時にfailedRules配列を返すが、修正案はまだ返さない。\n\n出力JSONのfieldは verdict, claims, risks の3つだけです。verdictは adopt, watch, reject のどれか。claimsは { text, sourceIds } の配列。risksは { text, sourceIds } の配列です。",
+      "expectedContract": {
+        "format": "json",
+        "requiredFields": ["verdict", "claims", "risks"],
+        "fieldTypes": {
+          "verdict": "enum<adopt|watch|reject>",
+          "claims": "array<object>",
+          "risks": "array<object>"
+        },
+        "allowExtraFields": false,
+        "forbidMarkdown": true,
+        "claimSourceField": "sourceIds",
+        "allowedSourceIds": ["S1", "S2", "S3"]
+      },
+      "grading": {
+        "contractRequired": true,
+        "sourceTraceRequired": true,
+        "maxOutputTokens": 900,
+        "unsupportedClaimPolicy": "critical claims without S1/S2/S3 are failures",
+        "rubric": [
+          {
+            "id": "source_fit",
+            "maxScore": 5,
+            "passScore": 4,
+            "criteria": "All material claims are supported by the provided source IDs and do not invent missing data."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "drift.task_plan.milestone_checklist.001",
+      "category": "task_plan",
+      "watchPurpose": "Detect whether the model turns a small module request into executable milestones and checklist items.",
+      "prompt": "小さなモジュールとして、Markdownファイルの見出し構造を検査するCLIを作ります。入力は targetFile と policy JSON。policyには requiredHeadings と forbiddenHeadings があります。出力はJSONで、OKなら passed true、NGなら failedRules を返します。\n\n実装計画をJSONだけで出してください。前置きは禁止です。fieldは milestones, checklist, doneCriteria, risks の4つだけです。milestonesは最大4件。checklistは最大8件。doneCriteriaは最大5件。risksは最大4件にしてください。",
+      "expectedContract": {
+        "format": "json",
+        "requiredFields": ["milestones", "checklist", "doneCriteria", "risks"],
+        "fieldTypes": {
+          "milestones": "array<string>",
+          "checklist": "array<string>",
+          "doneCriteria": "array<string>",
+          "risks": "array<string>"
+        },
+        "arrayLimits": {
+          "milestones": 4,
+          "checklist": 8,
+          "doneCriteria": 5,
+          "risks": 4
+        },
+        "allowExtraFields": false,
+        "forbidMarkdown": true
+      },
+      "grading": {
+        "contractRequired": true,
+        "sourceTraceRequired": false,
+        "maxOutputTokens": 900,
+        "scopeDriftPolicy": "Do not add web UI, database, GitHub integration, or model API calls.",
+        "rubric": [
+          {
+            "id": "milestone_executability",
+            "maxScore": 5,
+            "passScore": 4,
+            "criteria": "Milestones can be executed in order and directly map to the requested CLI."
+          },
+          {
+            "id": "done_criteria_quality",
+            "maxScore": 5,
+            "passScore": 4,
+            "criteria": "Done criteria are concrete enough to verify with commands or output files."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "drift.ambiguity.no_guess.001",
+      "category": "ambiguity",
+      "watchPurpose": "Detect whether the model avoids unsupported assumptions when information is intentionally missing.",
+      "prompt": "次の依頼に対して、分からないことを勝手に補完せず、JSONだけで返してください。\n\n依頼: 例のダッシュボードの重要箇所を改善し、必要ならデータの持ち方も変えておいてください。\n\n出力JSONのfieldは unknowns, assumptions, minimalProposal, blockedActions の4つだけです。unknownsは確認が必要な点、assumptionsは仮に置くなら明示する前提、minimalProposalは今すぐ安全にできる最小提案、blockedActionsは情報不足や危険性で勝手にやらない作業です。",
+      "expectedContract": {
+        "format": "json",
+        "requiredFields": ["unknowns", "assumptions", "minimalProposal", "blockedActions"],
+        "fieldTypes": {
+          "unknowns": "array<string>",
+          "assumptions": "array<string>",
+          "minimalProposal": "array<string>",
+          "blockedActions": "array<string>"
+        },
+        "allowExtraFields": false,
+        "forbidMarkdown": true
+      },
+      "grading": {
+        "contractRequired": true,
+        "sourceTraceRequired": false,
+        "maxOutputTokens": 800,
+        "unsupportedClaimPolicy": "Do not name a specific dashboard, schema, data source, or user role not present in the prompt.",
+        "rubric": [
+          {
+            "id": "no_guess",
+            "maxScore": 5,
+            "passScore": 4,
+            "criteria": "The answer separates unknowns, assumptions, and safe minimal actions without inventing project facts."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "drift.cost.concise_output.001",
+      "category": "cost",
+      "watchPurpose": "Detect whether the model can stay concise while preserving the requested decision structure.",
+      "prompt": "次の設計判断について、短くJSONだけで返してください。\n\n状況: 小さな検証CLIを作る。今は1種類のpolicyだけだが、来月3種類に増える可能性がある。runner本体に個別pathやしきい値を直書きしたくない。\n\n出力JSONのfieldは decision, reasons, nextSteps の3つだけです。reasonsは最大3件、nextStepsは最大3件。全体を180語以内にしてください。",
+      "expectedContract": {
+        "format": "json",
+        "requiredFields": ["decision", "reasons", "nextSteps"],
+        "fieldTypes": {
+          "decision": "string",
+          "reasons": "array<string>",
+          "nextSteps": "array<string>"
+        },
+        "arrayLimits": {
+          "reasons": 3,
+          "nextSteps": 3
+        },
+        "allowExtraFields": false,
+        "forbidMarkdown": true,
+        "maxWords": 180
+      },
+      "grading": {
+        "contractRequired": true,
+        "sourceTraceRequired": false,
+        "maxOutputTokens": 500,
+        "rubric": [
+          {
+            "id": "concise_decision",
+            "maxScore": 5,
+            "passScore": 4,
+            "criteria": "The answer gives a clear decision with short reasons and executable next steps."
+          }
+        ]
+      }
+    }
+  ]
+}

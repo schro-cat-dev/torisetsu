@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "model-drift-action-proposal.v1",
+  "generatedAt": "2026-08-30T23:40:47.146Z",
+  "proposalId": "2026-08-31.status-block-proposal",
+  "sourceCheckResult": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/status_fixtures/2026-08-31.status-block.check-result.json",
+  "status": "BLOCK",
+  "baselineRunId": "fixture-status-baseline-2026-08-31",
+  "currentRunId": "fixture-status-current-block-2026-08-31",
+  "model": {
+    "provider": "fixture",
+    "name": "fixture-model",
+    "modelGroup": "fixture.status",
+    "versionHint": "current-block",
+    "settings": {
+      "temperature": 0,
+      "reasoningEffort": "medium"
+    }
+  },
+  "proposals": [
+    {
+      "target": "prompt",
+      "reason": "重要claimに根拠なしがある",
+      "changeSummary": "根拠なしの重要claimをBLOCK扱いにし、sourceIdsがない場合は断定ではなく未確認として出す",
+      "requiresHumanApproval": true,
+      "evidence": {
+        "checkId": "model_drift.critical_unsupported_claims",
+        "metric": "criticalUnsupportedClaims",
+        "actual": 1,
+        "operator": "==",
+        "expected": 0,
+        "severity": "BLOCK",
+        "message": "重要claimに根拠なしがある"
+      }
+    }
+  ],
+  "validation": {
+    "status": "PASS",
+    "failedCheckCount": 1,
+    "proposalCount": 1,
+    "validationErrors": []
+  }
+}

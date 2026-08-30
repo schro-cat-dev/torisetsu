@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "model-drift-watch-observation.v1",
+  "runId": "fixture-status-baseline-2026-08-31",
+  "runAt": "2026-08-31T10:00:00.000Z",
+  "watchType": "smoke",
+  "model": {
+    "provider": "fixture",
+    "name": "fixture-model",
+    "modelGroup": "fixture.status",
+    "versionHint": "baseline",
+    "settings": {
+      "temperature": 0,
+      "reasoningEffort": "medium"
+    }
+  },
+  "caseSetId": "model-drift-smoke.v1",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "rawRunFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/raw-run-ok.json",
+  "grader": {
+    "graderId": "fixture-status-baseline-grader",
+    "configPath": "fixture"
+  },
+  "metrics": {
+    "contractPassRate": 1,
+    "sourceTraceRate": 0.98,
+    "taskRubricScore": 92,
+    "criticalUnsupportedClaims": 0,
+    "totalTokens": 10000,
+    "latencyMs": 40000,
+    "refusalOrFallbackRate": 0,
+    "humanRevisionMeasured": true,
+    "humanRevisionMinutes": 20,
+    "conclusionConflictCount": 0
+  },
+  "notes": "Shared baseline for OK/WATCH/ACTION/BLOCK status fixtures."
+}

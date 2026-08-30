@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "model-drift-observation-schema-check-result.v1",
+  "generatedAt": "2026-08-30T23:26:02.969Z",
+  "configPath": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/configs/observation-schema-check.config.json",
+  "targetFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/observations/2026-08-31.smoke.fixture.ok.observation.json",
+  "status": "PASS",
+  "summary": {
+    "runId": "2026-08-31.smoke.fixture.ok",
+    "provider": "fixture",
+    "model": "fixture-model-ok",
+    "checkedMetricCount": 10,
+    "failedCheckCount": 0
+  },
+  "passedChecks": [
+    {
+      "id": "observation.schema_version",
+      "path": "observation.schemaVersion",
+      "passed": true
+    },
+    {
+      "id": "observation.required_top_level_fields",
+      "path": "observation",
+      "passed": true
+    },
+    {
+      "id": "observation.model_fields",
+      "path": "observation.model",
+      "passed": true
+    },
+    {
+      "id": "observation.grader_fields",
+      "path": "observation.grader",
+      "passed": true
+    },
+    {
+      "id": "observation.metrics",
+      "path": "observation.metrics",
+      "passed": true
+    }
+  ],
+  "failedChecks": []
+}

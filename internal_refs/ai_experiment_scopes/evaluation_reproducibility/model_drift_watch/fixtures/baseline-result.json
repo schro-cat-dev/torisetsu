@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "model-drift-watch-observation.v1",
+  "runId": "baseline-2026-08-31-smoke",
+  "runAt": "2026-08-31T00:00:00.000Z",
+  "watchType": "smoke",
+  "model": {
+    "provider": "example",
+    "name": "example-model",
+    "versionHint": "initial-baseline",
+    "settings": {
+      "temperature": 0.2,
+      "reasoningEffort": "medium"
+    }
+  },
+  "metrics": {
+    "contractPassRate": 1,
+    "sourceTraceRate": 0.98,
+    "taskRubricScore": 92,
+    "criticalUnsupportedClaims": 0,
+    "totalTokens": 10000,
+    "latencyMs": 40000,
+    "refusalOrFallbackRate": 0,
+    "humanRevisionMinutes": 20,
+    "conclusionConflictCount": 0
+  },
+  "notes": "fixture baseline"
+}

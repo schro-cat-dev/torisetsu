@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "execution-completion-record.v1",
+  "task": {
+    "taskId": "2026-08-31.completion-loop-infra",
+    "title": "探索抑制と完了score基盤の追加",
+    "estimatedMinutes": 60,
+    "actualMinutes": 55
+  },
+  "completion": {
+    "doneCriteriaMet": true,
+    "doneCriteria": "AGENTS、task skill、専用skill、score runner、モデルドリフトv1完了契約を追加する"
+  },
+  "quality": {
+    "requiredChecksPassed": true,
+    "checks": [
+      "node execution",
+      "node --check",
+      "skill validation",
+      "git diff --check"
+    ]
+  },
+  "evidence": {
+    "verificationRecorded": true,
+    "commands": [
+      "node internal_refs/ai_experiment_scopes/execution_completion_loop/tools/run-completion-score.mjs internal_refs/ai_experiment_scopes/execution_completion_loop/configs/default-completion-score.config.json internal_refs/ai_experiment_scopes/execution_completion_loop/fixtures/sample-completion-record.json",
+      "node --check internal_refs/ai_experiment_scopes/execution_completion_loop/tools/run-completion-score.mjs",
+      "python3 /Users/yutoseki/.codex/skills/codex-skill-maintenance/scripts/validate_skills.py .agents/skills/completion-driven-execution",
+      "python3 /Users/yutoseki/.codex/skills/codex-skill-maintenance/scripts/validate_skills.py .agents/skills/task-deadline-stakeholder-planning",
+      "python3 /Users/yutoseki/.codex/skills/codex-skill-maintenance/scripts/validate_skills.py .agents/skills/cognitive-model-calibration",
+      "git diff --check"
+    ]
+  },
+  "focus": {
+    "scopeDriftCount": 0
+  },
+  "speed": {
+    "estimateOverrunRate": 0
+  },
+  "revision": {
+    "userRevisionRequestCount": 1
+  },
+  "nextLoop": {
+    "singleNextAction": true,
+    "nextAction": "モデルドリフト監視のsmoke 5件case JSONとcase schema checkerを作る"
+  }
+}

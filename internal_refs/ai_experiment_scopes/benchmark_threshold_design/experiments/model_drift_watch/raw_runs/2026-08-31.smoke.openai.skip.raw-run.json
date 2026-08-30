@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "model-drift-raw-run.v1",
+  "runId": "2026-08-31.smoke.openai.skip",
+  "startedAt": "2026-08-30T23:40:47.149Z",
+  "endedAt": "2026-08-30T23:40:47.149Z",
+  "latencyMs": 0,
+  "provider": "openai",
+  "modelGroup": "openai.high",
+  "model": "gpt-5.6-sol",
+  "watchType": "smoke",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "caseSetId": "model-drift-smoke.v1",
+  "settings": {
+    "temperature": 0,
+    "reasoningEffort": "medium",
+    "maxOutputTokens": 1200,
+    "store": false
+  },
+  "status": "SKIP",
+  "skipReason": "executionMode=skip",
+  "cases": [
+    {
+      "caseId": "drift.contract.schema_convert.001",
+      "status": "SKIP",
+      "latencyMs": 0,
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "stopReason": "skip",
+      "outputText": "",
+      "skipReason": "executionMode=skip"
+    },
+    {
+      "caseId": "drift.source_trace.local_excerpt.001",
+      "status": "SKIP",
+      "latencyMs": 0,
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "stopReason": "skip",
+      "outputText": "",
+      "skipReason": "executionMode=skip"
+    },
+    {
+      "caseId": "drift.task_plan.milestone_checklist.001",
+      "status": "SKIP",
+      "latencyMs": 0,
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "stopReason": "skip",
+      "outputText": "",
+      "skipReason": "executionMode=skip"
+    },
+    {
+      "caseId": "drift.ambiguity.no_guess.001",
+      "status": "SKIP",
+      "latencyMs": 0,
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "stopReason": "skip",
+      "outputText": "",
+      "skipReason": "executionMode=skip"
+    },
+    {
+      "caseId": "drift.cost.concise_output.001",
+      "status": "SKIP",
+      "latencyMs": 0,
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "stopReason": "skip",
+      "outputText": "",
+      "skipReason": "executionMode=skip"
+    }
+  ]
+}

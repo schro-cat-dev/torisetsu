@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "model-drift-watch-observation.v1",
+  "runId": "2026-08-31.smoke.fixture.ok",
+  "runAt": "2026-08-31T10:00:08+09:00",
+  "watchType": "smoke",
+  "model": {
+    "provider": "fixture",
+    "name": "fixture-model-ok",
+    "modelGroup": "fixture.ok",
+    "versionHint": "raw run model field",
+    "settings": {
+      "temperature": 0,
+      "maxOutputTokens": 1200
+    }
+  },
+  "caseSetId": "model-drift-smoke.v1",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "rawRunFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/raw-run-ok.json",
+  "grader": {
+    "graderId": "2026-08-31.model-drift-fixture-ok-grader",
+    "configPath": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/configs/grader-fixture-ok.config.json"
+  },
+  "metrics": {
+    "contractPassRate": 1,
+    "sourceTraceRate": 1,
+    "taskRubricScore": 100,
+    "criticalUnsupportedClaims": 0,
+    "totalTokens": 1588,
+    "latencyMs": 8000,
+    "refusalOrFallbackRate": 0,
+    "humanRevisionMeasured": true,
+    "humanRevisionMinutes": 1,
+    "conclusionConflictCount": 0
+  }
+}

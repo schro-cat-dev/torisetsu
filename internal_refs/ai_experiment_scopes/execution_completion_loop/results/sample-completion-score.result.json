@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "execution-completion-score-result.v1",
+  "generatedAt": "2026-08-30T22:12:59.052Z",
+  "configPath": "internal_refs/ai_experiment_scopes/execution_completion_loop/configs/default-completion-score.config.json",
+  "recordPath": "internal_refs/ai_experiment_scopes/execution_completion_loop/fixtures/sample-completion-record.json",
+  "taskId": "sample.2026-08-31.execution-loop",
+  "taskTitle": "完了優先loopのサンプル採点",
+  "status": "PASS",
+  "score": 100,
+  "earned": 100,
+  "total": 100,
+  "checks": [
+    {
+      "id": "completion.done_criteria_met",
+      "field": "completion.doneCriteriaMet",
+      "actual": true,
+      "operator": "==",
+      "expected": true,
+      "weight": 30,
+      "severity": "BLOCK",
+      "passed": true,
+      "message": "今回の完了条件を満たした"
+    },
+    {
+      "id": "quality.required_checks_passed",
+      "field": "quality.requiredChecksPassed",
+      "actual": true,
+      "operator": "==",
+      "expected": true,
+      "weight": 20,
+      "severity": "ACTION",
+      "passed": true,
+      "message": "必須チェックが通った"
+    },
+    {
+      "id": "evidence.verification_recorded",
+      "field": "evidence.verificationRecorded",
+      "actual": true,
+      "operator": "==",
+      "expected": true,
+      "weight": 15,
+      "severity": "ACTION",
+      "passed": true,
+      "message": "検証証跡が記録されている"
+    },
+    {
+      "id": "focus.scope_drift_count",
+      "field": "focus.scopeDriftCount",
+      "actual": 0,
+      "operator": "==",
+      "expected": 0,
+      "weight": 10,
+      "severity": "ACTION",
+      "passed": true,
+      "message": "勝手なスコープ拡大がない"
+    },
+    {
+      "id": "speed.estimate_overrun_rate",
+      "field": "speed.estimateOverrunRate",
+      "actual": 0,
+      "operator": "<=",
+      "expected": 0.3,
+      "weight": 10,
+      "severity": "WATCH",
+      "passed": true,
+      "message": "見積もり超過が30%以内"
+    },
+    {
+      "id": "revision.user_revision_request_count",
+      "field": "revision.userRevisionRequestCount",
+      "actual": 0,
+      "operator": "<=",
+      "expected": 1,
+      "weight": 10,
+      "severity": "WATCH",
+      "passed": true,
+      "message": "ユーザー修正依頼が1回以内"
+    },
+    {
+      "id": "next_loop.single_next_action",
+      "field": "nextLoop.singleNextAction",
+      "actual": true,
+      "operator": "==",
+      "expected": true,
+      "weight": 5,
+      "severity": "WATCH",
+      "passed": true,
+      "message": "次の改善が1つに絞れている"
+    }
+  ],
+  "actionItems": [
+    "次のマイルストーンへ進む"
+  ]
+}

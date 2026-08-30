@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "model-drift-observation-schema-check-config.v1",
+  "checkId": "2026-08-31.smoke-fixture-observation-schema-check",
+  "targetFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/observations/2026-08-31.smoke.fixture.ok.observation.json",
+  "expected": {
+    "observationSchemaVersion": "model-drift-watch-observation.v1",
+    "requiredTopLevelFields": [
+      "schemaVersion",
+      "runId",
+      "runAt",
+      "watchType",
+      "model",
+      "caseSetId",
+      "caseSetFile",
+      "rawRunFile",
+      "grader",
+      "metrics"
+    ],
+    "requiredModelFields": [
+      "provider",
+      "name",
+      "modelGroup",
+      "versionHint",
+      "settings"
+    ],
+    "requiredGraderFields": [
+      "graderId",
+      "configPath"
+    ],
+    "numericMetrics": [
+      "contractPassRate",
+      "sourceTraceRate",
+      "taskRubricScore",
+      "criticalUnsupportedClaims",
+      "totalTokens",
+      "latencyMs",
+      "refusalOrFallbackRate",
+      "humanRevisionMinutes",
+      "conclusionConflictCount"
+    ],
+    "booleanMetrics": [
+      "humanRevisionMeasured"
+    ],
+    "rateMetrics": [
+      "contractPassRate",
+      "sourceTraceRate",
+      "refusalOrFallbackRate"
+    ],
+    "integerMetrics": [
+      "criticalUnsupportedClaims",
+      "totalTokens",
+      "latencyMs",
+      "conclusionConflictCount"
+    ]
+  },
+  "output": {
+    "file": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/schema_checks/2026-08-31.smoke-fixture-observation-schema-check.result.json",
+    "failStatuses": ["FAIL"]
+  }
+}

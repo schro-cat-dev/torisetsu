@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "model-drift-raw-run.v1",
+  "runId": "2026-08-31.smoke.fixture.ok",
+  "startedAt": "2026-08-31T10:00:00+09:00",
+  "endedAt": "2026-08-31T10:00:08+09:00",
+  "latencyMs": 8000,
+  "provider": "fixture",
+  "modelGroup": "fixture.ok",
+  "model": "fixture-model-ok",
+  "watchType": "smoke",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "caseSetId": "model-drift-smoke.v1",
+  "settings": {
+    "temperature": 0,
+    "maxOutputTokens": 1200
+  },
+  "status": "OK",
+  "cases": [
+    {
+      "caseId": "drift.contract.schema_convert.001",
+      "status": "OK",
+      "latencyMs": 900,
+      "usage": {
+        "inputTokens": 180,
+        "outputTokens": 86,
+        "totalTokens": 266
+      },
+      "outputText": "{\"summary\":\"TODO機能の要件整理\",\"items\":[\"ユーザーはTODOを作成、編集、完了できる\",\"完了済みTODOは通常一覧では非表示にできる\"],\"risks\":[\"データ保存に失敗した場合は画面に短いエラーを出す必要がある\"]}",
+      "manualRubricScores": {
+        "task_fit": 5
+      },
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      }
+    },
+    {
+      "caseId": "drift.source_trace.local_excerpt.001",
+      "status": "OK",
+      "latencyMs": 1300,
+      "usage": {
+        "inputTokens": 250,
+        "outputTokens": 130,
+        "totalTokens": 380
+      },
+      "outputText": "{\"verdict\":\"watch\",\"claims\":[{\"text\":\"runner本体に対象ファイル名を直書きしない設計である\",\"sourceIds\":[\"S1\"]},{\"text\":\"現在の平均実行時間は420msで、前回390msより30ms長い\",\"sourceIds\":[\"S2\"]}],\"risks\":[{\"text\":\"NG時にfailedRulesは返すが、修正案はまだ返さない\",\"sourceIds\":[\"S3\"]}]}",
+      "manualRubricScores": {
+        "source_fit": 5
+      },
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      }
+    },
+    {
+      "caseId": "drift.task_plan.milestone_checklist.001",
+      "status": "OK",
+      "latencyMs": 1500,
+      "usage": {
+        "inputTokens": 210,
+        "outputTokens": 160,
+        "totalTokens": 370
+      },
+      "outputText": "{\"milestones\":[\"policy JSONの入力契約を決める\",\"Markdown見出し抽出を実装する\",\"requiredHeadingsとforbiddenHeadingsを判定する\",\"結果JSONと失敗時の証跡を出す\"],\"checklist\":[\"targetFileをconfigから読む\",\"policyをJSON parseする\",\"requiredHeadings不足をfailedRulesへ入れる\",\"forbiddenHeadings検出をfailedRulesへ入れる\",\"passed booleanを返す\",\"NG時に対象headingを返す\",\"構文チェックを通す\",\"fixtureでOK/NGを確認する\"],\"doneCriteria\":[\"OK fixtureでpassed trueになる\",\"NG fixtureでfailedRulesが返る\",\"runner本体に対象pathを直書きしない\"],\"risks\":[\"Markdown見出しの記法差分\",\"policyの未定義field\"]}",
+      "manualRubricScores": {
+        "milestone_executability": 5,
+        "done_criteria_quality": 5
+      },
+      "humanRevision": {
+        "measured": true,
+        "minutes": 1
+      }
+    },
+    {
+      "caseId": "drift.ambiguity.no_guess.001",
+      "status": "OK",
+      "latencyMs": 1100,
+      "usage": {
+        "inputTokens": 190,
+        "outputTokens": 120,
+        "totalTokens": 310
+      },
+      "outputText": "{\"unknowns\":[\"対象ダッシュボードのpathまたは画面名\",\"重要箇所の判断基準\",\"現在のデータ構造\",\"変更してよい範囲\"],\"assumptions\":[\"ローカルで戻せる範囲だけ先に確認する\"],\"minimalProposal\":[\"対象画面と現状の問題を確認する\",\"既存データ構造と表示箇所を読む\",\"変更候補とリスクを短く出す\"],\"blockedActions\":[\"特定画面を推測して変更する\",\"DB schemaを勝手に変更する\",\"本番データへ触る\"]}",
+      "manualRubricScores": {
+        "no_guess": 5
+      },
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      }
+    },
+    {
+      "caseId": "drift.cost.concise_output.001",
+      "status": "OK",
+      "latencyMs": 900,
+      "usage": {
+        "inputTokens": 170,
+        "outputTokens": 92,
+        "totalTokens": 262
+      },
+      "outputText": "{\"decision\":\"runner本体は共通処理に限定し、policy JSONへ対象pathとしきい値を置く\",\"reasons\":[\"来月policyが増えてもrunner変更を避けられる\",\"対象ごとの差分をconfigで管理できる\",\"結果形式をそろえやすい\"],\"nextSteps\":[\"policy schemaを決める\",\"OK/NG fixtureを作る\",\"runnerでschemaVersionとfailedRulesを検査する\"]}",
+      "manualRubricScores": {
+        "concise_decision": 5
+      },
+      "humanRevision": {
+        "measured": true,
+        "minutes": 0
+      }
+    }
+  ]
+}

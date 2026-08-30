@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "model-drift-check-result.v1",
+  "generatedAt": "2026-08-30T23:40:36.258Z",
+  "configPath": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/configs/status-fixture-ok.config.json",
+  "inputs": {
+    "baselineFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/status-baseline-observation.json",
+    "currentFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/fixtures/status-current-ok-observation.json"
+  },
+  "model": {
+    "provider": "fixture",
+    "name": "fixture-model",
+    "modelGroup": "fixture.status",
+    "versionHint": "current-ok",
+    "settings": {
+      "temperature": 0,
+      "reasoningEffort": "medium"
+    }
+  },
+  "baselineRunId": "fixture-status-baseline-2026-08-31",
+  "currentRunId": "fixture-status-current-ok-2026-08-31",
+  "status": "OK",
+  "metrics": {
+    "contractPassRateDrop": 0,
+    "sourceTraceRateDrop": 0.030000000000000027,
+    "taskScoreDrop": 3,
+    "tokenIncreaseRate": 0.1,
+    "latencyIncreaseRate": 0.15,
+    "falseRefusalOrFallbackRate": 0,
+    "humanRevisionMinutesIncreaseRate": 0.1,
+    "criticalUnsupportedClaims": 0,
+    "conclusionConflictCount": 0
+  },
+  "checks": [
+    {
+      "id": "model_drift.contract_pass_rate_drop",
+      "metric": "contractPassRateDrop",
+      "actual": 0,
+      "operator": "<=",
+      "expected": 0,
+      "unit": "pt",
+      "severity": "ACTION",
+      "passed": true,
+      "message": "出力契約の通過率がbaselineより落ちた"
+    },
+    {
+      "id": "model_drift.source_trace_rate_drop",
+      "metric": "sourceTraceRateDrop",
+      "actual": 0.030000000000000027,
+      "operator": "<=",
+      "expected": 0.05,
+      "unit": "pt",
+      "severity": "WATCH",
+      "passed": true,
+      "message": "根拠追跡率がbaselineより落ちた"
+    },
+    {
+      "id": "model_drift.task_score_drop",
+      "metric": "taskScoreDrop",
+      "actual": 3,
+      "operator": "<=",
+      "expected": 5,
+      "unit": "pt",
+      "severity": "WATCH",
+      "passed": true,
+      "message": "task rubric scoreがbaselineより落ちた"
+    },
+    {
+      "id": "model_drift.token_increase_rate",
+      "metric": "tokenIncreaseRate",
+      "actual": 0.1,
+      "operator": "<=",
+      "expected": 0.2,
+      "unit": "rate",
+      "severity": "WATCH",
+      "passed": true,
+      "message": "token使用量がbaselineより増えた"
+    },
+    {
+      "id": "model_drift.latency_increase_rate",
+      "metric": "latencyIncreaseRate",
+      "actual": 0.15,
+      "operator": "<=",
+      "expected": 0.3,
+      "unit": "rate",
+      "severity": "WATCH",
+      "passed": true,
+      "message": "latencyがbaselineより増えた"
+    },
+    {
+      "id": "model_drift.false_refusal_or_fallback_rate",
+      "metric": "falseRefusalOrFallbackRate",
+      "actual": 0,
+      "operator": "<=",
+      "expected": 0.05,
+      "unit": "rate",
+      "severity": "ACTION",
+      "passed": true,
+      "message": "正当タスクで拒否またはfallbackが増えた"
+    },
+    {
+      "id": "model_drift.human_revision_minutes_increase_rate",
+      "metric": "humanRevisionMinutesIncreaseRate",
+      "actual": 0.1,
+      "operator": "<=",
+      "expected": 0.2,
+      "unit": "rate",
+      "severity": "ACTION",
+      "passed": true,
+      "message": "人間の修正時間がbaselineより増えた"
+    },
+    {
+      "id": "model_drift.critical_unsupported_claims",
+      "metric": "criticalUnsupportedClaims",
+      "actual": 0,
+      "operator": "==",
+      "expected": 0,
+      "unit": "count",
+      "severity": "BLOCK",
+      "passed": true,
+      "message": "重要claimに根拠なしがある"
+    },
+    {
+      "id": "model_drift.conclusion_conflict_count",
+      "metric": "conclusionConflictCount",
+      "actual": 0,
+      "operator": "==",
+      "expected": 0,
+      "unit": "count",
+      "severity": "ACTION",
+      "passed": true,
+      "message": "同一caseで結論が揺れた"
+    }
+  ],
+  "actionItems": [
+    "採用モデル、prompt、schema、しきい値を維持する"
+  ]
+}

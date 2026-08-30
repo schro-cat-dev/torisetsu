@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "model-drift-adapter-config.v1",
+  "runId": "2026-08-31.smoke.openai.skip",
+  "executionMode": "skip",
+  "provider": "openai",
+  "apiKeyEnv": "OPENAI_API_KEY",
+  "endpoint": "https://api.openai.com/v1/responses",
+  "model": "gpt-5.6-sol",
+  "modelGroup": "openai.high",
+  "watchType": "smoke",
+  "caseSetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "settings": {
+    "temperature": 0,
+    "reasoningEffort": "medium",
+    "maxOutputTokens": 1200,
+    "store": false
+  },
+  "output": {
+    "rawRunFile": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/raw_runs/2026-08-31.smoke.openai.skip.raw-run.json",
+    "failStatuses": ["ERROR"]
+  }
+}

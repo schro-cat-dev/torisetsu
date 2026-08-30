@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "execution-completion-record.v1",
+  "task": {
+    "taskId": "sample.2026-08-31.execution-loop",
+    "title": "完了優先loopのサンプル採点",
+    "startedAt": "2026-08-31T06:50:00+09:00",
+    "finishedAt": "2026-08-31T07:10:00+09:00",
+    "estimatedMinutes": 30,
+    "actualMinutes": 20
+  },
+  "completion": {
+    "doneCriteriaMet": true,
+    "doneCriteria": "runnerがfixtureを読み、score結果JSONを出す"
+  },
+  "quality": {
+    "requiredChecksPassed": true,
+    "checks": [
+      "node execution",
+      "node --check",
+      "git diff --check"
+    ]
+  },
+  "evidence": {
+    "verificationRecorded": true,
+    "commands": [
+      "node internal_refs/ai_experiment_scopes/execution_completion_loop/tools/run-completion-score.mjs internal_refs/ai_experiment_scopes/execution_completion_loop/configs/default-completion-score.config.json internal_refs/ai_experiment_scopes/execution_completion_loop/fixtures/sample-completion-record.json"
+    ]
+  },
+  "focus": {
+    "scopeDriftCount": 0
+  },
+  "speed": {
+    "estimateOverrunRate": 0
+  },
+  "revision": {
+    "userRevisionRequestCount": 0
+  },
+  "nextLoop": {
+    "singleNextAction": true,
+    "nextAction": "実タスクの完了記録をこのschemaで保存する"
+  }
+}

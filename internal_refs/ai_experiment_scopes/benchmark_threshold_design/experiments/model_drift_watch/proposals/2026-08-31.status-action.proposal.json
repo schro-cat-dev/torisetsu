@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "model-drift-action-proposal.v1",
+  "generatedAt": "2026-08-30T23:40:47.147Z",
+  "proposalId": "2026-08-31.status-action-proposal",
+  "sourceCheckResult": "internal_refs/ai_experiment_scopes/benchmark_threshold_design/experiments/model_drift_watch/status_fixtures/2026-08-31.status-action.check-result.json",
+  "status": "ACTION",
+  "baselineRunId": "fixture-status-baseline-2026-08-31",
+  "currentRunId": "fixture-status-current-action-2026-08-31",
+  "model": {
+    "provider": "fixture",
+    "name": "fixture-model",
+    "modelGroup": "fixture.status",
+    "versionHint": "current-action",
+    "settings": {
+      "temperature": 0,
+      "reasoningEffort": "medium"
+    }
+  },
+  "proposals": [
+    {
+      "target": "schema",
+      "reason": "出力契約の通過率がbaselineより落ちた",
+      "changeSummary": "caseごとのexpectedContractとprompt内の出力形式条件を照合し、required fields、extra field禁止、Markdown禁止を明示する",
+      "requiresHumanApproval": true,
+      "evidence": {
+        "checkId": "model_drift.contract_pass_rate_drop",
+        "metric": "contractPassRateDrop",
+        "actual": 0.19999999999999996,
+        "operator": "<=",
+        "expected": 0,
+        "severity": "ACTION",
+        "message": "出力契約の通過率がbaselineより落ちた"
+      }
+    }
+  ],
+  "validation": {
+    "status": "PASS",
+    "failedCheckCount": 1,
+    "proposalCount": 1,
+    "validationErrors": []
+  }
+}

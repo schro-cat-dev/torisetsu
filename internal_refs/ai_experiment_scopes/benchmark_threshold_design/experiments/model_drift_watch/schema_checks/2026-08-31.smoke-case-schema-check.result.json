@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "model-drift-case-schema-check-result.v1",
+  "generatedAt": "2026-08-30T23:26:10.668Z",
+  "configPath": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/configs/case-schema-check.config.json",
+  "targetFile": "internal_refs/ai_experiment_scopes/evaluation_reproducibility/model_drift_watch/cases/smoke.v1.json",
+  "status": "PASS",
+  "summary": {
+    "caseSetId": "model-drift-smoke.v1",
+    "caseCount": 5,
+    "checkedCaseIds": [
+      "drift.contract.schema_convert.001",
+      "drift.source_trace.local_excerpt.001",
+      "drift.task_plan.milestone_checklist.001",
+      "drift.ambiguity.no_guess.001",
+      "drift.cost.concise_output.001"
+    ]
+  },
+  "passedChecks": [
+    {
+      "id": "case_set.schema_version",
+      "passed": true
+    },
+    {
+      "id": "case_set.case_set_id",
+      "passed": true
+    },
+    {
+      "id": "case_set.case_count",
+      "passed": true
+    },
+    {
+      "id": "case_set.required_case_ids",
+      "passed": true
+    },
+    {
+      "id": "case_set.case_contracts",
+      "passed": true
+    }
+  ],
+  "failedChecks": []
+}

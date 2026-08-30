@@ -13,6 +13,7 @@
 | 内部学習セット | 原則として直接断定しない |
 | 割当リソース | レイテンシ、失敗、再試行などから推測に留める |
 | 動作パラメータ | 明示されている場合だけ記録し、不明なら不明とする |
+| 提供側の内部更新 | 直接断定せず、同一caseの定期実行差分から推測に留める |
 
 ## 記録テンプレート
 
@@ -36,3 +37,15 @@
 未確認: 実際の推論パラメータや割当リソースは不明。
 ```
 
+## モデルドリフト監視で追加記録するもの
+
+| 項目 | 内容 |
+|---|---|
+| model id | 実行時に指定したモデル名 |
+| provider | OpenAI、Anthropicなど |
+| run date | 実行日時 |
+| model settings | reasoning/thinking effort、temperatureなど |
+| available tools | shell、web、apply_patchなど |
+| repo commit | 実行時のcommit |
+| observed changes | 前回との差分 |
+| inference | 内部更新の可能性など。断定しない |

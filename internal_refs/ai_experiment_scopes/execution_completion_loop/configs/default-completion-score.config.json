@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "execution-completion-score-config.v1",
+  "name": "default-completion-score",
+  "items": [
+    {
+      "id": "completion.done_criteria_met",
+      "field": "completion.doneCriteriaMet",
+      "operator": "==",
+      "value": true,
+      "weight": 30,
+      "severity": "BLOCK",
+      "message": "今回の完了条件を満たした"
+    },
+    {
+      "id": "quality.required_checks_passed",
+      "field": "quality.requiredChecksPassed",
+      "operator": "==",
+      "value": true,
+      "weight": 20,
+      "severity": "ACTION",
+      "message": "必須チェックが通った"
+    },
+    {
+      "id": "evidence.verification_recorded",
+      "field": "evidence.verificationRecorded",
+      "operator": "==",
+      "value": true,
+      "weight": 15,
+      "severity": "ACTION",
+      "message": "検証証跡が記録されている"
+    },
+    {
+      "id": "focus.scope_drift_count",
+      "field": "focus.scopeDriftCount",
+      "operator": "==",
+      "value": 0,
+      "weight": 10,
+      "severity": "ACTION",
+      "message": "勝手なスコープ拡大がない"
+    },
+    {
+      "id": "speed.estimate_overrun_rate",
+      "field": "speed.estimateOverrunRate",
+      "operator": "<=",
+      "value": 0.3,
+      "weight": 10,
+      "severity": "WATCH",
+      "message": "見積もり超過が30%以内"
+    },
+    {
+      "id": "revision.user_revision_request_count",
+      "field": "revision.userRevisionRequestCount",
+      "operator": "<=",
+      "value": 1,
+      "weight": 10,
+      "severity": "WATCH",
+      "message": "ユーザー修正依頼が1回以内"
+    },
+    {
+      "id": "next_loop.single_next_action",
+      "field": "nextLoop.singleNextAction",
+      "operator": "==",
+      "value": true,
+      "weight": 5,
+      "severity": "WATCH",
+      "message": "次の改善が1つに絞れている"
+    }
+  ],
+  "statusBands": [
+    {
+      "status": "PASS",
+      "minInclusive": 85
+    },
+    {
+      "status": "WATCH",
+      "minInclusive": 70
+    },
+    {
+      "status": "ACTION",
+      "minInclusive": 50
+    },
+    {
+      "status": "BLOCK",
+      "minInclusive": 0
+    }
+  ],
+  "actions": [
+    {
+      "status": "PASS",
+      "items": [
+        "次のマイルストーンへ進む"
+      ]
+    },
+    {
+      "status": "WATCH",
+      "items": [
+        "低score項目を次回の注意点にする"
+      ]
+    },
+    {
+      "status": "ACTION",
+      "items": [
+        "低score項目を1つ選び、次loopで修正する"
+      ]
+    },
+    {
+      "status": "BLOCK",
+      "items": [
+        "完了扱いにしない",
+        "不足している完了条件または必須チェックを先に埋める"
+      ]
+    }
+  ],
+  "output": {
+    "file": "internal_refs/ai_experiment_scopes/execution_completion_loop/results/sample-completion-score.result.json",
+    "failStatuses": ["ACTION", "BLOCK"]
+  }
+}
