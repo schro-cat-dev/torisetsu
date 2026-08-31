@@ -4,7 +4,7 @@
 
 ## 1. 結論
 
-まずは次の12領域に分ける。
+まずは次の13領域に分ける。
 
 | 領域 | ディレクトリ | 役割 |
 |---|---|---|
@@ -20,6 +20,7 @@
 | AI協働チートシート | `ai_collaboration_cheatsheet/` | AIが分からない時やズレそうな時に、どう動き、どうボールをパスするかを管理する |
 | 設計追跡フレームワーク | `design_traceability_framework/` | 設計、実装、型、テスト、修正履歴をID対応表で決定論的に辿る |
 | Skill orchestration harness | `skill_orchestration_harness/` | AIが読むskillの順番、ステート、チーム一元化ハーネスを管理する |
+| Development Route Cards | `development_route_cards/` | 作業タイプ別の進行route、support mode、品質gate、補助輪を管理する |
 
 各スコープで実際に試した記録は、原則として各ディレクトリ配下の `experiments/` に置く。
 
@@ -42,7 +43,10 @@ flowchart TD
   Evaluation --> Benchmark["ベンチマーク・閾値設計"]
   Evaluation --> Traceability["設計追跡フレームワーク"]
   Traceability --> SkillHarness["Skill orchestration harness"]
+  Traceability --> DevRoutes["Development Route Cards"]
   Traceability --> Benchmark
+  DevRoutes --> SkillHarness
+  DevRoutes --> Benchmark
   SkillHarness --> Benchmark
   Benchmark --> Phase["フェーズ計画"]
   Evaluation --> Log["実験ログ形式"]
