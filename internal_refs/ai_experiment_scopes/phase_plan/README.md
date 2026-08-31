@@ -112,3 +112,8 @@ Harness改善が実作業に効いたかは `../benchmark_threshold_design/targe
 | フェーズ1終了条件 | 5 | 4 | だらだら続けず、次に進む判断をするため |
 | 採用プラットフォームMVP設計 | 5 | 5 | フェーズ2の実験対象になるため |
 | 外部参照の読み込み順 | 4 | 4 | 参照先が多いと、学習対象と実装対象が混ざりやすいため |
+| 外部AIハーネス/skill統合計画 | 5 | 5 | Google、promptfoo、EvalBenchなどを調査し、既存のcase、grader、observation、check resultへ接続できる候補を決めるため |
+
+参照:
+
+- `../../../external_refs/ai_harness_skill_integration_references/README.md`
