@@ -4,7 +4,7 @@
 
 ## 1. 結論
 
-まずは次の13領域に分ける。
+まずは次の14領域に分ける。
 
 | 領域 | ディレクトリ | 役割 |
 |---|---|---|
@@ -21,6 +21,7 @@
 | 設計追跡フレームワーク | `design_traceability_framework/` | 設計、実装、型、テスト、修正履歴をID対応表で決定論的に辿る |
 | Skill orchestration harness | `skill_orchestration_harness/` | AIが読むskillの順番、ステート、チーム一元化ハーネスを管理する |
 | Development Route Cards | `development_route_cards/` | 作業タイプ別の進行route、support mode、品質gate、補助輪を管理する |
+| Issue Backlog | `issue_backlog/` | モデル調査、外部ハーネス統合、route card、API費用検証をissue候補として分類する |
 
 各スコープで実際に試した記録は、原則として各ディレクトリ配下の `experiments/` に置く。
 
@@ -47,6 +48,8 @@ flowchart TD
   Traceability --> Benchmark
   DevRoutes --> SkillHarness
   DevRoutes --> Benchmark
+  DevRoutes --> IssueBacklog["Issue Backlog"]
+  IssueBacklog --> Phase
   SkillHarness --> Benchmark
   Benchmark --> Phase["フェーズ計画"]
   Evaluation --> Log["実験ログ形式"]

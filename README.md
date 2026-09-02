@@ -122,6 +122,8 @@ AIもユーザーも、それぞれの認知モデルが行動しやすい環境
 
 - [Development Route Cards](internal_refs/ai_experiment_scopes/development_route_cards/README.md): 前提知識が少ない人でもAIを使いながら開発手順を外しにくくし、作業しながら学べる進行routeと補助量を管理する入口。
 
+- [Issue Backlog](internal_refs/ai_experiment_scopes/issue_backlog/README.md): モデル調査、外部ハーネス統合、Development Route Cards、API費用検証などをissue候補として分類し、見ることリストとチェック欄で管理する入口。
+
 ## 外部参照
 
 - [ハーネス・採用プラットフォーム外部参照](external_refs/harness_recruiting_platform_references/README.md): SmartHR、OpenCATS、Playwright などを見ながら、TODO修正後の採用プラットフォーム実験を考える入口。

@@ -44,6 +44,7 @@
 - `thinking-pattern-check/priority-5/2026-08-22-cognitive-gap-correction.md`
 - `prompt-calibration/priority-5/2026-08-22-request-instruction-mismatch.md`
 - `prompt-calibration/priority-5/2026-08-25-abstract-output-lacks-examples.md`
+- `prompt-calibration/priority-5/2026-09-03-derived-doc-traceability.md`
 - `information-structure-calibration/priority-5/2026-08-25-structure-unit-vs-runtime-payload.md`
 - `information-structure-calibration/priority-5/2026-08-25-question-seed-vs-ai-reframing.md`
 - `high-level-decision-handoff/priority-5/2026-08-25-domain-strategy-tradeoff-handoff.md`

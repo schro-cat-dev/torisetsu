@@ -8,6 +8,21 @@ Googleや外部の評価ハーネス、agent framework、skill集を調査し、
 
 ここでの統合は、外部repoをそのまま採用することではない。外部repoの使える部分を、既存の `case -> raw log -> grader -> observation -> check result -> proposal` の流れへ接続できる形にすること。
 
+関連ログ:
+
+- [2026-09-03-review-log.md](2026-09-03-review-log.md): 外部候補を見た後の講評、採用判断、除外理由。
+
+## 講評ログの反映状況
+
+2026-09-03時点の講評は、この文書の候補表と除外扱いへ反映済み。
+
+| 反映内容 | 反映先 |
+|---|---|
+| `anthropics/skills` と `composio-community/awesome-codex-skills` を評価 1/10、使わない扱いに変更 | `今回の除外扱い`、`推奨候補`、`調査元` |
+| `microsoft/SkillOpt` はrepoとして評価 1/10、除外扱い | [2026-09-03-review-log.md](2026-09-03-review-log.md) |
+| `addyosmani/agent-skills` は構造参照、`obra/superpowers` は部分参照、`alibaba/open-code-review` は設計参照 | [2026-09-03-review-log.md](2026-09-03-review-log.md) |
+| 外部repoは原則install / copy / vendoringせず、設計観点だけ参照する | [2026-09-03-review-log.md](2026-09-03-review-log.md) |
+
 ## 対象
 
 - LLM / agent の評価ハーネス。
@@ -49,7 +64,6 @@ Googleや外部の評価ハーネス、agent framework、skill集を調査し、
 - Google ADK eval docs
 - `GoogleCloudPlatform/agent-starter-pack`
 - `UKGovernmentBEIS/inspect_ai`
-- `anthropics/skills`
 - SWE-bench harness docs
 
 今回のB扱い:
@@ -59,6 +73,11 @@ Googleや外部の評価ハーネス、agent framework、skill集を調査し、
 - `confident-ai/deepeval`
 - Ragas docs
 - `langchain-ai/langgraph`
+
+今回の除外扱い:
+
+- `composio-community/awesome-codex-skills`: 評価 1/10。個別skillの内容が薄く、実務用の根拠確認、失敗時の扱い、出力契約が不足するため使わない。
+- `anthropics/skills`: 評価 1/10。公開skill集としての形式参照はできるが、このリポジトリのskill移行元としては薄いため使わない。
 
 注意:
 
@@ -90,11 +109,26 @@ Googleや外部の評価ハーネス、agent framework、skill集を調査し、
 | 4 | `Arize-ai/phoenix`<br>https://github.com/Arize-ai/phoenix | observability / eval / dataset / experiment tracking | open-source AI observability。OpenTelemetry trace、evaluation、versioned datasets、experiments、prompt management、OpenAI/Anthropic/Google ADK等のintegrationsに言及がある。 | 現在はfile ledgerで足りるが、runが増えるとtrace検索とdataset管理が必要になる。 | v1では採用しない。model drift runが20本を超えたら、local Phoenixでtrace保存をpilotする。 |
 | 4 | Google ADK eval docs<br>https://github.com/google/adk-docs/blob/main/docs/evaluate/index.md | ADK agent evaluation | ADKはagent evaluationでtrajectory/tool useとfinal responseを分け、test files、evalset、CLI `adk eval`、criteriaを持つ。 | Gemini/ADK agentを作る場合、評価caseとtrajectoryの考え方がそのまま使える。 | ADK agentを作る段階で統合。今は評価項目の設計参照にする。 |
 | 3 | `GoogleCloudPlatform/agent-starter-pack`<br>https://github.com/GoogleCloudPlatform/agent-starter-pack | Google agent project template | Google Cloud Platform配下。READMEでmaintenance modeと、active developmentが `agents-cli` へ移ったことが明記されている。CI/CD、evaluation、observability、deployment templateを持つ。 | 既存Google agent projectの構造や移行判断の参照になる。ただし新規導入の第一候補ではない。 | 新規導入はしない。template構成とmigration観点だけ読む。 |
-| 3 | `anthropics/skills`<br>https://github.com/anthropics/skills | Claude skill set / plugin marketplace | Claude Code、Claude.ai、APIで使うskill sets。Claude Code plugin marketplaceとして追加できる。document-skills、example-skillsに言及がある。 | 外部skillの配布形態、説明粒度、install範囲を参照できる。 | Claude側skillの調査対象。Codexへそのまま入れず、必要な思想だけ `.agents/skills` へ翻訳する。 |
 | 3 | SWE-bench harness docs<br>https://www.swebench.com/SWE-bench/api/harness/ | coding benchmark harness | `run_evaluation`、grading、reporting、log parserなどのharness APIがある。 | 実GitHub issue修正の評価方法、patch評価、run log設計の参照になる。 | 汎用導入はしない。coding task benchmarkを作る時に、ログとreport形式を参照する。 |
 | 3 | `confident-ai/deepeval`<br>https://github.com/confident-ai/deepeval | LLM unit testing / metrics | Pytestに近いLLM評価、G-Eval、task completion、answer relevancy、hallucination、JSON correctness、CI/CD、OpenAI/Anthropic/Google ADK integrationsに言及がある。 | PythonでLLM unit testを書きたい場合に使いやすい。 | LLM-as-judge比率が高いので、初期v1では採用しない。機械判定で足りない評価だけ後でpilotする。 |
 | 2 | `explodinggradients/ragas`<br>https://docs.ragas.io/en/v0.3.4/tutorials/rag/ | RAG evaluation | RAG向けにcontext precision、context recall、faithfulness、response relevancy等を扱う。 | RAGや検索拡張を作る場合に必要になる。 | RAG対象が出るまで保留。今のモデルドリフトsmokeには入れない。 |
 | 2 | `langchain-ai/langgraph`<br>https://github.com/langchain-ai/langgraph | stateful agent runtime | 長時間・状態ありagent、durable execution、human-in-the-loop、memory、debuggingに言及がある。 | agent orchestrationを作る時の実装候補。評価ハーネスそのものではない。 | 評価基盤ではなくruntime候補として別管理。今回の統合対象からは外す。 |
+| 1 | `anthropics/skills`<br>https://github.com/anthropics/skills | Claude skill set / plugin marketplace | Claude Code、Claude.ai、APIで使うskill sets。Claude Code plugin marketplaceとして追加できる。document-skills、example-skillsに言及がある。 | 形式参照はできるが、実務上の判断、根拠確認、失敗時の扱いが薄い。 | 評価 1/10。使わない。 |
+| 1 | `composio-community/awesome-codex-skills`<br>https://github.com/composio-community/awesome-codex-skills | community Codex skill collection | 個別skill例では用途説明、手順、出力テンプレートが中心。 | 実務用skillに必要な根拠URL、スコア算出、鮮度、除外条件、検証方法が不足する。 | 評価 1/10。使わない。 |
+
+## 追加確認候補の扱い
+
+2026-09-03に追加で確認した候補。詳細な講評は [2026-09-03-review-log.md](2026-09-03-review-log.md) に残す。
+
+| repo / docs | 扱い | 理由 |
+|---|---|---|
+| `addyosmani/agent-skills`<br>https://github.com/addyosmani/agent-skills | 構造参照 | 公開skill集としては比較的良い。`When to Use`、手順、verification、red flagsの揃え方だけ参考にする。 |
+| `obra/superpowers`<br>https://github.com/obra/superpowers | 部分参照 | TDD / debuggingの強制力は参考になるが、運用思想が硬いため丸ごと採用しない。 |
+| `alibaba/open-code-review`<br>https://github.com/alibaba/open-code-review | 設計参照 | Go実装の実ツール。決定的処理 + agent分離は参考になるが、導入より自作を優先する。 |
+| `meridianlabs-ai/inspect-skills`<br>https://github.com/meridianlabs-ai/inspect-skills | 条件付き参照 | Inspect AIを使う場合だけ、eval log運用skillとして見る。 |
+| `vercel-labs/agent-skills`<br>https://github.com/vercel-labs/agent-skills | 条件付き参照 | React / Next / Vercel領域に限って見る。汎用skill移行元にはしない。 |
+| `microsoft/SkillOpt`<br>https://github.com/microsoft/SkillOpt | 除外 | repoとして評価 1/10。構成がぱっと読みにくく、自作ベンチ優位の訴求が強いため採用判断に合わない。 |
+| `awesome-*` 系の一覧repo / directory site | 除外 | リンク集は薄いskillを混ぜる入口になりやすい。原則として採用判断の根拠にしない。 |
 
 ## 結論
 
@@ -135,7 +169,7 @@ v1では L0 から L3 までを対象にする。L4は、実行結果、導入�
 | EXT-05 | 外部resultをlocal observationへ変換するadapter設計を作る | 5 | 1時間 | model drift watchへの接続 | input/output schemaとNG例がある | 外部ツール結果が台帳に残らない |
 | EXT-06 | `Inspect AI` のscorer/case設計をgrader設計と比較する | 4 | 1時間 | grader品質の比較参照 | local graderへ足す候補と足さない候補が分かる | 評価設計が独自基準だけになる |
 | EXT-07 | `Phoenix` のtrace保存を後段候補として評価する | 3 | 1時間 | 実行ログ増加時の検索性 | 導入判断条件が決まる | run数が増えた時にログ探索が重くなる |
-| EXT-08 | `Anthropic skills` をskill設計参照として読む | 3 | 1時間 | skill外部導入の比較 | Codex skillへ翻訳する項目としない項目が分かる | 外部skillをそのまま混ぜる危険が残る |
+| EXT-08 | `Anthropic skills` と `awesome-codex-skills` を除外候補として記録する | 1 | 15分 | 薄い公開skill集を混ぜない | 評価 1/10、使わない理由が残る | 外部skillをそのまま混ぜる危険が残る |
 | EXT-09 | 外部統合pilot結果を `benchmark_threshold_design/experiments/` に残す | 5 | 30分 | 証跡管理 | 実行コマンド、結果、判断、残リスクが残る | 導入判断を後から検証できない |
 
 ## 最初の実行順
@@ -235,7 +269,8 @@ v1では L0 から L3 までを対象にする。L4は、実行結果、導入�
 | promptfoo | https://github.com/promptfoo/promptfoo | prompt/model/provider比較、declarative config、CI/CD、red teaming |
 | Inspect AI | https://github.com/UKGovernmentBEIS/inspect_ai | LLM eval、tool usage、multi-turn、model-graded eval、pre-built evals |
 | Phoenix | https://github.com/Arize-ai/phoenix | tracing、evaluation、datasets、experiments、prompt management、provider integrations |
-| Anthropic skills | https://github.com/anthropics/skills | Claude Code plugin marketplace、document-skills、example-skills |
+| Anthropic skills | https://github.com/anthropics/skills | Claude Code plugin marketplace、document-skills、example-skills。評価 1/10、使わない |
+| Composio awesome-codex-skills | https://github.com/composio-community/awesome-codex-skills | community Codex skill collection。評価 1/10、使わない |
 | SWE-bench harness | https://www.swebench.com/SWE-bench/api/harness/ | coding benchmark harness、grading、reporting、run evaluation API |
 | DeepEval | https://github.com/confident-ai/deepeval | pytest-like LLM eval、metrics、JSON correctness、provider integrations |
 | Ragas docs | https://docs.ragas.io/en/v0.3.4/tutorials/rag/ | RAG metrics、faithfulness、context precision/recall |

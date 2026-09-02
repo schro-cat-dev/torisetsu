@@ -29,6 +29,10 @@
   - 参照: `.agents/skills/task-output-format-governance/SKILL.md`
   - 用途: 設計、レビュー、プロンプト、運用、tips の助言を出す時。
   - 必須: 実データ例、JSON例、コマンド例、しきい値、NG例 / OK例、入力例 / 出力例のうち必要なものを添える。
+- 関連ドキュメント反映:
+  - 参照: `.agents/skills/task-output-format-governance/SKILL.md`
+  - 用途: 調査ログ、講評ログ、検証ログ、設計メモ、判断ログなど、起点文書から派生したドキュメントを作る時。
+  - 必須: 起点文書、派生文書、反映内容、辿り方、完了確認を揃える。起点文書にはリンクだけでなく、何が反映済みかを残す。
 - UI価値/導線レビュー:
   - 参照: `.agents/skills/ui-value-design-review/SKILL.md`
   - 用途: フロントエンドUI、配置、導線、詳細表示、入力欄、不要文言、画面フィードバックを扱う時。
