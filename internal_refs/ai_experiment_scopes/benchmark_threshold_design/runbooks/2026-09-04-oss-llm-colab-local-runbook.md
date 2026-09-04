@@ -946,10 +946,9 @@ ram_gb: 12.67
 | v1 | `rakugo.learning.plan.001` | 実測済み | 落語学習の長めの構造化出力を見る | 6見出しは出たが、反復が多く、練習タスクの目的/手順/完了条件が弱い |
 | v2 | `rakugo.learning.plan.scored.001` | 実測済み | 5段階評価、自己チェック、反復抑制まで1回で出せるか見る | 1600 token上限に到達し、評価基準途中で切れた。評価軸混同も出た |
 | v3 | `rakugo.learning.plan.scored.001` | 実測済み | v2に評価軸分離、中学生向け説明、NG/OK例を足した修正版 | 1600 token上限に到達し、評価基準途中で切れた。反復と評価軸混同は残った |
-| v4 | `rakugo.learning.case.practice.001` | 未実測 | 言い回し、ケース練習、会話の流れ、挟む内容、なぜ良いかを出す専用prompt | 次フェーズで実行 |
+| v4 | `rakugo.learning.case.practice.001` | 実測済み | 言い回し、ケース練習、会話の流れ、挟む内容、なぜ良いかを出す専用prompt | 2000 token上限に到達し、ケース4途中で切れた。具体性は改善せず、ほぼ同文反復になった |
 
-v1からv3の実測結果は下の `実行結果` に残す。
-v4は、v3で不足した「言い回し、ケース練習、会話の流れ、根拠」を見るための次フェーズ用promptとして別に置く。
+v1からv4の実測結果は下の `実行結果` に残す。
 
 #### 実行セル 5段階評価付き
 
@@ -1617,6 +1616,76 @@ AI目線の仮評価:
 - ただし、このモデルとCPU条件で、長い日本語構造化promptを一発で完成品質にするのは弱い。
 - 次フェーズでは、総合計画promptではなく、`ケース練習・言い回し・根拠` を出す専用promptに分ける。
 
+#### 実行結果 case practice v4
+
+実行日: 2026-09-04
+
+ユーザーが、`rakugo.learning.case.practice.001` を `max_new_tokens=2000` に上げて実行した結果。
+
+| case_id | generation_seconds | case_total_seconds | prompt_tokens | new_tokens | remaining_new_token_budget | tokens_per_second | ram_used_gb | hit_max_new_tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| `rakugo.learning.case.practice.001` | 846.69 | 846.76 | 860 | 2000 | 0 | 2.36 | 3.13 | true |
+
+生成preset:
+
+```json
+{
+  "do_sample": true,
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "min_p": 0
+}
+```
+
+セル全体:
+
+```text
+cell_total_seconds: 846.78
+default_max_new_tokens: 1600
+requested_max_new_tokens: 2000
+effective_max_new_tokens: 2000
+model_context_limit: 40960
+context_available_new_tokens: 40100
+```
+
+注意:
+
+- `ALL RESULTS JSON` の `default_max_new_tokens` は `1600` のままだが、case内の `requested_max_new_tokens` と `effective_max_new_tokens` は `2000`。
+- 実際に `model.generate(...)` へ渡った上限はcase側の `effective_max_new_tokens=2000` と見る。
+
+時間換算:
+
+- `cell_total_seconds=846.78` 秒は、約14分6.78秒。
+- `tokens_per_second=2.36` で、v3の `1.93` より速いが、反復実験としては重い。
+
+出力の観察:
+
+- `new_tokens=2000`、`remaining_new_token_budget=0`、`hit_max_new_tokens=true` のため、出力はケース4の途中で切れている。
+- `使う型` で `起承転結` が複数回出ており、型の種類を分けられていない。
+- `使用注意: 不要で、質が向上するだけに。` のように意味が通りにくい文が出ている。
+- チェックシートのOK例とNG例が同じ文になっている。
+- ケースごとの `起 / 承 / 転 / 結` が同じ文の反復になっている。
+- `實际の言い回し` のように日本語文中へ中国語表記が混ざっている。
+- `面白くなる根拠` が `話し合いが良いです。` になっており、根拠として機能していない。
+
+AI目線の仮評価:
+
+| field | score | 理由 |
+|---|---:|---|
+| `structure_score` | 2 | 見出しとケース形式は出たが、ケース4途中で切れた |
+| `detail_score` | 1 | OK/NG例、言い回し、根拠が同文反復で、意味の差分が作れていない |
+| `practical_score` | 1 | 練習に使える具体セリフや手順になっていない |
+| `transfer_score` | 1 | 日常会話への転用に見えるが、場面ごとの差がほぼない |
+| `speed_score` | 1 | 約14分7秒で、Colab CPUの反復実験には重い |
+
+この結果からの判断:
+
+- promptを「ケース練習、言い回し、根拠」に絞っても、この0.6B CPU条件では意味の保持が弱い。
+- 構造だけは出せるが、中身の差分、OK/NGの対比、なぜ良いかの根拠を作る力が不足している。
+- この段階で、0.6Bに長い構造化回答を一気に出させる方針は打ち止めでよい。
+- 次に試すなら、1ケースだけ、または `チェックシートだけ`、`言い回しだけ`、`根拠だけ` に分割する。
+
 性能としての見立て:
 
 - Colab無料CPUで `Qwen/Qwen3-0.6B` を動かす基礎検証としては使える。
@@ -1691,6 +1760,19 @@ AI目線の仮評価:
 | JSON case再試行 | `Language mismatch` がprompt不足か見る | 日本語指定、英語禁止、入力本文ありで再実行し、JSON parse可否を記録する |
 | 速度比較 | CPU性能差を切り分ける | Colab GPU、ローカルOllama、llama.cpp量子化のどれか1つと比較する |
 | 評価表の機械チェック | 見出し不足、score重複、途中切れを人手だけにしない | 出力textを簡易scriptで検査し、missing/duplicate/truncatedを出す |
+
+このフェーズで追加で完了したこと:
+
+| step | 目的 | 結果 |
+|---|---|---|
+| `rakugo.learning.case.practice.001` 実測 | ケース練習、言い回し、根拠に絞れば改善するか見る | 2000 tokenでもケース4途中で切れた。OK/NG例、起承転結、根拠が同文反復になり、意味保持が弱かった |
+
+この結果を受けた次の切り分け:
+
+| step | 目的 | 完了条件 |
+|---|---|---|
+| 1ケースだけで再試行 | 0.6Bが短い範囲なら意味を保てるか見る | 1ケース内で通常版、面白くする版、やりすぎ版、根拠が別内容になる |
+| 出力種別を分ける | チェックシート、言い回し、根拠を同時に出す負荷を下げる | 各caseが途中切れせず、OK/NG例が別文になる |
 
 ## ローカルOllamaで動かす
 
@@ -2039,8 +2121,11 @@ input:
 | source | URL | このrunbookで使った事実 |
 |---|---|---|
 | Hugging Face Transformers Generation docs | https://huggingface.co/docs/transformers/v5.15.1/en/main_classes/text_generation | `max_new_tokens` は入力promptを除いた新規生成token数の上限。`max_length` より `max_new_tokens` の利用が推奨される。`max_time` も指定可能 |
+| Qwen3 official blog | https://qwenlm.github.io/blog/qwen3/ | Qwen3シリーズは2025-04-29リリース。0.6B、1.7B、4B、8B、14B、32BなどをApache-2.0で公開 |
+| Qwen/Qwen3-0.6B model card | https://huggingface.co/Qwen/Qwen3-0.6B | Apache-2.0。関連paper `Qwen3 Technical Report` は2025-05-14公開。model card上のContext Lengthは32768 |
 | Qwen/Qwen3-0.6B config.json | https://huggingface.co/Qwen/Qwen3-0.6B/blob/main/config.json | `max_position_embeddings` は40960。`Qwen3ForCausalLM`、`model_type: qwen3`、`torch_dtype: bfloat16` |
 | QwenLM Qwen3 Transformers docs | https://github.com/QwenLM/Qwen3/blob/main/docs/source/inference/transformers.md | Qwen3のthinking / non-thinking mode、`/no_think`、`enable_thinking=False` 相当の扱い、長文contextとYaRNの注意 |
+| QwenLM Qwen3 speed benchmark | https://github.com/QwenLM/Qwen3/blob/main/docs/source/getting_started/speed_benchmark.md | Qwen3-0.6BのTransformers BF16 GPU目安は、input length 1でGPU memory 1394MB、input length 30720で4755MB |
 | Google Colab FAQ | https://research.google.com/colaboratory/faq.html | 無料枠のリソースは保証されず、GPU種別や使用上限は変動する |
 | Google Colab FAQ UK | https://research.google.com/colaboratory/intl/en-GB/faq.html | 無料管理runtimeでSSH、remote desktop、Web UI中心利用、distributed worker等が制限対象 |
 | OpenAI Cookbook gpt-oss + Ollama | https://github.com/openai/openai-cookbook/blob/main/articles/gpt-oss/run-locally-ollama.md | `gpt-oss:20b` は16GB VRAM/unified memory目安、OllamaはChat Completions互換APIを提供 |

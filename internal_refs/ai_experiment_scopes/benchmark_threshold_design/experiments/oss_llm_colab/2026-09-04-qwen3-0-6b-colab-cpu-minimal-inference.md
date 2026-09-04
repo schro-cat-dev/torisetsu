@@ -346,3 +346,55 @@ AI目線の仮評価:
 - Colab無料CPUでの `Qwen/Qwen3-0.6B` 基礎実行、短文推論、長めpromptの挙動確認は完了。
 - 長い日本語構造化promptを一発で完了品質へ持っていく用途では弱い。
 - 次は `rakugo.learning.case.practice.001` として、ケース練習、言い回し、根拠だけを出すpromptに分ける。初期値は `max_new_tokens=2000`、重い場合は `1600` に下げる。
+
+## 実用タスク rakugo.learning.case.practice.001
+
+実行日: 2026-09-04
+
+ケース練習、言い回し、会話の流れ、挟む内容、なぜ良いかを出す専用promptで実行した。
+
+| case_id | requested_max_new_tokens | effective_max_new_tokens | generation_seconds | case_total_seconds | prompt_tokens | new_tokens | remaining_new_token_budget | tokens_per_second | ram_used_gb | hit_max_new_tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `rakugo.learning.case.practice.001` | 2000 | 2000 | 846.69 | 846.76 | 860 | 2000 | 0 | 2.36 | 3.13 | true |
+
+セル全体:
+
+```text
+cell_total_seconds: 846.78
+default_max_new_tokens: 1600
+requested_max_new_tokens: 2000
+effective_max_new_tokens: 2000
+model_context_limit: 40960
+context_available_new_tokens: 40100
+```
+
+注意:
+
+- `ALL RESULTS JSON` の `default_max_new_tokens` は `1600` のままだが、case側の `requested_max_new_tokens` と `effective_max_new_tokens` は `2000`。
+- 実際に `model.generate(...)` へ渡った上限は `effective_max_new_tokens=2000` と扱う。
+
+出力概要:
+
+- `cell_total_seconds=846.78` 秒、約14分6.78秒。
+- `new_tokens=2000`、`remaining_new_token_budget=0`、`hit_max_new_tokens=true` のため、ケース4途中で切れている。
+- `使う型` で `起承転結` が複数回出ており、型の種類を分けられていない。
+- チェックシートのOK例とNG例が同じ。
+- ケースごとの `起 / 承 / 転 / 結` が同じ文の反復になっている。
+- `實际の言い回し` のように中国語表記が混ざっている。
+- `面白くなる根拠` が `話し合いが良いです。` になっており、根拠として機能していない。
+
+AI目線の仮評価:
+
+| field | score | 理由 |
+|---|---:|---|
+| `structure_score` | 2 | 見出しとケース形式は出たが、ケース4途中で切れた |
+| `detail_score` | 1 | OK/NG例、言い回し、根拠が同文反復で、意味の差分が作れていない |
+| `practical_score` | 1 | 練習に使える具体セリフや手順になっていない |
+| `transfer_score` | 1 | 日常会話への転用に見えるが、場面ごとの差がほぼない |
+| `speed_score` | 1 | 約14分7秒で、Colab CPUの反復実験には重い |
+
+判断:
+
+- promptを「ケース練習、言い回し、根拠」に絞っても、この0.6B CPU条件では意味の保持が弱い。
+- 0.6Bは、見出しや表の形は出せるが、OK/NGの対比、場面差分、根拠説明を長く保つ力が不足している。
+- 次にこのモデルで試すなら、1ケースだけ、または `チェックシートだけ`、`言い回しだけ`、`根拠だけ` に分割する。

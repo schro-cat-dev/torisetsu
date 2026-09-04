@@ -31,6 +31,7 @@ Codex や Claude などの内蔵 planning は便利だが、粒度が粗いと�
 |---|---|
 | `SKILL_DRAFT.md` | 将来skill化するためのドラフト。まだactive skillではない |
 | `team-centralized-harness-system-design.md` | チームで一元化して使うハーネスの詳細設計ドラフト |
+| `citation-knowledge-retrieval-productization.md` | 小型LLM生成を不採用にした後、独自引用・ナレッジ取得ツールを実用化するためのメモ |
 | `samples/todo-design-orchestration.md` | TODO設計タスクでのステート、skill順序、出力例 |
 | `../../../external_refs/ai_harness_skill_integration_references/README.md` | Googleや外部の評価ハーネス、agent skill、観測基盤を調査し、統合候補と実行順を管理する |
 

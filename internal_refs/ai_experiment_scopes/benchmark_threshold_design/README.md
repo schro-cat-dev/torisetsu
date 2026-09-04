@@ -24,10 +24,14 @@ AI実験の評価軸、閾値、版、実測結果を分けて管理する。
 
 - [OSS LLM Colab / Local Trial Runbook](runbooks/2026-09-04-oss-llm-colab-local-runbook.md): Colab無料CPU、ローカルOllama、llama.cpp、OpenAI-compatible API接続でOSS / open-weight modelを試す手順。
 
+## Reports
+
+- [Local LLM Inference Architecture](reports/2026-09-04-local-llm-inference-architecture/INDEX.md): 小型LLM、推論アーキテクチャ、リソース、ライセンス、field lineage harnessへの接続設計。
+
 ## Experiments
 
 - [Qwen3 0.6B Colab CPU Summary](experiments/oss_llm_colab/2026-09-04-qwen3-0-6b-colab-cpu-summary.md): Colab無料CPUでの基礎検証まとめ。動作確認、速度、出力品質、次フェーズを短く整理。
-- [Qwen3 0.6B Colab CPU Minimal Inference](experiments/oss_llm_colab/2026-09-04-qwen3-0-6b-colab-cpu-minimal-inference.md): Colab無料CPUで `Qwen/Qwen3-0.6B` を実行した推論結果。`max_new_tokens=160/320/860/1200/1600` の実測、旧 `do_sample=False` とQwen公式推奨presetの差分、長文promptの途中切れ、評価軸混同、次フェーズ用promptを記録済み。
+- [Qwen3 0.6B Colab CPU Minimal Inference](experiments/oss_llm_colab/2026-09-04-qwen3-0-6b-colab-cpu-minimal-inference.md): Colab無料CPUで `Qwen/Qwen3-0.6B` を実行した推論結果。`max_new_tokens=160/320/860/1200/1600/2000` の実測、旧 `do_sample=False` とQwen公式推奨presetの差分、長文promptの途中切れ、評価軸混同、意味保持の弱さを記録済み。
 
 ## 公開ベンチマークの扱い
 

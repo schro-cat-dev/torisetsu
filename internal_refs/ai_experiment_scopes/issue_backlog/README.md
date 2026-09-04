@@ -51,7 +51,8 @@
 | IB-008 | `cost` | API keyあり実行の費用上限と実行条件を決める | 4 | 未着手 | `model_drift_watch/README.md` |
 | IB-009 | `implementation` | EvalBench / promptfoo結果をlocal observationへ変換するadapter設計を作る | 4 | 未着手 | `external_refs/ai_harness_skill_integration_references/README.md` |
 | IB-010 | `handoff` | root READMEから主要調査レポートへ直接辿れる導線を追加する | 5 | 未着手 | `README.md` |
-| IB-011 | `evaluation` | OSS LLMをColab無料枠とローカルで試す | 5 | Colab CPUでQwen3 0.6Bの基礎検証完了。次は分割promptとローカル比較 | `benchmark_threshold_design/runbooks/2026-09-04-oss-llm-colab-local-runbook.md` |
+| IB-011 | `evaluation` | OSS LLMをColab無料枠とローカルで試す | 5 | Colab CPUでQwen3 0.6Bの基礎検証完了。0.6Bは長文構造化生成では不採用 | `benchmark_threshold_design/runbooks/2026-09-04-oss-llm-colab-local-runbook.md` |
+| IB-012 | `implementation` | 独自引用・ナレッジ取得ツールを実用化する | 5 | 方針メモ作成済み、実装未着手 | `skill_orchestration_harness/citation-knowledge-retrieval-productization.md` |
 
 ## 見ることリスト
 
@@ -186,11 +187,28 @@
 - [x] 評価軸分離後の `rakugo.learning.plan.scored.001` を再実測する。
 - [x] `rakugo.learning.case.practice.001` の追加promptをrunbookへ追加する。初期値は `max_new_tokens=2000`、重い場合は `1600` に下げる。
 - [ ] 本文生成、評価基準生成、自己チェックを分割して実測する。
-- [ ] `rakugo.learning.case.practice.001` を実測する。
+- [x] `rakugo.learning.case.practice.001` を実測する。2000 tokenでも途中切れし、同文反復が多かった。
+- [ ] `rakugo.learning.case.practice.001` を1ケースだけで再実測する。
+- [ ] `チェックシートだけ`、`言い回しだけ`、`根拠だけ` に分割して再実測する。
 - [ ] 評価表の見出し不足、score重複、途中切れを簡易scriptで確認する。
 - [ ] ローカルOllamaで実測する。
 - [x] 初回実測結果を `experiments/` 配下へ保存する。
 - [x] 新版セルの再測定結果を `experiments/` 配下へ保存する。
+- [x] Qwen3 0.6Bを長文構造化生成の採用候補から外す判断を記録する。
+- [x] 次の主軸を、小型LLM生成ではなく独自引用・ナレッジ取得へ切り替える。
+
+### IB-012 独自引用・ナレッジ取得ツール実用化
+
+- [x] 小型LLM長文生成を主役にしない判断がある。
+- [x] `citation-knowledge-item.v1` の初期サンプルがある。
+- [ ] schemaを確定する。
+- [ ] 5件以上の手作りknowledgeを登録する。
+- [ ] `index-knowledge` を作る。
+- [ ] `select-knowledge` を作る。
+- [ ] `render-context-pack` を作る。
+- [ ] `check-output-grounding` を作る。
+- [ ] 外部送信禁止fieldを強制する。
+- [ ] 落語ケース練習を引用取得方式で再構成する。
 
 ## GitHub Issue化テンプレート
 
@@ -235,10 +253,12 @@
 5. IB-006: 小さいUIコンポーネントで試す。
 6. IB-007: API keyなしのfixture比較を整理する。
 7. IB-008: 費用上限を決めてからAPI keyあり実行へ進む。
-8. IB-011: OSS LLMをColab無料枠とローカルで試す。
+8. IB-012: 独自引用・ナレッジ取得ツールを実用化する。
+9. IB-011: 必要な場合だけ、Qwen3 4B / DeepSeek distill / SmolLM3などを同一caseで比較する。
 
 理由:
 
 - 先に導線を直すと、ユーザーが調査内容を確認しやすい。
 - route cardは、JSONとcheckerができるまで実用段階ではない。
 - API keyありの検証は、APIなしで価値が見えた後に進める。
+- Qwen3 0.6Bは長文構造化生成では不採用のため、次は生成モデル調整より引用・ナレッジ取得の実用化を優先する。
