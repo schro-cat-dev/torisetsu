@@ -9,7 +9,7 @@
     "dueDate": "2026-08-30",
     "completedAt": "",
     "createdAt": "2026-08-25T00:00:00.000Z",
-    "updatedAt": "2026-08-27T00:10:00.000Z"
+    "updatedAt": "2026-08-27T12:35:14.416Z"
   },
   {
     "id": "todo-002",
@@ -75,13 +75,13 @@
     "id": "todo-007",
     "title": "ねこ用のメモを整理する",
     "description": "追加分類が通常分類と同じように表示、選択、保存できるかを見る。",
-    "status": "todo",
+    "status": "done",
     "priority": "low",
     "categoryId": "category-f642553c-f546-4adb-852c-9c9850e05e12",
     "dueDate": "",
-    "completedAt": "",
+    "completedAt": "2026-08-27T12:36:26.763Z",
     "createdAt": "2026-08-27T00:15:00.000Z",
-    "updatedAt": "2026-08-27T02:18:00.000Z"
+    "updatedAt": "2026-08-27T12:36:26.763Z"
   },
   {
     "id": "todo-008",

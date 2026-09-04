@@ -18,6 +18,16 @@ AI実験の評価軸、閾値、版、実測結果を分けて管理する。
 | `threshold_registry.md` | 現在使う閾値の一覧 |
 | `version_ledger.md` | 閾値や評価軸を変えた履歴 |
 | `experiments/` | 実測結果、比較結果、反省ログ |
+| `runbooks/` | 実験を同じ手順で動かすための手順書 |
+
+## Runbooks
+
+- [OSS LLM Colab / Local Trial Runbook](runbooks/2026-09-04-oss-llm-colab-local-runbook.md): Colab無料CPU、ローカルOllama、llama.cpp、OpenAI-compatible API接続でOSS / open-weight modelを試す手順。
+
+## Experiments
+
+- [Qwen3 0.6B Colab CPU Summary](experiments/oss_llm_colab/2026-09-04-qwen3-0-6b-colab-cpu-summary.md): Colab無料CPUでの基礎検証まとめ。動作確認、速度、出力品質、次フェーズを短く整理。
+- [Qwen3 0.6B Colab CPU Minimal Inference](experiments/oss_llm_colab/2026-09-04-qwen3-0-6b-colab-cpu-minimal-inference.md): Colab無料CPUで `Qwen/Qwen3-0.6B` を実行した推論結果。`max_new_tokens=160/320/860/1200/1600` の実測、旧 `do_sample=False` とQwen公式推奨presetの差分、長文promptの途中切れ、評価軸混同、次フェーズ用promptを記録済み。
 
 ## 公開ベンチマークの扱い
 
@@ -63,4 +73,3 @@ AIが方向性に違和感を持った場合は、次の形で提示する。
 | 実測 | 実際の値 |
 | 解釈 | その値をどう読むか |
 | 残リスク | 数値だけでは見えないこと |
-

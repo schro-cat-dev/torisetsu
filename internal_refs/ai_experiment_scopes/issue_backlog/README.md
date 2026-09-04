@@ -51,6 +51,7 @@
 | IB-008 | `cost` | API keyあり実行の費用上限と実行条件を決める | 4 | 未着手 | `model_drift_watch/README.md` |
 | IB-009 | `implementation` | EvalBench / promptfoo結果をlocal observationへ変換するadapter設計を作る | 4 | 未着手 | `external_refs/ai_harness_skill_integration_references/README.md` |
 | IB-010 | `handoff` | root READMEから主要調査レポートへ直接辿れる導線を追加する | 5 | 未着手 | `README.md` |
+| IB-011 | `evaluation` | OSS LLMをColab無料枠とローカルで試す | 5 | Colab CPUでQwen3 0.6Bの基礎検証完了。次は分割promptとローカル比較 | `benchmark_threshold_design/runbooks/2026-09-04-oss-llm-colab-local-runbook.md` |
 
 ## 見ることリスト
 
@@ -153,6 +154,44 @@
 - [ ] モデルドリフト監視へのリンクがある。
 - [ ] 読む順番が分かる。
 
+### IB-011 OSS LLM Colab / Local Trial
+
+- [x] Colab無料CPUで試す手順がある。
+- [x] ローカルOllamaで試す手順がある。
+- [x] llama.cppで試す手順がある。
+- [x] OpenAI-compatible APIとして接続する手順がある。
+- [x] 同一promptで比較するcaseがある。
+- [x] 超軽量な実運用タスクの依頼内容がある。
+- [x] 実運用タスクを落語学習の構造化アウトプット確認へ上方修正した。
+- [x] 結果記録テンプレートがある。
+- [x] 問題が発生した場合の対応とColabやり直し手順がある。
+- [x] `max_new_tokens` の公式仕様とmodel context上限の扱いを記載した。
+- [x] Colab無料CPUの環境確認セルを実行した。
+- [x] Colab無料CPUで `Qwen/Qwen3-0.6B` のmodel loadを実行した。
+- [x] Colabで最小推論を実測した。
+- [x] thinking抑制とセル全体時間計測を入れた新版セルで再測定した。
+- [x] 同一smokeを2回実行し、速度と出力傾向の再現性を確認した。
+- [x] `max_new_tokens=320` で短文計画を再試行した。
+- [x] `max_new_tokens=860` で短文計画を再試行した。
+- [x] 旧smokeの `do_sample=False` がQwen公式推奨presetとズレていたことを記録した。
+- [ ] Qwen公式推奨presetで短文計画を再試行する。
+- [ ] `max_new_tokens=480` から `600` と重複禁止付きpromptで短文計画を再試行する。
+- [ ] 日本語指定、英語禁止、入力本文ありのJSON caseで再試行する。
+- [x] 落語学習promptで長めの構造化出力を実測する。
+- [x] 落語学習promptを5段階評価付きに上方修正し、`max_new_tokens=1600` の実行セルを追加した。
+- [x] 落語学習promptに反復抑制、抽象文のNG/OK例、見出しごとの役割分離を追加した。
+- [x] `話の強弱`、`起承転結`、`盛り上がり` の評価軸混同を記録し、promptで分離した。
+- [x] 評価軸混同について、中学生にも分かる具体例をpromptと証跡へ追加した。
+- [x] `rakugo.learning.plan.scored.001` を `max_new_tokens=1600` で実測する。
+- [x] 評価軸分離後の `rakugo.learning.plan.scored.001` を再実測する。
+- [x] `rakugo.learning.case.practice.001` の追加promptをrunbookへ追加する。初期値は `max_new_tokens=2000`、重い場合は `1600` に下げる。
+- [ ] 本文生成、評価基準生成、自己チェックを分割して実測する。
+- [ ] `rakugo.learning.case.practice.001` を実測する。
+- [ ] 評価表の見出し不足、score重複、途中切れを簡易scriptで確認する。
+- [ ] ローカルOllamaで実測する。
+- [x] 初回実測結果を `experiments/` 配下へ保存する。
+- [x] 新版セルの再測定結果を `experiments/` 配下へ保存する。
+
 ## GitHub Issue化テンプレート
 
 ~~~markdown
@@ -196,6 +235,7 @@
 5. IB-006: 小さいUIコンポーネントで試す。
 6. IB-007: API keyなしのfixture比較を整理する。
 7. IB-008: 費用上限を決めてからAPI keyあり実行へ進む。
+8. IB-011: OSS LLMをColab無料枠とローカルで試す。
 
 理由:
 
