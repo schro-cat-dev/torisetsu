@@ -1,0 +1,27 @@
+{
+  "name": "@torisetsu/configurable-list-core",
+  "version": "0.1.0",
+  "description": "Framework-independent contracts, validation, sanitization, and state helpers for configurable lists.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "files": ["dist", "contracts", "README.md"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./contracts/*": "./contracts/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "vite build --config vite.config.ts && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit"
+  },
+  "dependencies": {
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5"
+  }
+}

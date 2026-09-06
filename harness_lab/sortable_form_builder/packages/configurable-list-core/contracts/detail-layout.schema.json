@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://torisetsu.local/contracts/configurable-detail-layout.v1.schema.json",
+  "title": "Configurable detail layout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sections"],
+  "properties": {
+    "schemaVersion": {
+      "const": "configurable-detail-layout.v1"
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 24,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/fieldList" },
+          { "$ref": "#/$defs/markdown" }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "sectionId": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,63}$"
+    },
+    "sectionTitle": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "fieldName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "markdownText": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "fieldList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "fields"],
+      "properties": {
+        "id": { "$ref": "#/$defs/sectionId" },
+        "type": { "const": "field-list" },
+        "title": { "$ref": "#/$defs/sectionTitle" },
+        "columns": { "enum": [1, 2] },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 24,
+          "items": { "$ref": "#/$defs/fieldName" }
+        }
+      }
+    },
+    "markdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "source"],
+      "properties": {
+        "id": { "$ref": "#/$defs/sectionId" },
+        "type": { "const": "markdown" },
+        "title": { "$ref": "#/$defs/sectionTitle" },
+        "source": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "markdown"],
+              "properties": {
+                "kind": { "const": "literal" },
+                "markdown": { "$ref": "#/$defs/markdownText" }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "field"],
+              "properties": {
+                "kind": { "const": "field" },
+                "field": { "$ref": "#/$defs/fieldName" }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

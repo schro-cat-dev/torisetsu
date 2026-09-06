@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://torisetsu.local/contracts/configurable-item-composition.v1.schema.json",
+  "title": "Configurable item composition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "fields", "creation", "display"],
+  "properties": {
+    "schemaVersion": { "const": "configurable-item-composition.v1" },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/textField" },
+          { "$ref": "#/$defs/numberField" },
+          { "$ref": "#/$defs/selectField" },
+          { "$ref": "#/$defs/checkboxField" }
+        ]
+      }
+    },
+    "creation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["initialTitle"],
+      "properties": {
+        "initialTitle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field", "value"],
+          "properties": {
+            "field": { "$ref": "#/$defs/fieldName" },
+            "value": { "type": "string" }
+          }
+        }
+      }
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["titleField"],
+      "properties": {
+        "titleField": { "$ref": "#/$defs/fieldName" },
+        "summaryField": { "$ref": "#/$defs/fieldName" },
+        "badgeField": { "$ref": "#/$defs/fieldName" },
+        "detailFields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fieldName" }
+        },
+        "detailLayout": {
+          "$ref": "https://torisetsu.local/contracts/configurable-detail-layout.v1.schema.json"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "fieldName": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,63}$"
+    },
+    "baseFieldProperties": {
+      "type": "object",
+      "properties": {
+        "name": { "$ref": "#/$defs/fieldName" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "required": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 300 },
+        "fullWidth": { "type": "boolean" }
+      }
+    },
+    "textField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "label"],
+      "properties": {
+        "name": { "$ref": "#/$defs/fieldName" },
+        "type": { "enum": ["text", "textarea"] },
+        "label": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "required": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 300 },
+        "fullWidth": { "type": "boolean" },
+        "defaultValue": { "type": "string" },
+        "placeholder": { "type": "string", "maxLength": 300 },
+        "maxLength": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "numberField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "label"],
+      "properties": {
+        "name": { "$ref": "#/$defs/fieldName" },
+        "type": { "const": "number" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "required": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 300 },
+        "fullWidth": { "type": "boolean" },
+        "defaultValue": { "type": "number" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "selectField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "label", "options"],
+      "properties": {
+        "name": { "$ref": "#/$defs/fieldName" },
+        "type": { "const": "select" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "required": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 300 },
+        "fullWidth": { "type": "boolean" },
+        "defaultValue": { "type": "string" },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["value", "label"],
+            "properties": {
+              "value": { "type": "string", "minLength": 1 },
+              "label": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "checkboxField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "label"],
+      "properties": {
+        "name": { "$ref": "#/$defs/fieldName" },
+        "type": { "const": "checkbox" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "required": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 300 },
+        "fullWidth": { "type": "boolean" },
+        "defaultValue": { "type": "boolean" }
+      }
+    }
+  }
+}

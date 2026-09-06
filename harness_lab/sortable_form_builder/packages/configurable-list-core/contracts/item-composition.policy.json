@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "configurable-item-composition-policy.v1",
+  "acceptedDocumentFormats": ["json", "markdown-json-fence"],
+  "limits": {
+    "maxDocumentCharacters": 128000,
+    "maxFields": 32,
+    "maxFieldNameCharacters": 64,
+    "maxLabelCharacters": 100,
+    "maxDescriptionCharacters": 300,
+    "maxOptions": 100
+  }
+}

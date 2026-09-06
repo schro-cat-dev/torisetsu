@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "configurable-detail-layout-policy.v1",
+  "acceptedDocumentFormats": ["json", "markdown-json-fence"],
+  "limits": {
+    "maxDocumentCharacters": 64000,
+    "maxSections": 24,
+    "maxSectionTitleCharacters": 100,
+    "maxMarkdownCharacters": 20000,
+    "maxFieldsPerSection": 24,
+    "maxNestingDepth": 8
+  },
+  "allowedLinkProtocols": ["http", "https", "mailto"]
+}

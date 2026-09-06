@@ -1,0 +1,30 @@
+{
+  "name": "@torisetsu/configurable-list",
+  "version": "0.1.0",
+  "description": "Complete configurable sortable-list package with framework-independent contracts and React UI.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": ["./styles.css"],
+  "files": ["dist", "styles.css", "README.md"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./styles.css"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit"
+  },
+  "dependencies": {
+    "@torisetsu/configurable-list-core": "0.1.0",
+    "@torisetsu/configurable-list-react": "0.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0 <20",
+    "react-dom": ">=18.2.0 <20"
+  }
+}

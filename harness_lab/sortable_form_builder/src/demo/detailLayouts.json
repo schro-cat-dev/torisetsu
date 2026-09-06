@@ -1,0 +1,59 @@
+{
+  "tasks": {
+    "schemaVersion": "configurable-detail-layout.v1",
+    "sections": [
+      {
+        "id": "task-guidance",
+        "type": "markdown",
+        "source": {
+          "kind": "literal",
+          "markdown": "**確認:** 着手前に優先度と見積もりを見直します。"
+        }
+      },
+      {
+        "id": "task-status",
+        "type": "field-list",
+        "title": "現在の設定",
+        "columns": 2,
+        "fields": ["title", "priority", "estimatedMinutes", "ready"]
+      },
+      {
+        "id": "task-notes",
+        "type": "markdown",
+        "title": "記録",
+        "source": {
+          "kind": "field",
+          "field": "notes"
+        }
+      }
+    ]
+  },
+  "contacts": {
+    "schemaVersion": "configurable-detail-layout.v1",
+    "sections": [
+      {
+        "id": "contact-guidance",
+        "type": "markdown",
+        "source": {
+          "kind": "literal",
+          "markdown": "> 送る前に、相手・連絡手段・伝える内容を確認します。"
+        }
+      },
+      {
+        "id": "contact-summary",
+        "type": "field-list",
+        "title": "連絡設定",
+        "fields": ["subject", "channel", "followUp"]
+      },
+      {
+        "id": "contact-details",
+        "type": "markdown",
+        "title": "伝える内容",
+        "source": {
+          "kind": "field",
+          "field": "details"
+        }
+      }
+    ]
+  }
+}
