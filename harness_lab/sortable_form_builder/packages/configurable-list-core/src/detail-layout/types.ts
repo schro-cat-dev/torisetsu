@@ -1,4 +1,12 @@
 import type { FieldValue } from "../types";
+import type {
+  BoundaryFilterResult,
+  BoundaryIssue,
+  JsonInputBoundaryIssueCode,
+  JsonInputBoundaryMetadata,
+  JsonInputBoundaryPolicy,
+} from "../input-boundary";
+import type { MarkdownSanitizationChange } from "./markdownSanitizer";
 
 export type DetailLayoutSchemaVersion = "configurable-detail-layout.v1";
 
@@ -40,21 +48,16 @@ export interface DetailLayoutDefinition<FieldName extends string = string> {
     sections: ReadonlyArray<DetailSectionDefinition<FieldName>>;
 }
 
-export interface DetailLayoutPolicy {
-    acceptedDocumentFormats: ReadonlyArray<"json" | "markdown-json-fence">;
-    maxDocumentCharacters: number;
+export interface DetailLayoutPolicy extends JsonInputBoundaryPolicy {
     maxSections: number;
     maxSectionTitleCharacters: number;
     maxMarkdownCharacters: number;
     maxFieldsPerSection: number;
-    maxNestingDepth: number;
     allowedLinkProtocols: ReadonlyArray<string>;
 }
 
 export type DetailLayoutIssueCode =
-    | "document_too_large"
-    | "invalid_json"
-    | "unsupported_document_format"
+    | JsonInputBoundaryIssueCode
     | "invalid_schema_version"
     | "invalid_structure"
     | "unknown_property"
@@ -63,30 +66,19 @@ export type DetailLayoutIssueCode =
     | "invalid_section_id"
     | "invalid_field_reference"
     | "invalid_markdown_source"
-    | "limit_exceeded"
-    | "nesting_too_deep"
-    | "unsafe_property";
+    | "limit_exceeded";
 
-export interface DetailLayoutIssue {
-    code: DetailLayoutIssueCode;
-    path: string;
-    message: string;
-}
+export type DetailLayoutIssue = BoundaryIssue<DetailLayoutIssueCode>;
 
 export type DetailLayoutFilterResult<FieldName extends string = string> =
-    | {
-          ok: true;
-          value: DetailLayoutDefinition<FieldName>;
-          issues: readonly [];
-          sanitizationChanges: ReadonlyArray<{
-              code: string;
-              count: number;
-          }>;
+    BoundaryFilterResult<
+      DetailLayoutDefinition<FieldName>,
+      DetailLayoutIssue,
+      {
+        boundary: JsonInputBoundaryMetadata;
+        sanitizationChanges: ReadonlyArray<MarkdownSanitizationChange>;
       }
-    | {
-          ok: false;
-          issues: ReadonlyArray<DetailLayoutIssue>;
-      };
+    >;
 
 export interface DetailItemValues<FieldName extends string = string> {
     id: string;

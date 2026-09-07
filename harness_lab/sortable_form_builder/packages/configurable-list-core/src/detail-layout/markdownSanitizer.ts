@@ -29,6 +29,7 @@ const markdownProcessor = unified()
     bullet: "-",
     fences: true,
   });
+const SAFE_LINK_PROTOCOLS = new Set(["http", "https", "mailto"]);
 
 function hasChildren(node: Root | RootContent): node is Root | (RootContent & Parent) {
   return "children" in node && Array.isArray(node.children);
@@ -50,7 +51,11 @@ function isSafeUrl(url: string, policy: DetailLayoutPolicy) {
     return true;
   }
 
-  return policy.allowedLinkProtocols.includes(protocolMatch[1].toLowerCase());
+  const protocol = protocolMatch[1].toLowerCase();
+  return (
+    SAFE_LINK_PROTOCOLS.has(protocol) &&
+    policy.allowedLinkProtocols.includes(protocol)
+  );
 }
 
 function recordChange(

@@ -9,6 +9,9 @@ export default defineConfig({
     strictPort: false,
   },
   test: {
-    include: ["tests/**/*.test.{ts,tsx}"],
+    include: [
+      "tracked-tests/**/*.test.{ts,tsx}",
+      "packages/*/tests/**/*.test.{ts,tsx}",
+    ],
   },
 });

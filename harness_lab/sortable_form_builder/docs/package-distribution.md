@@ -6,7 +6,7 @@
 
 | package | 責務 | 単独利用する場面 |
 |---|---|---|
-| `@torisetsu/configurable-list-core` | 型、入力防御、JSON契約、値移行、純粋な状態更新 | Reactを使わない検証処理やバックエンド |
+| `@torisetsu/configurable-list-core` | 共通JSON境界、入力防御、JSON契約、値移行、純粋な状態更新 | Reactを使わない検証処理やバックエンド |
 | `@torisetsu/configurable-list-react` | dnd-kit、フォーム、行内詳細、構成編集、モーダル | 独自のcore import方針を持つReactアプリ |
 | `@torisetsu/configurable-list` | coreとReact UIの再export | 通常のReactアプリ |
 
@@ -72,12 +72,17 @@ npm run verify:package
 2. 空の一時consumerへtarballを展開する。
 3. consumerが統合packageだけをimportしたTypeScriptコードを確認する。
 4. Viteでブラウザ用JS/CSSをbuildする。
+5. Nodeからpacked coreをimportし、構成検証、Markdown除去記録、境界adapterを確認する。
+6. packed React packageがguard迂回rendererを公開していないことを確認する。
 
 2026-09-07の実結果:
 
 ```text
 consumerTypecheck: passed
 consumerBuild: passed
+packedNodeBoundary.nodeBoundary: passed
+packedNodeBoundary.sanitizationEvidence: passed
+packedNodeBoundary.guardedRendererExport: passed
 emittedAssets: JavaScript 1件、CSS 1件
 ```
 

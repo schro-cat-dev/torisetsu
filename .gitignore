@@ -1,3 +1,17 @@
 ideas/
+internal_refs/local_unmasked_chat_logs/
+.agents/skills/tdd-slice-execution/
+.agents/skills/test-design-expert-judgment/
+tooling/go-test-harness/
+internal_refs/harness_arch/*
+!internal_refs/harness_arch/README.md
+!internal_refs/harness_arch/ui_quality_harness/
+!internal_refs/harness_arch/ui_quality_harness/**
+internal_refs/test_management/
+harness_lab/sortable_form_builder/tests/
+harness_lab/sortable_form_builder/test_management/
 .ui-quality-runs/
+harness_lab/todo_frontend/harness_runs/
+harness_lab/todo_frontend/test-results/
+harness_lab/todo_frontend/playwright-report/
 internal_refs/harness_arch/ui_quality_harness/results/

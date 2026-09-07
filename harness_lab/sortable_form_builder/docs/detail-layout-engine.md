@@ -9,15 +9,15 @@ dnd-kit一覧の各アイテム直下へ開く詳細領域に、個別JSONで指
 ## 対象範囲
 
 - dnd-kit一覧の本文クリックで開閉する行内詳細表示。
-- ブラウザ上でのJSON検証、Markdown解析、React描画。
+- ブラウザまたはNode上でのJSON検証とMarkdown解析、React描画。
 
-バックエンド、DB、保存方式、PII処理、認証は対象外です。
+HTTP framework固有middleware、DB、保存方式、PII処理、認証は対象外です。Node/APIで共通防御を呼ぶ方法は[`input-defense-boundary.md`](./input-defense-boundary.md)に記載する。
 
 ## 処理順
 
 ```text
 unknownのJSONまたはJSON文字列
-  -> JSON読取
+  -> 共通JSON境界で読取、総量・ネスト・危険値を確認
   -> schemaVersion確認
   -> property/type/field参照/件数/文字数の検証
   -> MarkdownをASTとして解析
@@ -75,6 +75,8 @@ unknownのJSONまたはJSON文字列
 | 項目 | 既定値 | 失敗時 |
 |---|---:|---|
 | JSON文書 | 64,000文字以下 | 全体を拒否 |
+| JSON要素数 | 2,048以下 | 全体を拒否 |
+| JSON内文字列合計 | 64,000文字以下 | 全体を拒否 |
 | section | 1から24件 | 全体を拒否 |
 | section ID | 64文字以内、英字開始 | 全体を拒否 |
 | section title | 1から100文字 | 全体を拒否 |
@@ -84,7 +86,7 @@ unknownのJSONまたはJSON文字列
 
 追加防御:
 
-- `__proto__`、`prototype`、`constructor`をproperty名に持つJSONを拒否する。
+- 共通JSON境界で循環参照、JSON外の値、危険property、8階層超のネストを拒否する。
 - `fields`に存在しないfield参照を拒否する。
 - Markdown sourceには`text`または`textarea`だけを許可する。
 - raw HTMLと画像はMarkdown ASTから除去する。
@@ -98,7 +100,7 @@ unknownのJSONまたはJSON文字列
 - 防御層とMarkdown変換はブラウザ側で実行する。
 - 閉じている詳細はReact treeに作らないため、一覧全件のMarkdownを一括変換しない。
 - config検証はcollection読込時の`useMemo`で1回行い、itemを開くたびには再実行しない。
-- production buildの実測はJavaScript `467.77 kB`、gzip後 `143.24 kB`。
+- 実際のbundle sizeは依存versionと利用側のtree shakingで変わるため、`npm run build`の出力で確認する。
 - 数十section以下の詳細表示を想定する。大量行の全文Markdown常時表示は、このエンジンの対象外とする。
 
 ## 参照実装との対応
@@ -122,10 +124,11 @@ unknownのJSONまたはJSON文字列
 ## 確認
 
 ```bash
-cd tooling/go-test-harness
-go run ./cmd/test-harness run --root ../.. --spec harness_lab/sortable_form_builder/test_management/test-command-plan.json
+npm test
+npm run typecheck
+npm run build
 ```
 
-共通runnerはGo標準ライブラリだけで動く。対象アプリ固有の`npm run test`、`npm run typecheck`、`npm run build`はJSON planから起動する。契約JSONは`packages/configurable-list-core/contracts/`に置く。
+契約JSONは`packages/configurable-list-core/contracts/`に置く。Git追跡対象の回帰テストは`tracked-tests/`、防御境界テストは`packages/configurable-list-core/tests/`に置き、packed packageのNode・browser確認まで`npm test`で実行する。
 
 単体テストでは、正常なobject、JSONコードフェンス、未知type、存在しないfield、非textのMarkdown参照、危険property、raw HTML、画像、`javascript:` URL、sanitization記録、fail closedを確認する。

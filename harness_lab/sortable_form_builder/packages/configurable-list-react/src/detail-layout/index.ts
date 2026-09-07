@@ -1,8 +1,2 @@
-export {
-  DetailLayoutRenderer,
-  ValidatedDetailLayoutRenderer,
-} from "./DetailLayoutRenderer";
-export type {
-  DetailLayoutRendererProps,
-  ValidatedDetailLayoutRendererProps,
-} from "./DetailLayoutRenderer";
+export { DetailLayoutRenderer } from "./DetailLayoutRenderer";
+export type { DetailLayoutRendererProps } from "./DetailLayoutRenderer";

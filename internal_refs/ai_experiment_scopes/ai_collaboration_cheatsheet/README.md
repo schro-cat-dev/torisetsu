@@ -131,6 +131,11 @@ AIのおすすめ:
 
 ユーザーから返った判断、補正、具体例、方針は、次に同じズレを減らすために `knowledge/` に保存します。
 
+関連ナレッジ:
+
+- [AI出力は完成形ではなく現実化前のたたき台として扱う](knowledge/2026-09-07-ai-output-as-draft-not-final.md)
+- [成果物の大きさを理由に実行速度や品質を下げない](knowledge/2026-09-07-large-output-fast-execution.md)
+
 保存する内容:
 
 ```text

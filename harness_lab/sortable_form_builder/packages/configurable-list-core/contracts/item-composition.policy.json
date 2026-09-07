@@ -7,6 +7,14 @@
     "maxFieldNameCharacters": 64,
     "maxLabelCharacters": 100,
     "maxDescriptionCharacters": 300,
-    "maxOptions": 100
+    "maxOptions": 100,
+    "maxNestingDepth": 8,
+    "maxNodeCount": 4096,
+    "maxTotalStringCharacters": 128000,
+    "maxDefaultValueCharacters": 100000,
+    "maxPlaceholderCharacters": 300,
+    "maxOptionValueCharacters": 300,
+    "maxOptionLabelCharacters": 100,
+    "maxInitialTitleCharacters": 100000
   }
 }

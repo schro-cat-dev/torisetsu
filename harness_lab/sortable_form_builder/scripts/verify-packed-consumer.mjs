@@ -170,6 +170,8 @@ await writeFile(
 import { createRoot } from "react-dom/client";
 import {
   ConfigurableCollectionEditor,
+  createInputBoundaryAdapter,
+  filterItemCompositionConfig,
   type CollectionDefinition,
   type ConfigurableItem,
 } from "@torisetsu/configurable-list";
@@ -187,6 +189,15 @@ const definition = {
     { name: "notes", type: "textarea", label: "詳細" },
   ],
 } satisfies CollectionDefinition;
+
+const compositionBoundary = createInputBoundaryAdapter(filterItemCompositionConfig);
+const checkedComposition = compositionBoundary.require({
+  schemaVersion: "configurable-item-composition.v1",
+  fields: definition.fields,
+  creation: definition.creation,
+  display: definition.display,
+});
+void checkedComposition.fields;
 
 function ConsumerApp() {
   const [items, setItems] = useState<Array<ConfigurableItem>>([]);
@@ -207,6 +218,57 @@ await linkInstalledDependencies();
 await unpackTarball("list-core", "configurable-list-core");
 await unpackTarball("list-react", "configurable-list-react");
 await unpackTarball("configurable-list-0.1.0", "configurable-list");
+
+const nodeBoundaryOutput = run(
+  process.execPath,
+  [
+    "--input-type=module",
+    "--eval",
+    `import {
+  createInputBoundaryAdapter,
+  filterItemCompositionConfig,
+} from "@torisetsu/configurable-list-core";
+import * as reactApi from "@torisetsu/configurable-list-react";
+
+const input = {
+  schemaVersion: "configurable-item-composition.v1",
+  fields: [{ name: "notes", type: "textarea", label: "Notes" }],
+  creation: { initialTitle: { field: "notes", value: "New item" } },
+  display: {
+    titleField: "notes",
+    detailLayout: {
+      schemaVersion: "configurable-detail-layout.v1",
+      sections: [{
+        id: "notes",
+        type: "markdown",
+        source: { kind: "literal", markdown: "safe<script>remove</script>" },
+      }],
+    },
+  },
+};
+const filtered = filterItemCompositionConfig(input);
+if (!filtered.ok) throw new Error(JSON.stringify(filtered.issues));
+if (JSON.stringify(filtered.value).includes("<script>")) {
+  throw new Error("Packed core returned unsanitized Markdown.");
+}
+if (!filtered.sanitizationChanges.some((change) => change.code === "raw_html_removed")) {
+  throw new Error("Packed core did not preserve sanitization evidence.");
+}
+const adapter = createInputBoundaryAdapter(filterItemCompositionConfig);
+if (adapter.require(input).fields.length !== 1) {
+  throw new Error("Packed core boundary adapter returned an unexpected value.");
+}
+if ("ValidatedDetailLayoutRenderer" in reactApi) {
+  throw new Error("Packed React package exposes the validation bypass renderer.");
+}
+console.log(JSON.stringify({
+  nodeBoundary: "passed",
+  sanitizationEvidence: "passed",
+  guardedRendererExport: "passed",
+}));`,
+  ],
+  consumerDirectory,
+);
 
 run(
   process.execPath,
@@ -233,6 +295,7 @@ console.log(
       tarballs,
       consumerTypecheck: "passed",
       consumerBuild: "passed",
+      packedNodeBoundary: JSON.parse(nodeBoundaryOutput),
       emittedAssets: builtAssets.sort(),
     },
     null,

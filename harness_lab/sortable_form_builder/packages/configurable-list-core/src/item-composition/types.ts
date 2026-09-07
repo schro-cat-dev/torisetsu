@@ -1,5 +1,28 @@
-import type { DetailLayoutDefinition } from "../detail-layout";
+import type {
+  DetailLayoutDefinition,
+  MarkdownSanitizationChange,
+} from "../detail-layout";
+import type {
+  BoundaryFilterResult,
+  BoundaryIssue,
+  JsonInputBoundaryIssueCode,
+  JsonInputBoundaryMetadata,
+  JsonInputBoundaryPolicy,
+} from "../input-boundary";
 import type { FieldDefinition } from "../types";
+
+export interface ItemCompositionPolicy extends JsonInputBoundaryPolicy {
+  maxFields: number;
+  maxFieldNameCharacters: number;
+  maxLabelCharacters: number;
+  maxDescriptionCharacters: number;
+  maxOptions: number;
+  maxDefaultValueCharacters: number;
+  maxPlaceholderCharacters: number;
+  maxOptionValueCharacters: number;
+  maxOptionLabelCharacters: number;
+  maxInitialTitleCharacters: number;
+}
 
 export interface ItemCompositionDefinition<FieldName extends string = string> {
   schemaVersion: "configurable-item-composition.v1";
@@ -20,32 +43,24 @@ export interface ItemCompositionDefinition<FieldName extends string = string> {
 }
 
 export type ItemCompositionIssueCode =
-  | "document_too_large"
-  | "invalid_json"
-  | "unsupported_document_format"
+  | JsonInputBoundaryIssueCode
   | "invalid_schema_version"
   | "invalid_structure"
   | "unknown_property"
-  | "unsafe_property"
   | "limit_exceeded"
   | "duplicate_field_name"
   | "invalid_field_definition"
   | "invalid_field_reference"
   | "invalid_detail_layout";
 
-export interface ItemCompositionIssue {
-  code: ItemCompositionIssueCode;
-  path: string;
-  message: string;
-}
+export type ItemCompositionIssue = BoundaryIssue<ItemCompositionIssueCode>;
 
 export type ItemCompositionFilterResult =
-  | {
-      ok: true;
-      value: ItemCompositionDefinition;
-      issues: readonly [];
+  BoundaryFilterResult<
+    ItemCompositionDefinition,
+    ItemCompositionIssue,
+    {
+      boundary: JsonInputBoundaryMetadata;
+      sanitizationChanges: ReadonlyArray<MarkdownSanitizationChange>;
     }
-  | {
-      ok: false;
-      issues: ReadonlyArray<ItemCompositionIssue>;
-    };
+  >;

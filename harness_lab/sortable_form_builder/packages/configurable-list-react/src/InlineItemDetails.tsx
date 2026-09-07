@@ -1,17 +1,13 @@
 import type {
   CollectionDefinition,
   ConfigurableItem,
-  DetailLayoutDefinition,
 } from "@torisetsu/configurable-list-core";
-import {
-  DetailLayoutRenderer,
-  ValidatedDetailLayoutRenderer,
-} from "./detail-layout";
+import { DetailLayoutRenderer } from "./detail-layout/DetailLayoutRenderer";
 
 export interface InlineItemDetailsProps<FieldName extends string> {
   definition: CollectionDefinition<FieldName>;
   item: ConfigurableItem<FieldName>;
-  layout?: DetailLayoutDefinition<FieldName>;
+  layout?: unknown;
   layoutError?: boolean;
 }
 
@@ -40,8 +36,8 @@ export function InlineItemDetails<FieldName extends string>({
         <p className="detail-layout-error" role="alert">
           詳細の表示設定を読み込めませんでした。
         </p>
-      ) : layout ? (
-        <ValidatedDetailLayoutRenderer
+      ) : layout !== undefined ? (
+        <DetailLayoutRenderer
           layout={layout}
           fields={definition.fields}
           item={item}

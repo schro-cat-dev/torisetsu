@@ -1,5 +1,11 @@
 import policyContract from "../../contracts/item-composition.policy.json";
-import { filterDetailLayoutConfig } from "../detail-layout";
+import {
+  DEFAULT_DETAIL_LAYOUT_POLICY,
+  filterDetailLayoutConfig,
+  type DetailLayoutPolicy,
+  type MarkdownSanitizationChange,
+} from "../detail-layout";
+import { filterJsonInputAtBoundary } from "../input-boundary";
 import type {
   CollectionDefinition,
   ConfigurableItem,
@@ -11,19 +17,20 @@ import type {
   ItemCompositionFilterResult,
   ItemCompositionIssue,
   ItemCompositionIssueCode,
+  ItemCompositionPolicy,
 } from "./types";
 
 type UnknownRecord = Record<string, unknown>;
 
-export const DEFAULT_ITEM_COMPOSITION_POLICY = Object.freeze({
-  ...policyContract.limits,
-  acceptedDocumentFormats: Object.freeze([
-    ...policyContract.acceptedDocumentFormats,
-  ]),
-});
+export const DEFAULT_ITEM_COMPOSITION_POLICY: Readonly<ItemCompositionPolicy> =
+  Object.freeze({
+    ...policyContract.limits,
+    acceptedDocumentFormats: Object.freeze([
+      ...policyContract.acceptedDocumentFormats,
+    ]) as ItemCompositionPolicy["acceptedDocumentFormats"],
+  });
 
 const FIELD_NAME_PATTERN = /^[a-z][a-z0-9._-]{0,63}$/i;
-const UNSAFE_PROPERTY_NAMES = new Set(["__proto__", "prototype", "constructor"]);
 
 function issue(
   code: ItemCompositionIssueCode,
@@ -33,42 +40,39 @@ function issue(
   return { code, path, message };
 }
 
+function validateItemCompositionPolicy(
+  policy: ItemCompositionPolicy,
+): ItemCompositionIssue | null {
+  const positiveIntegerKeys = [
+    "maxFields",
+    "maxFieldNameCharacters",
+    "maxLabelCharacters",
+    "maxDescriptionCharacters",
+    "maxOptions",
+    "maxDefaultValueCharacters",
+    "maxPlaceholderCharacters",
+    "maxOptionValueCharacters",
+    "maxOptionLabelCharacters",
+    "maxInitialTitleCharacters",
+  ] as const;
+  for (const key of positiveIntegerKeys) {
+    if (!Number.isSafeInteger(policy[key]) || policy[key] < 1) {
+      return issue(
+        "invalid_boundary_policy",
+        `$.policy.${key}`,
+        `${key}は1以上の安全な整数で指定してください`,
+      );
+    }
+  }
+  return null;
+}
+
 function isRecord(value: unknown): value is UnknownRecord {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }
   const prototype = Object.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
-}
-
-function findUnsafeProperty(value: unknown) {
-  const pending: Array<{ value: unknown; path: string }> = [{ value, path: "$" }];
-  const seen = new Set<object>();
-
-  while (pending.length > 0) {
-    const current = pending.pop();
-    if (
-      !current ||
-      typeof current.value !== "object" ||
-      current.value === null ||
-      seen.has(current.value)
-    ) {
-      continue;
-    }
-    seen.add(current.value);
-
-    for (const [key, child] of Object.entries(current.value)) {
-      const childPath = Array.isArray(current.value)
-        ? `${current.path}[${key}]`
-        : `${current.path}.${key}`;
-      if (UNSAFE_PROPERTY_NAMES.has(key)) {
-        return childPath;
-      }
-      pending.push({ value: child, path: childPath });
-    }
-  }
-
-  return null;
 }
 
 function rejectUnknownProperties(
@@ -83,48 +87,6 @@ function rejectUnknownProperties(
         issue("unknown_property", `${path}.${key}`, `未対応のpropertyです: ${key}`),
       );
     }
-  }
-}
-
-function parseDocument(input: unknown) {
-  if (typeof input !== "string") {
-    return { value: input, issues: [] as ItemCompositionIssue[] };
-  }
-  if (input.length > policyContract.limits.maxDocumentCharacters) {
-    return {
-      value: null,
-      issues: [
-        issue(
-          "document_too_large",
-          "$",
-          `JSON文書は${policyContract.limits.maxDocumentCharacters}文字以内にしてください`,
-        ),
-      ],
-    };
-  }
-
-  const trimmed = input.trim();
-  const fencedMatch = trimmed.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/i);
-  const format = fencedMatch ? "markdown-json-fence" : "json";
-  if (!policyContract.acceptedDocumentFormats.includes(format)) {
-    return {
-      value: null,
-      issues: [
-        issue("unsupported_document_format", "$", `未対応の入力形式です: ${format}`),
-      ],
-    };
-  }
-
-  try {
-    return {
-      value: JSON.parse(fencedMatch?.[1] ?? trimmed) as unknown,
-      issues: [] as ItemCompositionIssue[],
-    };
-  } catch {
-    return {
-      value: null,
-      issues: [issue("invalid_json", "$", "有効なJSON文書ではありません")],
-    };
   }
 }
 
@@ -177,6 +139,7 @@ function readOptionalNumber(
 function readFieldDefinition(
   value: unknown,
   index: number,
+  policy: ItemCompositionPolicy,
   issues: ItemCompositionIssue[],
 ): FieldDefinition | null {
   const path = `$.fields[${index}]`;
@@ -187,14 +150,14 @@ function readFieldDefinition(
 
   if (
     typeof value.name !== "string" ||
-    value.name.length > policyContract.limits.maxFieldNameCharacters ||
+    value.name.length > policy.maxFieldNameCharacters ||
     !FIELD_NAME_PATTERN.test(value.name)
   ) {
     issues.push(
       issue(
         "invalid_field_definition",
         `${path}.name`,
-        "nameは英字で始まる64文字以内の英数字・記号._-で指定してください",
+        `nameは英字で始まる${policy.maxFieldNameCharacters}文字以内の英数字・記号._-で指定してください`,
       ),
     );
     return null;
@@ -202,13 +165,13 @@ function readFieldDefinition(
   if (
     typeof value.label !== "string" ||
     value.label.length === 0 ||
-    value.label.length > policyContract.limits.maxLabelCharacters
+    value.label.length > policy.maxLabelCharacters
   ) {
     issues.push(
       issue(
         "invalid_field_definition",
         `${path}.label`,
-        `labelは1文字以上${policyContract.limits.maxLabelCharacters}文字以内です`,
+        `labelは1文字以上${policy.maxLabelCharacters}文字以内です`,
       ),
     );
     return null;
@@ -224,7 +187,7 @@ function readFieldDefinition(
     ...(readOptionalString(
       value.description,
       `${path}.description`,
-      policyContract.limits.maxDescriptionCharacters,
+      policy.maxDescriptionCharacters,
       issues,
     ) === undefined
       ? {}
@@ -250,10 +213,20 @@ function readFieldDefinition(
     return {
       ...base,
       type: value.type,
-      ...(readOptionalString(value.defaultValue, `${path}.defaultValue`, maxLength ?? 100_000, issues) === undefined
+      ...(readOptionalString(
+        value.defaultValue,
+        `${path}.defaultValue`,
+        Math.min(maxLength ?? policy.maxDefaultValueCharacters, policy.maxDefaultValueCharacters),
+        issues,
+      ) === undefined
         ? {}
         : { defaultValue: value.defaultValue as string }),
-      ...(readOptionalString(value.placeholder, `${path}.placeholder`, 300, issues) === undefined
+      ...(readOptionalString(
+        value.placeholder,
+        `${path}.placeholder`,
+        policy.maxPlaceholderCharacters,
+        issues,
+      ) === undefined
         ? {}
         : { placeholder: value.placeholder as string }),
       ...(maxLength === undefined ? {} : { maxLength }),
@@ -310,13 +283,13 @@ function readFieldDefinition(
     if (
       !Array.isArray(value.options) ||
       value.options.length === 0 ||
-      value.options.length > policyContract.limits.maxOptions
+      value.options.length > policy.maxOptions
     ) {
       issues.push(
         issue(
           "invalid_field_definition",
           `${path}.options`,
-          `optionsは1件以上${policyContract.limits.maxOptions}件以内です`,
+          `optionsは1件以上${policy.maxOptions}件以内です`,
         ),
       );
       return null;
@@ -329,11 +302,17 @@ function readFieldDefinition(
         !isRecord(option) ||
         typeof option.value !== "string" ||
         option.value.length === 0 ||
+        option.value.length > policy.maxOptionValueCharacters ||
         typeof option.label !== "string" ||
-        option.label.length === 0
+        option.label.length === 0 ||
+        option.label.length > policy.maxOptionLabelCharacters
       ) {
         issues.push(
-          issue("invalid_field_definition", optionPath, "valueとlabelが必要です"),
+          issue(
+            "invalid_field_definition",
+            optionPath,
+            `valueは1から${policy.maxOptionValueCharacters}文字、labelは1から${policy.maxOptionLabelCharacters}文字で指定してください`,
+          ),
         );
         continue;
       }
@@ -350,7 +329,7 @@ function readFieldDefinition(
     const defaultValue = readOptionalString(
       value.defaultValue,
       `${path}.defaultValue`,
-      300,
+      policy.maxOptionValueCharacters,
       issues,
     );
     if (defaultValue !== undefined && !optionValues.has(defaultValue)) {
@@ -418,18 +397,16 @@ function readFieldReference(
 
 export function filterItemCompositionConfig(
   input: unknown,
+  policy: ItemCompositionPolicy = DEFAULT_ITEM_COMPOSITION_POLICY,
+  detailLayoutPolicy: DetailLayoutPolicy = DEFAULT_DETAIL_LAYOUT_POLICY,
 ): ItemCompositionFilterResult {
-  const parsed = parseDocument(input);
-  if (parsed.issues.length > 0) return { ok: false, issues: parsed.issues };
+  const policyIssue = validateItemCompositionPolicy(policy);
+  if (policyIssue) return { ok: false, issues: [policyIssue] };
 
-  const unsafePath = findUnsafeProperty(parsed.value);
-  if (unsafePath) {
-    return {
-      ok: false,
-      issues: [issue("unsafe_property", unsafePath, "安全でないproperty名です")],
-    };
-  }
-  if (!isRecord(parsed.value)) {
+  const boundaryResult = filterJsonInputAtBoundary(input, policy);
+  if (!boundaryResult.ok) return { ok: false, issues: boundaryResult.issues };
+
+  if (!isRecord(boundaryResult.value)) {
     return {
       ok: false,
       issues: [issue("invalid_structure", "$", "item compositionはobjectです")],
@@ -438,12 +415,12 @@ export function filterItemCompositionConfig(
 
   const issues: ItemCompositionIssue[] = [];
   rejectUnknownProperties(
-    parsed.value,
+    boundaryResult.value,
     new Set(["schemaVersion", "fields", "creation", "display"]),
     "$",
     issues,
   );
-  if (parsed.value.schemaVersion !== "configurable-item-composition.v1") {
+  if (boundaryResult.value.schemaVersion !== "configurable-item-composition.v1") {
     issues.push(
       issue(
         "invalid_schema_version",
@@ -453,22 +430,22 @@ export function filterItemCompositionConfig(
     );
   }
   if (
-    !Array.isArray(parsed.value.fields) ||
-    parsed.value.fields.length === 0 ||
-    parsed.value.fields.length > policyContract.limits.maxFields
+    !Array.isArray(boundaryResult.value.fields) ||
+    boundaryResult.value.fields.length === 0 ||
+    boundaryResult.value.fields.length > policy.maxFields
   ) {
     issues.push(
       issue(
         "limit_exceeded",
         "$.fields",
-        `fieldsは1件以上${policyContract.limits.maxFields}件以内です`,
+        `fieldsは1件以上${policy.maxFields}件以内です`,
       ),
     );
     return { ok: false, issues };
   }
 
-  const fields = parsed.value.fields
-    .map((field, index) => readFieldDefinition(field, index, issues))
+  const fields = boundaryResult.value.fields
+    .map((field, index) => readFieldDefinition(field, index, policy, issues))
     .filter((field): field is FieldDefinition => field !== null);
   const fieldsByName = new Map(fields.map((field) => [field.name, field]));
   const seenFieldNames = new Set<string>();
@@ -486,34 +463,44 @@ export function filterItemCompositionConfig(
   }
 
   let creation: ItemCompositionDefinition["creation"] | null = null;
-  if (!isRecord(parsed.value.creation) || !isRecord(parsed.value.creation.initialTitle)) {
+  if (
+    !isRecord(boundaryResult.value.creation) ||
+    !isRecord(boundaryResult.value.creation.initialTitle)
+  ) {
     issues.push(
       issue("invalid_structure", "$.creation.initialTitle", "initialTitleが必要です"),
     );
   } else {
     rejectUnknownProperties(
-      parsed.value.creation,
+      boundaryResult.value.creation,
       new Set(["initialTitle"]),
       "$.creation",
       issues,
     );
     rejectUnknownProperties(
-      parsed.value.creation.initialTitle,
+      boundaryResult.value.creation.initialTitle,
       new Set(["field", "value"]),
       "$.creation.initialTitle",
       issues,
     );
     const titleField = readFieldReference(
-      parsed.value.creation.initialTitle.field,
+      boundaryResult.value.creation.initialTitle.field,
       "$.creation.initialTitle.field",
       fieldsByName,
       issues,
       true,
     );
-    const titleValue = parsed.value.creation.initialTitle.value;
-    if (typeof titleValue !== "string") {
+    const titleValue = boundaryResult.value.creation.initialTitle.value;
+    if (
+      typeof titleValue !== "string" ||
+      titleValue.length > policy.maxInitialTitleCharacters
+    ) {
       issues.push(
-        issue("invalid_structure", "$.creation.initialTitle.value", "valueは文字列です"),
+        issue(
+          "invalid_structure",
+          "$.creation.initialTitle.value",
+          `valueは${policy.maxInitialTitleCharacters}文字以内の文字列です`,
+        ),
       );
     }
     const fieldDefinition = titleField ? fieldsByName.get(titleField) : undefined;
@@ -536,11 +523,12 @@ export function filterItemCompositionConfig(
   }
 
   let display: ItemCompositionDefinition["display"] | null = null;
-  if (!isRecord(parsed.value.display)) {
+  const sanitizationChanges: MarkdownSanitizationChange[] = [];
+  if (!isRecord(boundaryResult.value.display)) {
     issues.push(issue("invalid_structure", "$.display", "displayはobjectです"));
   } else {
     rejectUnknownProperties(
-      parsed.value.display,
+      boundaryResult.value.display,
       new Set([
         "titleField",
         "summaryField",
@@ -552,7 +540,7 @@ export function filterItemCompositionConfig(
       issues,
     );
     const titleField = readFieldReference(
-      parsed.value.display.titleField,
+      boundaryResult.value.display.titleField,
       "$.display.titleField",
       fieldsByName,
       issues,
@@ -575,27 +563,34 @@ export function filterItemCompositionConfig(
       );
     }
     const summaryField = readFieldReference(
-      parsed.value.display.summaryField,
+      boundaryResult.value.display.summaryField,
       "$.display.summaryField",
       fieldsByName,
       issues,
       false,
     );
     const badgeField = readFieldReference(
-      parsed.value.display.badgeField,
+      boundaryResult.value.display.badgeField,
       "$.display.badgeField",
       fieldsByName,
       issues,
       false,
     );
     let detailFields: string[] | undefined;
-    if (parsed.value.display.detailFields !== undefined) {
-      if (!Array.isArray(parsed.value.display.detailFields)) {
+    if (boundaryResult.value.display.detailFields !== undefined) {
+      if (
+        !Array.isArray(boundaryResult.value.display.detailFields) ||
+        boundaryResult.value.display.detailFields.length > policy.maxFields
+      ) {
         issues.push(
-          issue("invalid_structure", "$.display.detailFields", "arrayで指定してください"),
+          issue(
+            "invalid_structure",
+            "$.display.detailFields",
+            `${policy.maxFields}件以内のarrayで指定してください`,
+          ),
         );
       } else {
-        detailFields = parsed.value.display.detailFields
+        detailFields = boundaryResult.value.display.detailFields
           .map((fieldName, index) =>
             readFieldReference(
               fieldName,
@@ -609,10 +604,11 @@ export function filterItemCompositionConfig(
       }
     }
     let detailLayout: ItemCompositionDefinition["display"]["detailLayout"];
-    if (parsed.value.display.detailLayout !== undefined) {
+    if (boundaryResult.value.display.detailLayout !== undefined) {
       const detailResult = filterDetailLayoutConfig(
-        parsed.value.display.detailLayout,
+        boundaryResult.value.display.detailLayout,
         fields,
+        detailLayoutPolicy,
       );
       if (!detailResult.ok) {
         issues.push(
@@ -626,6 +622,7 @@ export function filterItemCompositionConfig(
         );
       } else {
         detailLayout = detailResult.value;
+        sanitizationChanges.push(...detailResult.sanitizationChanges);
       }
     }
     if (titleField) {
@@ -641,7 +638,7 @@ export function filterItemCompositionConfig(
 
   if (
     issues.length > 0 ||
-    fields.length !== parsed.value.fields.length ||
+    fields.length !== boundaryResult.value.fields.length ||
     !creation ||
     !display
   ) {
@@ -657,6 +654,16 @@ export function filterItemCompositionConfig(
       display,
     },
     issues: [],
+    boundary: {
+      inputKind: boundaryResult.inputKind,
+      ...(boundaryResult.documentFormat
+        ? { documentFormat: boundaryResult.documentFormat }
+        : {}),
+      nodeCount: boundaryResult.nodeCount,
+      totalStringCharacters: boundaryResult.totalStringCharacters,
+      maxDepthObserved: boundaryResult.maxDepthObserved,
+    },
+    sanitizationChanges,
   };
 }
 

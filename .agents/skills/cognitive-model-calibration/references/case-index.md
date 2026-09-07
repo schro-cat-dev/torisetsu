@@ -39,6 +39,7 @@
 - `task-weight-calibration/priority-5/2026-08-31-completion-estimate-discipline.md`
 - `task-weight-calibration/priority-5/2026-08-31-exploration-vs-completion-loop.md`
 - `task-weight-calibration/priority-5/2026-08-31-weak-completion-wording.md`
+- `task-weight-calibration/priority-5/2026-09-07-large-output-fast-execution.md`
 - `self-insight-check/priority-5/2026-08-22-strength-weakness-and-cognitive-gap.md`
 - `action-suggestion/priority-5/2026-08-22-adapted-action-suggestion.md`
 - `thinking-pattern-check/priority-5/2026-08-22-cognitive-gap-correction.md`
@@ -48,3 +49,4 @@
 - `information-structure-calibration/priority-5/2026-08-25-structure-unit-vs-runtime-payload.md`
 - `information-structure-calibration/priority-5/2026-08-25-question-seed-vs-ai-reframing.md`
 - `high-level-decision-handoff/priority-5/2026-08-25-domain-strategy-tradeoff-handoff.md`
+- `high-level-decision-handoff/priority-5/2026-09-07-human-ai-peer-judgment.md`

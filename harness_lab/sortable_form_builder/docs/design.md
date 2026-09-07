@@ -22,6 +22,7 @@
 |---|---|---|
 | `packages/configurable-list-core/src/types.ts` | 入出力の型契約 | 持たない |
 | `packages/configurable-list-core/src/fieldValues.ts` | 初期値作成と入力確認 | 持たない |
+| `packages/configurable-list-core/src/input-boundary/` | JSON読取、総量制限、危険値拒否、Node/API接続adapter | 持たない |
 | `packages/configurable-list-core/src/detail-layout/` | 詳細JSON検証とMarkdown防御 | 持たない |
 | `packages/configurable-list-core/src/item-composition/` | 構成JSON検証、値移行、並び替えの純粋ロジック | 持たない |
 | `packages/configurable-list-react/src/ConfigurableItemForm.tsx` | 設定から入力欄を描画 | 持たない |
@@ -84,8 +85,11 @@ const definition = {
 - 未対応の入力種類が必要になった場合だけ、`FieldDefinition` と描画処理を同時に拡張する。
 - 既存の詳細section typeを使うJSONを追加しても、`detail-layout`配下の差分がゼロである。
 - 詳細JSONは`filterDetailLayoutConfig`を通過しないままReactへ渡さない。
+- item構成JSONは`filterItemCompositionConfig`を通過しないまま保存・適用しない。
 
 詳細JSONの契約、防御ルール、ブラウザ負荷は [`detail-layout-engine.md`](./detail-layout-engine.md) を参照する。
+
+共通JSON防御とNode/APIでの配置方法は [`input-defense-boundary.md`](./input-defense-boundary.md) を参照する。
 
 構成編集と既存アイテムの移行規則は [`item-composition-editor.md`](./item-composition-editor.md) を参照する。
 

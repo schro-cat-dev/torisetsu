@@ -11,6 +11,7 @@ export {
   createDraftItem,
   validateFieldValues,
 } from "./fieldValues";
+export * from "./input-boundary";
 export * from "./detail-layout";
 export * from "./item-composition";
 export type {

@@ -53,6 +53,7 @@
 | IB-010 | `handoff` | root READMEから主要調査レポートへ直接辿れる導線を追加する | 5 | 未着手 | `README.md` |
 | IB-011 | `evaluation` | OSS LLMをColab無料枠とローカルで試す | 5 | Colab CPUでQwen3 0.6Bの基礎検証完了。0.6Bは長文構造化生成では不採用 | `benchmark_threshold_design/runbooks/2026-09-04-oss-llm-colab-local-runbook.md` |
 | IB-012 | `implementation` | 独自引用・ナレッジ取得ツールを実用化する | 5 | 方針メモ作成済み、実装未着手 | `skill_orchestration_harness/citation-knowledge-retrieval-productization.md` |
+| IB-013 | `handoff` | Field Lineage Harnessを非公開開発物として切り分ける | 5 | issue化済み、移設未着手 | `private-field-lineage-harness-workspace.md` |
 
 ## 見ることリスト
 
@@ -246,18 +247,20 @@
 
 ## 次のおすすめ順
 
-1. IB-010: root README導線を先に直す。
-2. IB-001: モデル調査レポートをユーザー確認しやすくする。
-3. IB-004: `ui.feature.add.v1` route card JSONを作る。
-4. IB-005: route card checkerを作る。
-5. IB-006: 小さいUIコンポーネントで試す。
-6. IB-007: API keyなしのfixture比較を整理する。
-7. IB-008: 費用上限を決めてからAPI keyあり実行へ進む。
-8. IB-012: 独自引用・ナレッジ取得ツールを実用化する。
-9. IB-011: 必要な場合だけ、Qwen3 4B / DeepSeek distill / SmolLM3などを同一caseで比較する。
+1. IB-013: Field Lineage Harnessを非公開開発物として切り分ける。
+2. IB-010: root README導線を先に直す。
+3. IB-001: モデル調査レポートをユーザー確認しやすくする。
+4. IB-004: `ui.feature.add.v1` route card JSONを作る。
+5. IB-005: route card checkerを作る。
+6. IB-006: 小さいUIコンポーネントで試す。
+7. IB-007: API keyなしのfixture比較を整理する。
+8. IB-008: 費用上限を決めてからAPI keyあり実行へ進む。
+9. IB-012: 独自引用・ナレッジ取得ツールを実用化する。
+10. IB-011: 必要な場合だけ、Qwen3 4B / DeepSeek distill / SmolLM3などを同一caseで比較する。
 
 理由:
 
+- Field Lineage Harnessは非公開開発物として育てるため、先に置き場所を固定する。
 - 先に導線を直すと、ユーザーが調査内容を確認しやすい。
 - route cardは、JSONとcheckerができるまで実用段階ではない。
 - API keyありの検証は、APIなしで価値が見えた後に進める。

@@ -26,13 +26,13 @@ npm run build
 npm run verify:package
 ```
 
-`npm test`と`verify:package`は3つのtarballを`.artifacts/`へ作り、別の一時consumerから型確認とVite buildを行います。
+`npm test`はpackageをbuildしてからGit追跡対象の単体テストと`verify:package`を実行します。`verify:package`は3つのtarballを`.artifacts/`へ作り、別の一時consumerからNode境界処理、型確認、Vite buildを確認します。
 
 ## Package構成
 
 | package | 責務 | React依存 |
 |---|---|---|
-| `@torisetsu/configurable-list-core` | 型、JSON検証、Markdown防御、値移行、状態更新 | なし |
+| `@torisetsu/configurable-list-core` | 共通JSON入力境界、契約検証、Markdown防御、値移行、状態更新 | なし |
 | `@torisetsu/configurable-list-react` | dnd-kit一覧、設定フォーム、行内詳細、モーダル | あり |
 | `@torisetsu/configurable-list` | 上記2つを一つのimport先にまとめる | あり |
 
@@ -53,6 +53,8 @@ import "@torisetsu/configurable-list/styles.css";
 詳細設計は `docs/design.md` を参照してください。
 
 個別JSONによる詳細表示、ブラウザ側の防御フィルター、Markdown描画の契約は `docs/detail-layout-engine.md` を参照してください。
+
+ブラウザとNodeで共通利用するJSON防御境界、policy、失敗時の扱いは `docs/input-defense-boundary.md` を参照してください。
 
 アイテムfield構成を画面またはJSONで編集するモーダルと、既存アイテムの移行規則は `docs/item-composition-editor.md` を参照してください。
 

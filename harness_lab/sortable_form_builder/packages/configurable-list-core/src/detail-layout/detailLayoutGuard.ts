@@ -1,4 +1,5 @@
 import type { FieldDefinition } from "../types";
+import { filterJsonInputAtBoundary } from "../input-boundary";
 import policyContract from "../../contracts/detail-layout.policy.json";
 import {
   sanitizeMarkdownForDisplay,
@@ -25,8 +26,7 @@ export const DEFAULT_DETAIL_LAYOUT_POLICY: Readonly<DetailLayoutPolicy> =
   });
 
 const SECTION_ID_PATTERN = /^[a-z][a-z0-9._-]{0,63}$/i;
-const UNSAFE_PROPERTY_NAMES = new Set(["__proto__", "prototype", "constructor"]);
-
+const SAFE_LINK_PROTOCOLS = new Set(["http", "https", "mailto"]);
 type UnknownRecord = Record<string, unknown>;
 
 function isRecord(value: unknown): value is UnknownRecord {
@@ -46,46 +46,37 @@ function issue(
   return { code, path, message };
 }
 
-function findUnsafePropertyOrDepthIssue(
-  value: unknown,
-  maxDepth: number,
+function validateDetailLayoutPolicy(
+  policy: DetailLayoutPolicy,
 ): DetailLayoutIssue | null {
-  const pending: Array<{ value: unknown; path: string; depth: number }> = [
-    { value, path: "$", depth: 0 },
-  ];
-  const seen = new Set<object>();
-
-  while (pending.length > 0) {
-    const current = pending.pop();
-    if (
-      !current ||
-      typeof current.value !== "object" ||
-      current.value === null ||
-      seen.has(current.value)
-    ) {
-      continue;
-    }
-
-    if (current.depth > maxDepth) {
+  const positiveIntegerKeys = [
+    "maxSections",
+    "maxSectionTitleCharacters",
+    "maxMarkdownCharacters",
+    "maxFieldsPerSection",
+  ] as const;
+  for (const key of positiveIntegerKeys) {
+    if (!Number.isSafeInteger(policy[key]) || policy[key] < 1) {
       return issue(
-        "nesting_too_deep",
-        current.path,
-        `JSONのネストは${maxDepth}階層以内にしてください`,
+        "invalid_boundary_policy",
+        `$.policy.${key}`,
+        `${key}は1以上の安全な整数で指定してください`,
       );
-    }
-
-    seen.add(current.value);
-    for (const [key, child] of Object.entries(current.value)) {
-      const childPath = Array.isArray(current.value)
-        ? `${current.path}[${key}]`
-        : `${current.path}.${key}`;
-      if (UNSAFE_PROPERTY_NAMES.has(key)) {
-        return issue("unsafe_property", childPath, "安全でないproperty名です");
-      }
-      pending.push({ value: child, path: childPath, depth: current.depth + 1 });
     }
   }
 
+  if (
+    !Array.isArray(policy.allowedLinkProtocols) ||
+    policy.allowedLinkProtocols.some(
+      (protocol) => !SAFE_LINK_PROTOCOLS.has(protocol),
+    )
+  ) {
+    return issue(
+      "invalid_boundary_policy",
+      "$.policy.allowedLinkProtocols",
+      "link protocolはhttp、https、mailtoだけを指定できます",
+    );
+  }
   return null;
 }
 
@@ -105,51 +96,6 @@ function rejectUnknownProperties(
         ),
       );
     }
-  }
-}
-
-function parseDocument(input: unknown, policy: DetailLayoutPolicy) {
-  if (typeof input !== "string") {
-    return { value: input, issues: [] as DetailLayoutIssue[] };
-  }
-
-  if (input.length > policy.maxDocumentCharacters) {
-    return {
-      value: null,
-      issues: [
-        issue(
-          "document_too_large",
-          "$",
-          `JSON文書は${policy.maxDocumentCharacters}文字以内にしてください`,
-        ),
-      ],
-    };
-  }
-
-  const trimmedInput = input.trim();
-  const fencedMatch = trimmedInput.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/i);
-  const documentFormat = fencedMatch ? "markdown-json-fence" : "json";
-  if (!policy.acceptedDocumentFormats.includes(documentFormat)) {
-    return {
-      value: null,
-      issues: [
-        issue(
-          "unsupported_document_format",
-          "$",
-          `未対応の入力形式です: ${documentFormat}`,
-        ),
-      ],
-    };
-  }
-  const jsonText = fencedMatch?.[1] ?? trimmedInput;
-
-  try {
-    return { value: JSON.parse(jsonText) as unknown, issues: [] as DetailLayoutIssue[] };
-  } catch {
-    return {
-      value: null,
-      issues: [issue("invalid_json", "$", "有効なJSON文書ではありません")],
-    };
   }
 }
 
@@ -370,23 +316,13 @@ export function filterDetailLayoutConfig<FieldName extends string>(
   fields: ReadonlyArray<FieldDefinition<FieldName>>,
   policy: DetailLayoutPolicy = DEFAULT_DETAIL_LAYOUT_POLICY,
 ): DetailLayoutFilterResult<FieldName> {
-  const parsed = parseDocument(input, policy);
-  if (parsed.issues.length > 0) {
-    return { ok: false, issues: parsed.issues };
-  }
+  const policyIssue = validateDetailLayoutPolicy(policy);
+  if (policyIssue) return { ok: false, issues: [policyIssue] };
 
-  const propertyOrDepthIssue = findUnsafePropertyOrDepthIssue(
-    parsed.value,
-    policy.maxNestingDepth,
-  );
-  if (propertyOrDepthIssue) {
-    return {
-      ok: false,
-      issues: [propertyOrDepthIssue],
-    };
-  }
+  const boundaryResult = filterJsonInputAtBoundary(input, policy);
+  if (!boundaryResult.ok) return { ok: false, issues: boundaryResult.issues };
 
-  if (!isRecord(parsed.value)) {
+  if (!isRecord(boundaryResult.value)) {
     return {
       ok: false,
       issues: [issue("invalid_structure", "$", "detail layoutはobjectです")],
@@ -395,13 +331,13 @@ export function filterDetailLayoutConfig<FieldName extends string>(
 
   const issues: DetailLayoutIssue[] = [];
   rejectUnknownProperties(
-    parsed.value,
+    boundaryResult.value,
     new Set(["schemaVersion", "sections"]),
     "$",
     issues,
   );
 
-  if (parsed.value.schemaVersion !== "configurable-detail-layout.v1") {
+  if (boundaryResult.value.schemaVersion !== "configurable-detail-layout.v1") {
     issues.push(
       issue(
         "invalid_schema_version",
@@ -412,9 +348,9 @@ export function filterDetailLayoutConfig<FieldName extends string>(
   }
 
   if (
-    !Array.isArray(parsed.value.sections) ||
-    parsed.value.sections.length === 0 ||
-    parsed.value.sections.length > policy.maxSections
+    !Array.isArray(boundaryResult.value.sections) ||
+    boundaryResult.value.sections.length === 0 ||
+    boundaryResult.value.sections.length > policy.maxSections
   ) {
     issues.push(
       issue(
@@ -428,7 +364,7 @@ export function filterDetailLayoutConfig<FieldName extends string>(
 
   const fieldsByName = new Map(fields.map((field) => [field.name, field]));
   const sanitizationChanges: MarkdownSanitizationChange[] = [];
-  const sections = parsed.value.sections
+  const sections = boundaryResult.value.sections
     .map((section, index) =>
       readSection(
         section,
@@ -457,7 +393,7 @@ export function filterDetailLayoutConfig<FieldName extends string>(
     sectionIds.add(section.id);
   }
 
-  if (issues.length > 0 || sections.length !== parsed.value.sections.length) {
+  if (issues.length > 0 || sections.length !== boundaryResult.value.sections.length) {
     return { ok: false, issues };
   }
 
@@ -465,5 +401,19 @@ export function filterDetailLayoutConfig<FieldName extends string>(
     schemaVersion: "configurable-detail-layout.v1",
     sections,
   };
-  return { ok: true, value, issues: [], sanitizationChanges };
+  return {
+    ok: true,
+    value,
+    issues: [],
+    boundary: {
+      inputKind: boundaryResult.inputKind,
+      ...(boundaryResult.documentFormat
+        ? { documentFormat: boundaryResult.documentFormat }
+        : {}),
+      nodeCount: boundaryResult.nodeCount,
+      totalStringCharacters: boundaryResult.totalStringCharacters,
+      maxDepthObserved: boundaryResult.maxDepthObserved,
+    },
+    sanitizationChanges,
+  };
 }

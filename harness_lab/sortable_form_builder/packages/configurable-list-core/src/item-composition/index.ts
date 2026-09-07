@@ -18,4 +18,5 @@ export type {
   ItemCompositionFilterResult,
   ItemCompositionIssue,
   ItemCompositionIssueCode,
+  ItemCompositionPolicy,
 } from "./types";

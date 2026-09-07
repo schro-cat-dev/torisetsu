@@ -7,7 +7,9 @@
     "maxSectionTitleCharacters": 100,
     "maxMarkdownCharacters": 20000,
     "maxFieldsPerSection": 24,
-    "maxNestingDepth": 8
+    "maxNestingDepth": 8,
+    "maxNodeCount": 2048,
+    "maxTotalStringCharacters": 64000
   },
   "allowedLinkProtocols": ["http", "https", "mailto"]
 }

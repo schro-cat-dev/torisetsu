@@ -16,8 +16,8 @@
     "build": "npm run build:packages && npm run build:demo",
     "verify:package": "npm run build:packages && node scripts/verify-packed-consumer.mjs",
     "typecheck": "npm run build:packages && tsc --noEmit",
-    "test": "npm run verify:package",
-    "test:unit:local": "vitest --run"
+    "test": "npm run test:unit:local && npm run verify:package",
+    "test:unit:local": "npm run build:packages && vitest --run"
   },
   "dependencies": {
     "@torisetsu/configurable-list": "0.1.0",
