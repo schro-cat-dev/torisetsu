@@ -45,4 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-quality-evidence
-          path: .ui-quality-runs/
+          path: |
+            .ui-quality-runs/
+            harness_lab/todo_frontend/test-results/
+            harness_lab/todo_frontend/tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts-snapshots/

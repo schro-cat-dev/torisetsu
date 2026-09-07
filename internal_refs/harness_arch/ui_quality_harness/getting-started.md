@@ -68,7 +68,7 @@ jq '{status, evidenceSources, rules, scenarios, gates, issues}' \
 
 ## visual baselineを更新する条件
 
-baselineは、期待する見た目を表す基準画像です。意図したUI変更を人またはAIが画面で確認した場合だけ更新します。原因不明の差分を通す目的では更新しません。
+baselineは、期待する見た目を表す基準画像です。macOSとLinuxの描画差を誤検出しないように、`darwin/`と`linux/`へOS別に保存します。意図したUI変更を人またはAIが画面で確認した場合だけ更新します。原因不明の差分を通す目的では更新しません。
 
 ```bash
 npm --prefix harness_lab/todo_frontend run update:browser-visual-baseline

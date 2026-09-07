@@ -78,7 +78,7 @@ export async function runUiQualityHarness(options) {
     let actualAdapterResultPath = adapterResultPath;
     const commandFailed = commandResults.some((item) => item.outcome !== "passed");
     if (adapter.outputContract.resultMode === "result_file" && !commandFailed) {
-      const configuredResultPath = expand(adapter.outputContract.resultFile, { root, profilePath, sourceId: source.id, runDir, adapterResultPath });
+      const configuredResultPath = expandRuntimeTokens(adapter.outputContract.resultFile, { root, profilePath, sourceId: source.id, runDir, adapterResultPath });
       const resolvedResultPath = resolveInside(runDir, configuredResultPath, `result file for ${source.id}`);
       actualAdapterResultPath = resolvedResultPath;
       adapterResult = await readJsonFile(resolvedResultPath);
@@ -234,9 +234,9 @@ function validateAdapterMapping(profile, sourceId, adapter) {
 }
 
 async function executeCommand(command, context) {
-  const cwd = resolveInside(context.root, expand(command.workingDirectoryRef, context), `workingDirectoryRef for ${command.id}`);
+  const cwd = resolveInside(context.root, expandRuntimeTokens(command.workingDirectoryRef, context), `workingDirectoryRef for ${command.id}`);
   const executable = command.executable === "node" ? process.execPath : command.executable;
-  const args = command.args.map((argument) => expand(argument, context));
+  const args = command.args.map((argument) => expandRuntimeTokens(argument, context));
   const commandText = [command.executable, ...args].join(" ");
   return new Promise((resolve) => {
     const child = spawn(executable, args, { cwd, shell: false, env: { ...process.env, UI_QUALITY_RUN_DIR: context.runDir } });
@@ -291,13 +291,14 @@ export function exitCodeForAggregateStatus(status) {
   return status === "failed" ? 1 : 0;
 }
 
-function expand(value, context) {
+export function expandRuntimeTokens(value, context) {
   const replacements = {
     "{repoRoot}": context.root,
     "{profilePath}": context.profilePath,
     "{evidenceSourceId}": context.sourceId,
     "{runDir}": context.runDir,
-    "{adapterResultPath}": context.adapterResultPath
+    "{adapterResultPath}": context.adapterResultPath,
+    "{platform}": context.platform ?? process.platform
   };
   let output = value;
   for (const [token, replacement] of Object.entries(replacements)) output = output.replaceAll(token, replacement);

@@ -17,7 +17,7 @@
           "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/tools/run-visual-manifest-check.mjs",
           "--manifest", "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-visual.manifest.json",
           "--profile", "{profilePath}",
-          "--baseline-dir", "{repoRoot}/harness_lab/todo_frontend/tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts-snapshots"
+          "--baseline-dir", "{repoRoot}/harness_lab/todo_frontend/tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts-snapshots/{platform}"
         ],
         "workingDirectoryRef": ".",
         "timeoutSeconds": 60

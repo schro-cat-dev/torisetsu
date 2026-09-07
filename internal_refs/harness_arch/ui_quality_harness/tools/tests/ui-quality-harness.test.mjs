@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { validateJsonSchema } from "../json-schema-validator.mjs";
 import { assertAdapter, validateProfile } from "../profile-contract.mjs";
 import { runDomChecks } from "../run-ui-dom-snapshot.mjs";
-import { aggregateResults, classifyCommandOutcome, exitCodeForAggregateStatus, findFailedDependencies, runUiQualityHarness } from "../run-ui-quality-harness.mjs";
+import { aggregateResults, classifyCommandOutcome, exitCodeForAggregateStatus, expandRuntimeTokens, findFailedDependencies, runUiQualityHarness } from "../run-ui-quality-harness.mjs";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const harnessDirectory = path.resolve(testDirectory, "../..");
@@ -170,6 +170,18 @@ test("command結果は成功、失敗、timeout、依存失敗を区別する", 
   assert.equal(classifyCommandOutcome({ timedOut: false, exitCode: 3 }), "command_failed");
   assert.equal(classifyCommandOutcome({ timedOut: true, exitCode: 124 }), "timed_out");
   assert.deepEqual(findFailedDependencies({ requires: ["first", "missing"] }, [{ id: "first", outcome: "command_failed" }]), ["first", "missing"]);
+});
+
+test("runtime tokenは実行OSをconfigへ注入する", () => {
+  const context = {
+    root: "/repo",
+    profilePath: "/repo/profile.json",
+    sourceId: "visual",
+    runDir: "/repo/runs",
+    adapterResultPath: "/repo/runs/result.json",
+    platform: "linux"
+  };
+  assert.equal(expandRuntimeTokens("{repoRoot}/baselines/{platform}", context), "/repo/baselines/linux");
 });
 
 test("aggregate result schemaは入れ子のunknown fieldも拒否する", () => {
