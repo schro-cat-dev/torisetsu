@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "todo-judgment-adapter",
+  "adapterKind": "judgment-review",
+  "capabilities": ["human-review", "ai-review", "evidence-reference"],
+  "execution": {
+    "mode": "external_command",
+    "commands": [{
+      "id": "review",
+      "executable": "node",
+      "args": [
+        "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/tools/run-ui-judgment-review.mjs",
+        "--profile", "{profilePath}",
+        "--review", "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/reviews/todo-frontend.judgment-review.json",
+        "--evidence-source-id", "{evidenceSourceId}",
+        "--out", "{adapterResultPath}"
+      ],
+      "workingDirectoryRef": ".",
+      "timeoutSeconds": 60
+    }]
+  },
+  "inputContract": {
+    "profileRuleIds": ["todo-purpose-fit-review", "todo-domain-taste-review"],
+    "profileScenarioIds": [],
+    "claims": []
+  },
+  "outputContract": {
+    "resultMode": "result_file",
+    "resultFile": "{adapterResultPath}"
+  }
+}

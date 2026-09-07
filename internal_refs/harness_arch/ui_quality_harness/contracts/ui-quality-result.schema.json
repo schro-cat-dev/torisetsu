@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-quality-result.schema.json",
+  "title": "UI Quality Harness Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "profileId",
+    "checkedAt",
+    "summary",
+    "issues",
+    "reviewRequired"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "ui-quality-harness-result.v1"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "failed"]
+    },
+    "profileId": {
+      "type": "string"
+    },
+    "checkedAt": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gateCount", "ruleCount", "scenarioCount", "evidenceSourceCount"],
+      "properties": {
+        "gateCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ruleCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scenarioCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidenceSourceCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "message"],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "reviewRequired": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "gateId", "reason"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "gateId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

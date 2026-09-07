@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "ui-visual-threshold-policy.v1",
+  "policyId": "todo-chromium-visual-diff",
+  "operator": "<=",
+  "maxDiffPixelRatio": 0.01,
+  "unit": "changed_pixels/total_pixels",
+  "scope": ["Chromium", "375x800", "1280x900", "fullPage", "manifest-listed-cases"],
+  "rationale": "同一環境の再実行差は0であることを前提にし、OS間のfont rasterization差だけを吸収する暫定上限として1%を採用する。control消失や大きなlayout移動は1%を超えるため拒否する。",
+  "boundaryCases": [
+    { "actual": 0.009, "expected": "passed" },
+    { "actual": 0.01, "expected": "passed" },
+    { "actual": 0.011, "expected": "failed" }
+  ],
+  "residualRisk": "OSごとの差が1%以内とはGitHub Actionsで未実測。CI実走時にfalse positive/negativeを再校正する。"
+}

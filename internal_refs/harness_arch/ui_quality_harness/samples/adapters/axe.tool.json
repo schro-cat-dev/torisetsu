@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "accessibility-audit-adapter",
+  "adapterKind": "accessibility-audit",
+  "capabilities": [
+    "label-check",
+    "aria-check",
+    "keyboard-baseline",
+    "contrast-baseline"
+  ],
+  "execution": {
+    "mode": "external_command",
+    "commands": [{
+      "id": "project-a11y-check",
+      "executable": "<set-by-project>",
+      "args": ["<set-by-project>"],
+      "workingDirectoryRef": "<set-by-project>",
+      "timeoutSeconds": 120
+    }]
+  },
+  "inputContract": {
+    "profileRuleIds": ["keyboard-and-label-baseline"],
+    "profileScenarioIds": [],
+    "claims": ["formLabel", "keyboardOperation", "visibleFocus", "dialogClose"]
+  },
+  "outputContract": {
+    "resultMode": "command_status"
+  },
+  "notes": [
+    "このsampleはアクセシビリティ検査adapterの契約例。具体的なaxe実行方法はproject側configで指定する。",
+    "完全なUI妥当性ではなく、機械で拾えるa11y基礎を対象にする。"
+  ]
+}

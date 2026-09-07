@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ui-judgment-review.v1",
+  "reviewId": "todo-frontend-ui-review-2026-09-07",
+  "profileId": "todo-frontend-ui-quality",
+  "reviewedAt": "2026-09-07T08:00:00+09:00",
+  "reviewer": {
+    "id": "codex",
+    "kind": "ai"
+  },
+  "evidenceArtifacts": [
+    { "id": "primaryTask", "kind": "file", "artifactRef": "evidence/todo-ui-observations.md" },
+    { "id": "screenBeforeAfter", "kind": "file", "artifactRef": "evidence/todo-ui-observations.md" },
+    { "id": "blockedOperation", "kind": "file", "artifactRef": "evidence/todo-ui-observations.md" },
+    { "id": "visibleLabels", "kind": "file", "artifactRef": "evidence/todo-ui-observations.md" },
+    { "id": "hiddenInternalInfo", "kind": "file", "artifactRef": "evidence/todo-ui-observations.md" },
+    { "id": "acceptedExample", "kind": "file", "artifactRef": "evidence/todo-ui-observations.md" }
+  ],
+  "items": [
+    {
+      "rubricId": "todo-purpose-fit-review",
+      "status": "passed",
+      "rationale": "一覧、検索、詳細、編集、完了、削除の主操作が同じTODOを中心に連続し、内部harness情報を操作面へ出していない。",
+      "evidence": ["primaryTask", "screenBeforeAfter", "blockedOperation"],
+      "openQuestions": []
+    },
+    {
+      "rubricId": "todo-domain-taste-review",
+      "status": "passed",
+      "rationale": "状態、優先度、分類、期限をTODO管理の語彙として表示し、内部IDやdebug情報を通常表示しない。",
+      "evidence": ["visibleLabels", "hiddenInternalInfo", "acceptedExample"],
+      "openQuestions": []
+    }
+  ]
+}

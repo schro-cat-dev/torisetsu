@@ -1,6 +1,6 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -13,11 +13,12 @@ let profile;
 
 try {
   profile = await loadProfile(profileName);
-} catch {
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
 }
 
-const runDir = join(process.cwd(), profile.outputDir ?? "harness_runs", runId);
+const runDir = resolveInside(process.cwd(), profile.outputDir ?? "harness_runs", "profile.outputDir");
 const stopOnFailure = profile.stopOnFailure ?? true;
 
 await mkdir(runDir, { recursive: true });
@@ -25,7 +26,8 @@ await mkdir(runDir, { recursive: true });
 const results = [];
 
 for (const step of profile.commands) {
-  const result = shouldSkip(step) ? skip(step) : await run(step);
+  const dependencyFailure = (step.requires ?? []).find((name) => results.find((result) => result.name === name)?.exitCode !== 0);
+  const result = dependencyFailure ? skip(step, `dependency failed: ${dependencyFailure}`, 1) : shouldSkip(step) ? skip(step, `requires ${step.optionalEnv}=1`, 0) : await run(step);
   results.push(result);
   await writeFile(
     join(runDir, `${sanitizeLogName(result.name)}.log`),
@@ -140,17 +142,17 @@ function shouldSkip(step) {
   return Boolean(step.optionalEnv) && process.env[step.optionalEnv] !== "1";
 }
 
-function skip(step) {
+function skip(step, reason, exitCode) {
   const args = step.args ?? [];
   const commandText = [step.command, ...args].join(" ");
-  const stdout = `SKIP: ${step.name} requires ${step.optionalEnv}=1\n`;
+  const stdout = `SKIP: ${step.name}: ${reason}\n`;
   process.stdout.write(stdout);
   return {
     name: step.name,
     commandText,
     stdout,
     stderr: "",
-    exitCode: 0,
+    exitCode,
     skipped: true
   };
 }
@@ -161,7 +163,7 @@ function run(step) {
   const commandText = [step.command, ...args].join(" ");
   return new Promise((resolve) => {
     const child = spawn(step.command, args, {
-      cwd: step.cwd ? join(process.cwd(), step.cwd) : process.cwd(),
+      cwd: step.cwd ? resolveInside(process.cwd(), step.cwd, `cwd for ${step.name}`) : process.cwd(),
       env: {
         ...process.env,
         HARNESS_RUN_DIR: runDir,
@@ -180,6 +182,9 @@ function run(step) {
     child.stderr.on("data", (chunk) => {
       stderr += chunk.toString();
       process.stderr.write(chunk);
+    });
+    child.on("error", (error) => {
+      resolve({ name, commandText, stdout, stderr: `${stderr}${error.message}\n`, exitCode: 1 });
     });
     child.on("close", (exitCode) => {
       resolve({ name, commandText, stdout, stderr, exitCode: exitCode ?? 1 });
@@ -204,4 +209,13 @@ function assertAllowedKeys(value, allowedKeys, label) {
       throw new Error(`${label}.${key} is not allowed.`);
     }
   }
+}
+
+function resolveInside(base, target, label) {
+  const resolvedBase = resolve(base);
+  const resolvedTarget = resolve(resolvedBase, target);
+  if (resolvedTarget !== resolvedBase && !resolvedTarget.startsWith(`${resolvedBase}${sep}`)) {
+    throw new Error(`${label} must stay inside ${resolvedBase}`);
+  }
+  return resolvedTarget;
 }

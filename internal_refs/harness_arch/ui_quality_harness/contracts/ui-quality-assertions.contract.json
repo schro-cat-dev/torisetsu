@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "ui-quality-assertion-catalog.v1",
+  "assertions": {
+    "requiredInfoPresent": {
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requiredInfoIds"],
+        "properties": {
+          "requiredInfoIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "hiddenUnlessExpanded": {
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["hiddenUnlessExpanded", "minVisibleTextLengthPerItem", "maxVisibleTextLengthPerItem", "minPrimaryActionsPerItem", "maxPrimaryActionsPerItem"],
+        "properties": {
+          "hiddenUnlessExpanded": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "minVisibleTextLengthPerItem": { "type": "integer", "minimum": 0 },
+          "maxVisibleTextLengthPerItem": { "type": "integer", "minimum": 0 },
+          "minPrimaryActionsPerItem": { "type": "integer", "minimum": 0 },
+          "maxPrimaryActionsPerItem": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "primaryBeforeSecondary": {
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["primaryInfoIds", "secondaryInfoIds", "orderMetric"],
+        "properties": {
+          "primaryInfoIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "secondaryInfoIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "orderMetric": { "type": "string", "enum": ["domOrder", "visualOrder"] }
+        }
+      }
+    },
+    "relatedActionsNearTarget": {
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["distanceMetric", "maxDistancePx", "relationPairs"],
+        "properties": {
+          "distanceMetric": { "type": "string", "enum": ["edgeGapPx", "centerDistancePx"] },
+          "maxDistancePx": { "type": "number", "minimum": 0 },
+          "relationPairs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["targetRef", "actionRef"],
+              "properties": {
+                "targetRef": { "type": "string", "minLength": 1 },
+                "actionRef": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "flowScenarioCompletes": {
+      "requiredClaimParams": ["expectedCompletionState"],
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expectedCompletionState"],
+        "properties": { "expectedCompletionState": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "stateRecoveryPathsPresent": {
+      "requiredClaimParams": ["requiredStates", "requiredRecoveryActions"],
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requiredStates", "requiredRecoveryActions"],
+        "properties": {
+          "requiredStates": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "requiredRecoveryActions": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "accessibilityBaseline": {
+      "requiredClaimParams": ["required"],
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["required"],
+        "properties": { "required": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } }
+      }
+    },
+    "sameRoleSamePattern": {
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["compareBy", "minimumComparedElements"],
+        "properties": {
+          "compareBy": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "enum": ["role", "visibleLabel", "variant", "visible"] } },
+          "minimumComparedElements": { "type": "integer", "minimum": 2 }
+        }
+      }
+    },
+    "judgmentReview": {
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requiresRationale"],
+        "properties": { "requiresRationale": { "const": true } }
+      }
+    },
+    "interactionPatternBaseline": {
+      "requiredClaimParams": ["requiredPatterns"],
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requiredPatterns"],
+        "properties": { "requiredPatterns": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } }
+      }
+    },
+    "layoutConsistencyBaseline": {
+      "requiredClaimParams": ["requiredChecks"],
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requiredChecks"],
+        "properties": { "requiredChecks": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } }
+      }
+    },
+    "visualCoverageComplete": {
+      "requiredClaimParams": ["requiredCaseIds"],
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requiredCaseIds"],
+        "properties": { "requiredCaseIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } }
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-dom-capture.config.schema.json",
+  "title": "UI DOM Capture Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "captureId", "routePath", "outputPath", "infos", "items", "elements"],
+  "properties": {
+    "schemaVersion": {
+      "const": "ui-dom-capture-config.v1"
+    },
+    "captureId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "routePath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "waitForSelector": {
+      "type": "string"
+    },
+    "outputPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "infos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "selector"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "selector": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["selector", "primaryActionSelector"],
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1
+          },
+          "idAttribute": {
+            "type": "string"
+          },
+          "primaryActionSelector": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref", "selector", "role"],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "selector": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "variant": {
+            "type": "string"
+          },
+          "multiple": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "consistencyGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "expected"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "refs": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "refPrefix": { "type": "string", "minLength": 1 },
+          "expected": { "type": "object", "minProperties": 1 }
+        }
+      }
+    }
+  }
+}

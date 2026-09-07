@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "todo-browser-flow-adapter",
+  "adapterKind": "browser-flow",
+  "capabilities": [
+    "click",
+    "type",
+    "keyboard",
+    "modal",
+    "state-visibility",
+    "flow-completion",
+    "dom-snapshot"
+  ],
+  "execution": {
+    "mode": "external_command",
+    "commands": [{
+      "id": "browser-flow",
+      "executable": "npm",
+      "args": ["run", "check:browser-e2e"],
+      "workingDirectoryRef": "harness_lab/todo_frontend",
+      "timeoutSeconds": 240
+    }]
+  },
+  "inputContract": {
+    "profileRuleIds": ["todo-crud-flow", "todo-interaction-patterns", "todo-state-recovery", "todo-a11y-baseline"],
+    "profileScenarioIds": ["todo-crud-main-flow", "todo-error-recovery-flow"],
+    "claims": [
+      "deleteSuccessVisible", "buttonActivation", "formValidation", "dialogOpenClose", "parentChildEventIsolation",
+      "loading", "empty", "error", "success", "disabled", "cancel", "retry",
+      "formLabel", "keyboardOperation", "visibleFocus", "dialogClose"
+    ]
+  },
+  "outputContract": {
+    "resultMode": "command_status"
+  },
+  "notes": [
+    "既存の todo_frontend quality-harness を外部toolとして扱う。",
+    "UI品質runner本体には、このnpm commandやpathを直書きしない。"
+  ]
+}

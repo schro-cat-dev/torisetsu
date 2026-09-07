@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "external-tool-check.v1",
+  "name": "browser-layout",
+  "tool": "playwright",
+  "preflightFiles": [
+    "node_modules/@playwright/test/cli.js",
+    "tooling/quality-harness/external-tools/playwright/playwright.config.ts",
+    "tooling/quality-harness/external-tools/playwright/tests/todo-layout-snapshot.spec.ts"
+  ],
+  "restoreFiles": [
+    "local-api/data/todos.json",
+    "local-api/data/categories.json"
+  ],
+  "command": {
+    "bin": "node",
+    "env": {
+      "PLAYWRIGHT_TODO_API_PORT": "4278",
+      "PLAYWRIGHT_TODO_WEB_PORT": "5278",
+      "PLAYWRIGHT_REUSE_EXISTING_SERVER": "0",
+      "UI_LAYOUT_POLICY": "internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-layout.policy.json"
+    },
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tooling/quality-harness/external-tools/playwright/tests/todo-layout-snapshot.spec.ts",
+      "--config",
+      "tooling/quality-harness/external-tools/playwright/playwright.config.ts"
+    ]
+  },
+  "result": {
+    "fileName": "browser-layout.results.json",
+    "metadata": {
+      "browser": "chromium",
+      "viewports": ["375x800", "1280x900"],
+      "checks": ["horizontal-overflow", "edge-gap-distance", "screenshot-evidence"],
+      "policy": "internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-layout.policy.json"
+    }
+  }
+}

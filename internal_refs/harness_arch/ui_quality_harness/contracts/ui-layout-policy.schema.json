@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-layout-policy.schema.json",
+  "title": "UI Layout Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policyId", "cases"],
+  "properties": {
+    "schemaVersion": { "const": "ui-layout-policy.v1" },
+    "policyId": { "type": "string", "minLength": 1 },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "routePath", "viewport", "waitForSelector", "noHorizontalOverflow", "relations", "screenshotName"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "routePath": { "type": "string", "minLength": 1 },
+          "viewport": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["width", "height"],
+            "properties": { "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 } }
+          },
+          "waitForSelector": { "type": "string", "minLength": 1 },
+          "noHorizontalOverflow": { "type": "boolean" },
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["targetSelector", "actionSelector", "distanceMetric", "operator", "maxDistancePx", "rationale", "boundaryCases"],
+              "properties": {
+                "targetSelector": { "type": "string", "minLength": 1 },
+                "actionSelector": { "type": "string", "minLength": 1 },
+                "distanceMetric": { "type": "string", "enum": ["edgeGapPx", "centerDistancePx"] },
+                "operator": { "const": "<=" },
+                "maxDistancePx": { "type": "number", "minimum": 0 },
+                "rationale": { "type": "string", "minLength": 1 },
+                "boundaryCases": {
+                  "type": "array",
+                  "minItems": 3,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["actual", "expected"],
+                    "properties": { "actual": { "type": "number", "minimum": 0 }, "expected": { "type": "string", "enum": ["passed", "failed"] } }
+                  }
+                }
+              }
+            }
+          },
+          "screenshotName": { "type": "string", "pattern": "^[a-z0-9-]+\\.png$" }
+        }
+      }
+    }
+  }
+}

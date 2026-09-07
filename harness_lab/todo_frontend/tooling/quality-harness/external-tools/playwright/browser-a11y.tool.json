@@ -32,7 +32,7 @@
     "metadata": {
       "browser": "chromium",
       "engine": "axe-core",
-      "disabledRules": ["color-contrast"]
+      "disabledRules": []
     }
   }
 }

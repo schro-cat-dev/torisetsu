@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "browser-flow-adapter",
+  "adapterKind": "browser-flow",
+  "capabilities": [
+    "click",
+    "type",
+    "keyboard",
+    "state-visibility",
+    "bounding-box",
+    "screenshot"
+  ],
+  "execution": {
+    "mode": "external_command",
+    "commands": [{
+      "id": "project-browser-check",
+      "executable": "<set-by-project>",
+      "args": ["<set-by-project>"],
+      "workingDirectoryRef": "<set-by-project>",
+      "timeoutSeconds": 120
+    }]
+  },
+  "inputContract": {
+    "profileRuleIds": ["related-actions-near-target", "edit-flow-completes", "interaction-pattern-baseline", "state-and-recovery-paths-present", "keyboard-and-label-baseline", "layout-consistency-baseline"],
+    "profileScenarioIds": ["edit-item-flow", "error-recovery-flow"],
+    "claims": [
+      "saveSuccessVisible", "buttonActivation", "formValidation", "dialogOpenClose",
+      "loading", "empty", "error", "success", "disabled", "cancel", "retry",
+      "formLabel", "keyboardOperation", "visibleFocus", "dialogClose",
+      "horizontalOverflow", "mobileViewport", "desktopViewport"
+    ]
+  },
+  "outputContract": {
+    "resultMode": "command_status"
+  },
+  "notes": [
+    "このsampleは外部tool接続の契約例。実行pathやtest fileはproject側configで指定する。",
+    "runner本体へPlaywright固有pathを直書きしない。"
+  ]
+}

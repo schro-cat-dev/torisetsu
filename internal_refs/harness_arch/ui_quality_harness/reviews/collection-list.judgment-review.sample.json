@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ui-judgment-review.v1",
+  "reviewId": "collection-list-sample-review",
+  "profileId": "collection-list-basic-ui-quality",
+  "reviewedAt": "2026-09-07T00:00:00+09:00",
+  "reviewer": {
+    "id": "sample-reviewer",
+    "kind": "ai"
+  },
+  "evidenceArtifacts": [
+    { "id": "targetUser", "kind": "file", "artifactRef": "evidence/collection-list-observations.md" },
+    { "id": "primaryTask", "kind": "file", "artifactRef": "evidence/collection-list-observations.md" },
+    { "id": "screenBeforeAfter", "kind": "file", "artifactRef": "evidence/collection-list-observations.md" },
+    { "id": "domainContext", "kind": "file", "artifactRef": "evidence/collection-list-observations.md" },
+    { "id": "acceptedExample", "kind": "file", "artifactRef": "evidence/collection-list-observations.md" },
+    { "id": "rejectedExample", "kind": "file", "artifactRef": "evidence/collection-list-observations.md" }
+  ],
+  "items": [
+    {
+      "rubricId": "purpose-fit-review",
+      "status": "passed",
+      "rationale": "一覧で対象を見つけ、詳細確認と編集へ進む主目的に必要な情報と操作が分離されている。",
+      "evidence": ["targetUser", "primaryTask", "screenBeforeAfter"],
+      "openQuestions": []
+    },
+    {
+      "rubricId": "domain-taste-review",
+      "status": "passed",
+      "rationale": "業務語彙は利用者の対象管理へ限定し、内部IDやdebug情報を通常表示しない方針になっている。",
+      "evidence": ["domainContext", "acceptedExample", "rejectedExample"],
+      "openQuestions": []
+    }
+  ]
+}

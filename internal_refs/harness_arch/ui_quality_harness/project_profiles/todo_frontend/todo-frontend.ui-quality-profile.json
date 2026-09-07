@@ -1,0 +1,328 @@
+{
+  "schemaVersion": "ui-quality-harness-profile.v1",
+  "profileId": "todo-frontend-ui-quality",
+  "qualityModel": {
+    "requiredGateIds": [
+      "baseAccessibility",
+      "interactionPattern",
+      "layoutConsistency",
+      "componentConsistency",
+      "domainSpecificTaste",
+      "purposeAndTaskFit",
+      "informationContent",
+      "informationDensity",
+      "informationArchitecture",
+      "placementAndProximity",
+      "interactionFlow",
+      "stateAndRecovery"
+    ]
+  },
+  "target": {
+    "id": "harness_lab/todo_frontend",
+    "kind": "application",
+    "entrypoint": "set-by-runtime-script",
+    "scope": ["todo-list", "create", "edit", "complete", "delete", "category-filter", "search"]
+  },
+  "gates": [
+    {
+      "id": "purposeAndTaskFit",
+      "label": "TODOを一覧、追加、編集、完了、削除できるか",
+      "blocking": false
+    },
+    {
+      "id": "informationContent",
+      "label": "TODO操作に必要な情報が表示されているか",
+      "blocking": true
+    },
+    {
+      "id": "informationDensity",
+      "label": "一覧の情報量が多すぎない/少なすぎないか",
+      "blocking": false
+    },
+    {
+      "id": "informationArchitecture",
+      "label": "一覧、詳細、編集、内部情報の責務が分かれているか",
+      "blocking": false
+    },
+    {
+      "id": "placementAndProximity",
+      "label": "TODO項目と関連操作が近くにあるか",
+      "blocking": false
+    },
+    {
+      "id": "interactionFlow",
+      "label": "TODOの主要操作フローが成立するか",
+      "blocking": true
+    },
+    {
+      "id": "interactionPattern",
+      "label": "button、dialog、formなどが期待どおり動くか",
+      "blocking": true
+    },
+    {
+      "id": "stateAndRecovery",
+      "label": "失敗、空状態、保存中、復帰手段があるか",
+      "blocking": true
+    },
+    {
+      "id": "baseAccessibility",
+      "label": "読める、押せる、label/focus/keyboardがあるか",
+      "blocking": true
+    },
+    {
+      "id": "layoutConsistency",
+      "label": "余白、配置、responsive、画面間の構造が一貫しているか",
+      "blocking": true
+    },
+    {
+      "id": "componentConsistency",
+      "label": "TODO UI内の同じ役割の部品が統一されているか",
+      "blocking": false
+    },
+    {
+      "id": "domainSpecificTaste",
+      "label": "TODO管理として過不足ない見た目と文言か",
+      "blocking": false
+    }
+  ],
+  "evidenceSources": [
+    {
+      "id": "domSnapshot",
+      "kind": "dom-snapshot",
+      "adapter": "dom",
+      "configRef": "adapters/todo-dom.tool.json"
+    },
+    {
+      "id": "browserFlow",
+      "kind": "browser-flow",
+      "adapter": "playwright",
+      "configRef": "adapters/todo-browser-flow.tool.json"
+    },
+    {
+      "id": "accessibilityAudit",
+      "kind": "accessibility-audit",
+      "adapter": "axe",
+      "configRef": "adapters/todo-a11y.tool.json"
+    },
+    {
+      "id": "layoutSnapshot",
+      "kind": "layout-snapshot",
+      "adapter": "screenshot",
+      "configRef": "adapters/todo-screenshot.tool.json"
+    },
+    {
+      "id": "judgmentReview",
+      "kind": "judgment-review",
+      "adapter": "review-sheet",
+      "configRef": "adapters/todo-judgment.tool.json"
+    }
+  ],
+  "rules": [
+    {
+      "id": "todo-required-info-present",
+      "gateId": "informationContent",
+      "assertion": "requiredInfoPresent",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "requiredInfoIds": ["primaryTitle", "currentStatus", "primaryAction"]
+      }
+    },
+    {
+      "id": "todo-internal-info-hidden",
+      "gateId": "informationDensity",
+      "assertion": "hiddenUnlessExpanded",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "hiddenUnlessExpanded": ["internalId", "debugInfo", "harnessVersion"],
+        "minVisibleTextLengthPerItem": 20,
+        "maxVisibleTextLengthPerItem": 160,
+        "minPrimaryActionsPerItem": 2,
+        "maxPrimaryActionsPerItem": 3
+      }
+    },
+    {
+      "id": "todo-primary-info-order",
+      "gateId": "informationArchitecture",
+      "assertion": "primaryBeforeSecondary",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "primaryInfoIds": ["primaryTitle"],
+        "secondaryInfoIds": ["currentStatus", "description", "metadata"],
+        "orderMetric": "visualOrder"
+      }
+    },
+    {
+      "id": "todo-actions-near-item",
+      "gateId": "placementAndProximity",
+      "assertion": "relatedActionsNearTarget",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot", "layoutSnapshot"],
+      "params": {
+        "distanceMetric": "edgeGapPx",
+        "maxDistancePx": 260,
+        "relationPairs": [
+          {
+            "targetRef": "todo.itemSummary[0]",
+            "actionRef": "todo.editAction[0]"
+          }
+        ]
+      }
+    },
+    {
+      "id": "todo-crud-flow",
+      "gateId": "interactionFlow",
+      "assertion": "flowScenarioCompletes",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow"],
+      "scenarioIds": ["todo-crud-main-flow"],
+      "params": {
+        "expectedCompletionState": "deleteSuccessVisible"
+      }
+    },
+    {
+      "id": "todo-interaction-patterns",
+      "gateId": "interactionPattern",
+      "assertion": "interactionPatternBaseline",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow"],
+      "params": {
+        "requiredPatterns": ["buttonActivation", "formValidation", "dialogOpenClose", "parentChildEventIsolation"]
+      }
+    },
+    {
+      "id": "todo-state-recovery",
+      "gateId": "stateAndRecovery",
+      "assertion": "stateRecoveryPathsPresent",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow"],
+      "scenarioIds": ["todo-error-recovery-flow"],
+      "params": {
+        "requiredStates": ["loading", "empty", "error", "success", "disabled"],
+        "requiredRecoveryActions": ["cancel", "retry"]
+      }
+    },
+    {
+      "id": "todo-a11y-baseline",
+      "gateId": "baseAccessibility",
+      "assertion": "accessibilityBaseline",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["accessibilityAudit", "browserFlow"],
+      "params": {
+        "required": ["formLabel", "keyboardOperation", "visibleFocus", "dialogClose"]
+      }
+    },
+    {
+      "id": "todo-layout-consistency",
+      "gateId": "layoutConsistency",
+      "assertion": "layoutConsistencyBaseline",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["layoutSnapshot"],
+      "params": {
+        "requiredChecks": ["horizontalOverflow", "mobileViewport", "desktopViewport", "relatedActionDistance"]
+      }
+    },
+    {
+      "id": "todo-visual-coverage",
+      "gateId": "layoutConsistency",
+      "assertion": "visualCoverageComplete",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["layoutSnapshot"],
+      "params": {
+        "requiredCaseIds": [
+          "active-list-mobile", "active-list-desktop", "create-mobile", "create-desktop",
+          "completed-list-mobile", "completed-list-desktop", "active-detail-mobile", "active-detail-desktop",
+          "active-edit-mobile", "active-edit-desktop", "completed-detail-mobile", "completed-detail-desktop",
+          "completed-edit-mobile", "completed-edit-desktop", "empty-mobile", "loading-mobile", "error-mobile", "disabled-create-mobile",
+          "empty-desktop", "loading-desktop", "error-desktop", "disabled-create-desktop"
+        ]
+      }
+    },
+    {
+      "id": "todo-component-patterns",
+      "gateId": "componentConsistency",
+      "assertion": "sameRoleSamePattern",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "compareBy": ["role", "variant", "visible"],
+        "minimumComparedElements": 2
+      }
+    },
+    {
+      "id": "todo-purpose-fit-review",
+      "gateId": "purposeAndTaskFit",
+      "assertion": "judgmentReview",
+      "checkKind": "judgment",
+      "severity": "review",
+      "evidenceSourceIds": ["judgmentReview"],
+      "params": {
+        "requiresRationale": true
+      }
+    },
+    {
+      "id": "todo-domain-taste-review",
+      "gateId": "domainSpecificTaste",
+      "assertion": "judgmentReview",
+      "checkKind": "judgment",
+      "severity": "review",
+      "evidenceSourceIds": ["judgmentReview"],
+      "params": {
+        "requiresRationale": true
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "todo-crud-main-flow",
+      "kind": "flow",
+      "steps": [
+        {
+          "id": "create",
+          "action": "runExistingExternalTool",
+          "targetRef": "harness_lab/todo_frontend:check:browser-e2e"
+        }
+      ],
+      "expectedStates": ["createSuccessVisible", "editSuccessVisible", "deleteSuccessVisible"]
+    },
+    {
+      "id": "todo-error-recovery-flow",
+      "kind": "flow",
+      "steps": [
+        {
+          "id": "review-existing-error-path",
+          "action": "runProjectScenario",
+          "targetRef": "todo.errorRecovery"
+        }
+      ],
+      "expectedStates": ["errorVisible", "retryAvailable"]
+    }
+  ],
+  "reviewRubric": [
+    {
+      "id": "todo-purpose-fit-review",
+      "gateId": "purposeAndTaskFit",
+      "question": "TODOを追加、探す、詳細確認、編集、完了、削除する主目的を邪魔していないか。",
+      "requiredEvidence": ["primaryTask", "screenBeforeAfter", "blockedOperation"]
+    },
+    {
+      "id": "todo-domain-taste-review",
+      "gateId": "domainSpecificTaste",
+      "question": "TODO管理として、内部成果物名やdebug情報を出さず、作業に必要な文言だけになっているか。",
+      "requiredEvidence": ["visibleLabels", "hiddenInternalInfo", "acceptedExample"]
+    }
+  ]
+}

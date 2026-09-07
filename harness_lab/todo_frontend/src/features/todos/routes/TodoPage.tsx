@@ -37,6 +37,18 @@ export function TodoPage() {
     }
   }, [isCompletedMode, setStatusFilter, statusFilter]);
 
+  useEffect(() => {
+    if (!isCreateMode && !isEditMode) return;
+    const closeDialog = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      if (isCreateMode) navigate("/todos");
+      if (isEditMode && selectedTodo) navigate(`${detailBasePath}/${selectedTodo.id}`);
+    };
+    document.addEventListener("keydown", closeDialog);
+    return () => document.removeEventListener("keydown", closeDialog);
+  }, [detailBasePath, isCreateMode, isEditMode, navigate, selectedTodo]);
+
   return (
     <main className="app-shell">
       <TodoHeader

@@ -11,7 +11,7 @@ export function TodoHeader({ isCreateMode, isCompletedMode }: TodoHeaderProps) {
       <div>
         <h1>TODO管理</h1>
       </div>
-      <div className="header-actions" aria-label="TODO操作">
+      <div className="header-actions" role="group" aria-label="TODO操作">
         {isCompletedMode ? (
           <Link className="button secondary" to="/todos">
             未完了を見る

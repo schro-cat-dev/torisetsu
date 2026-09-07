@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "todo-dom-adapter",
+  "adapterKind": "dom-snapshot",
+  "capabilities": ["capture", "visible-text", "dom-order", "visual-order", "bounding-box", "consistency-group"],
+  "execution": {
+    "mode": "external_command",
+    "commands": [
+      {
+        "id": "capture",
+        "executable": "npm",
+        "args": ["run", "check:dom-snapshot"],
+        "workingDirectoryRef": "harness_lab/todo_frontend",
+        "timeoutSeconds": 240
+      },
+      {
+        "id": "evaluate",
+        "requires": ["capture"],
+        "executable": "node",
+        "args": [
+          "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/tools/run-ui-dom-snapshot.mjs",
+          "--profile", "{profilePath}",
+          "--snapshot", "{runDir}/todo-frontend.dom-snapshot.json",
+          "--evidence-source-id", "{evidenceSourceId}",
+          "--out", "{adapterResultPath}"
+        ],
+        "workingDirectoryRef": ".",
+        "timeoutSeconds": 60
+      }
+    ]
+  },
+  "inputContract": {
+    "profileRuleIds": ["todo-required-info-present", "todo-internal-info-hidden", "todo-primary-info-order", "todo-actions-near-item", "todo-component-patterns"],
+    "profileScenarioIds": [],
+    "claims": []
+  },
+  "outputContract": {
+    "resultMode": "result_file",
+    "resultFile": "{adapterResultPath}"
+  }
+}

@@ -1,6 +1,6 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
-import { join } from "node:path";
+import { resolve, sep } from "node:path";
 
 const root = process.cwd();
 const specPath = process.argv[2];
@@ -10,17 +10,20 @@ if (!specPath) {
   throw new Error("Usage: <external-tool-spec-runner> <spec.json>");
 }
 
-const spec = JSON.parse(await readFile(join(root, specPath), "utf8"));
+const spec = JSON.parse(await readFile(resolveInside(root, specPath, "spec path"), "utf8"));
 validateSpec(spec);
 
 for (const file of spec.preflightFiles ?? []) {
-  await assertExists(join(root, file), `${spec.name}: required file is missing: ${file}`);
+  await assertExists(resolveInside(root, file, "preflight file"), `${spec.name}: required file is missing: ${file}`);
 }
 
 const restoredFiles = await backupFiles(spec.restoreFiles ?? []);
-const result = await runSpec(spec);
-
-await restoreFiles(restoredFiles);
+let result;
+try {
+  result = await runSpec(spec);
+} finally {
+  await restoreFiles(restoredFiles);
+}
 await writeResult(spec, result);
 
 if (result.exitCode !== 0) {
@@ -73,7 +76,7 @@ async function backupFiles(files) {
   for (const file of files) {
     backups.push({
       file,
-      content: await readFile(join(root, file), "utf8")
+      content: await readFile(resolveInside(root, file, "restore file"), "utf8")
     });
   }
   return backups;
@@ -81,7 +84,7 @@ async function backupFiles(files) {
 
 async function restoreFiles(backups) {
   for (const backup of backups) {
-    await writeFile(join(root, backup.file), backup.content);
+    await writeFile(resolveInside(root, backup.file, "restore file"), backup.content);
   }
 }
 
@@ -99,7 +102,7 @@ async function writeResult(specToWrite, result) {
     status: result.exitCode === 0 ? "ok" : "failed",
     metadata: specToWrite.result?.metadata ?? {}
   };
-  await writeFile(join(outputDir, specToWrite.result.fileName), `${JSON.stringify(payload, null, 2)}\n`);
+  await writeFile(resolveInside(outputDir, specToWrite.result.fileName, "result file"), `${JSON.stringify(payload, null, 2)}\n`);
 }
 
 function validateSpec(specToValidate) {
@@ -130,4 +133,13 @@ function assert(value, message) {
   if (!value) {
     throw new Error(message);
   }
+}
+
+function resolveInside(base, target, label) {
+  const resolvedBase = resolve(base);
+  const resolvedTarget = resolve(resolvedBase, target);
+  if (resolvedTarget !== resolvedBase && !resolvedTarget.startsWith(`${resolvedBase}${sep}`)) {
+    throw new Error(`${label} must stay inside ${resolvedBase}`);
+  }
+  return resolvedTarget;
 }

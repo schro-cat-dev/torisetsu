@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "todo-a11y-adapter",
+  "adapterKind": "accessibility-audit",
+  "capabilities": [
+    "axe-core",
+    "aria-baseline",
+    "label-check",
+    "keyboard-baseline"
+  ],
+  "execution": {
+    "mode": "external_command",
+    "commands": [{
+      "id": "browser-a11y",
+      "executable": "npm",
+      "args": ["run", "check:browser-a11y"],
+      "workingDirectoryRef": "harness_lab/todo_frontend",
+      "timeoutSeconds": 240
+    }]
+  },
+  "inputContract": {
+    "profileRuleIds": ["todo-a11y-baseline"],
+    "profileScenarioIds": [],
+    "claims": ["formLabel", "keyboardOperation", "visibleFocus", "dialogClose"]
+  },
+  "outputContract": {
+    "resultMode": "command_status"
+  },
+  "notes": [
+    "既存の Playwright + axe check を外部toolとして扱う。",
+    "実ブラウザ起動を伴う。"
+  ]
+}

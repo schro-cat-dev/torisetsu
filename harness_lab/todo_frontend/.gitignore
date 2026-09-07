@@ -4,8 +4,5 @@ dist/
 test-results/
 playwright-report/
 harness_runs/**
-!harness_runs/
-!harness_runs/*/
-!harness_runs/*/summary.md
 *.tsbuildinfo
 .DS_Store

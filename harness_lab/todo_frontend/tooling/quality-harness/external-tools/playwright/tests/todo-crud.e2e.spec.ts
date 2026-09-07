@@ -85,3 +85,83 @@ test("TODOの作成、検索、詳細、編集、完了、削除が画面から�
   await editedItem.getByRole("button", { name: "削除" }).click();
   await expect(editedItem).toHaveCount(0);
 });
+
+test("loading、empty、error、retry、disabled、cancel、successを区別できる", async ({ page }) => {
+  let isInitialFailurePhase = true;
+  let markFirstRequestStarted!: () => void;
+  let allowFirstResponse!: () => void;
+  const firstRequestStarted = new Promise<void>((resolve) => { markFirstRequestStarted = resolve; });
+  const firstResponseAllowed = new Promise<void>((resolve) => { allowFirstResponse = resolve; });
+  await page.route("**/api/todos", async (route) => {
+    if (route.request().method() !== "GET") return route.continue();
+    if (isInitialFailurePhase) {
+      markFirstRequestStarted();
+      await firstResponseAllowed;
+      return route.fulfill({ status: 503, body: "一時的に取得できません。", contentType: "text/plain" });
+    }
+    return route.continue();
+  });
+
+  await page.goto("/todos");
+  await firstRequestStarted;
+  await expect(page.getByRole("heading", { name: "読み込み中" })).toBeVisible();
+  isInitialFailurePhase = false;
+  allowFirstResponse();
+  await expect(page.getByRole("heading", { name: "取得できませんでした" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "もう一度試す" })).toBeVisible();
+  await page.getByRole("button", { name: "もう一度試す" }).click();
+  await expect(page.getByRole("region", { name: "TODO一覧" })).toBeVisible();
+
+  await page.getByRole("textbox", { name: "検索" }).fill("__no_matching_todo__");
+  await expect(page.getByRole("heading", { name: "表示できるTODOがありません" })).toBeVisible();
+  await page.getByRole("textbox", { name: "検索" }).fill("");
+
+  await page.getByRole("link", { name: "新規作成" }).click();
+  const dialog = page.getByRole("dialog", { name: "新しいTODO" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "追加する" })).toBeDisabled();
+  await dialog.getByRole("button", { name: "キャンセル" }).click();
+  await expect(page).toHaveURL(/\/todos$/);
+  await expect(page.getByRole("region", { name: "TODO一覧" })).toBeVisible();
+});
+
+test("標準操作pattern、親子event分離、keyboard、focus、Escape closeが成立する", async ({ page }) => {
+  await page.goto("/todos");
+  const firstItem = page.locator(".todo-item").first();
+  const checkbox = firstItem.getByRole("checkbox");
+  const wasChecked = await checkbox.isChecked();
+  await firstItem.locator(".todo-summary-button").press("Enter");
+  await expect(firstItem.locator(".todo-inline-detail")).toBeVisible();
+  expect(await checkbox.isChecked()).toBe(wasChecked);
+
+  await page.getByRole("link", { name: "新規作成" }).click();
+  const dialog = page.getByRole("dialog", { name: "新しいTODO" });
+  const title = dialog.getByLabel("タイトル");
+  await expect(title).toBeFocused();
+  const outlineStyle = await title.evaluate((element) => getComputedStyle(element).outlineStyle);
+  expect(outlineStyle).not.toBe("none");
+  await title.fill("keyboard flow");
+  await expect(dialog.getByRole("button", { name: "追加する" })).toBeEnabled();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(page).toHaveURL(/\/todos$/);
+});
+
+test("保存中はsubmitがdisabledになり二重送信できない", async ({ page }) => {
+  let releaseRequest: (() => void) | undefined;
+  const requestReached = new Promise<void>((resolve) => { releaseRequest = resolve; });
+  await page.route("**/api/todos", async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    await requestReached;
+    return route.continue();
+  });
+  await page.goto("/todos/new");
+  const form = page.getByRole("form", { name: "新しいTODO" });
+  await form.getByLabel("タイトル").fill("二重送信確認");
+  const submit = form.getByRole("button", { name: "追加する" });
+  const submitClick = submit.click();
+  await expect(form.getByRole("button", { name: "保存中" })).toBeDisabled();
+  releaseRequest?.();
+  await submitClick;
+  await expect(page).toHaveURL(/\/todos$/);
+});

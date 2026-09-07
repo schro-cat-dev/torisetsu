@@ -3,8 +3,13 @@
   "name": "harness-genericity-policy",
   "targets": [
     {
-      "dir": "tooling/quality-harness",
+      "dir": "harness_lab/todo_frontend/tooling/quality-harness",
       "extensions": [".mjs"]
+    },
+    {
+      "dir": "internal_refs/harness_arch/ui_quality_harness/tools",
+      "extensions": [".mjs"],
+      "excludeDirs": ["tests"]
     }
   ],
   "forbidden": [
@@ -52,6 +57,16 @@
       "id": "generic runner must not hardcode tester module directory",
       "match": "contains",
       "value": "tester-modules"
+    },
+    {
+      "id": "generic engine must not hardcode the sample application root",
+      "match": "contains",
+      "value": "harness_lab/todo_frontend"
+    },
+    {
+      "id": "generic engine must not hardcode an evidence source ID",
+      "match": "contains",
+      "value": "domSnapshot"
     }
   ],
   "result": {

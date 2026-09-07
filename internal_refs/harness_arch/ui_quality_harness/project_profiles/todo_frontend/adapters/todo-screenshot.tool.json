@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ui-quality-tool-adapter.v1",
+  "adapterId": "todo-screenshot-adapter",
+  "adapterKind": "layout-snapshot",
+  "capabilities": [
+    "screenshot",
+    "bounding-box",
+    "viewport"
+  ],
+  "execution": {
+    "mode": "external_command",
+    "commands": [
+      {
+        "id": "manifest",
+        "executable": "node",
+        "args": [
+          "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/tools/run-visual-manifest-check.mjs",
+          "--manifest", "{repoRoot}/internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-visual.manifest.json",
+          "--profile", "{profilePath}",
+          "--baseline-dir", "{repoRoot}/harness_lab/todo_frontend/tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts-snapshots"
+        ],
+        "workingDirectoryRef": ".",
+        "timeoutSeconds": 60
+      },
+      {
+        "id": "layout",
+        "requires": ["manifest"],
+        "executable": "npm",
+        "args": ["run", "check:browser-layout"],
+        "workingDirectoryRef": "harness_lab/todo_frontend",
+        "timeoutSeconds": 240
+      },
+      {
+        "id": "visual",
+        "requires": ["manifest", "layout"],
+        "executable": "npm",
+        "args": ["run", "check:browser-visual"],
+        "workingDirectoryRef": "harness_lab/todo_frontend",
+        "timeoutSeconds": 360
+      }
+    ]
+  },
+  "inputContract": {
+    "profileRuleIds": ["todo-actions-near-item", "todo-layout-consistency", "todo-visual-coverage"],
+    "profileScenarioIds": [],
+    "claims": [
+      "horizontalOverflow", "mobileViewport", "desktopViewport", "relatedActionDistance",
+      "active-list-mobile", "active-list-desktop", "create-mobile", "create-desktop",
+      "completed-list-mobile", "completed-list-desktop", "active-detail-mobile", "active-detail-desktop",
+      "active-edit-mobile", "active-edit-desktop", "completed-detail-mobile", "completed-detail-desktop",
+      "completed-edit-mobile", "completed-edit-desktop", "empty-mobile", "loading-mobile", "error-mobile", "disabled-create-mobile",
+      "empty-desktop", "loading-desktop", "error-desktop", "disabled-create-desktop"
+    ]
+  },
+  "outputContract": {
+    "resultMode": "command_status"
+  },
+  "notes": [
+    "既存TODO実験アプリのPlaywright visual regression checkを外部toolとして扱う。",
+    "UI品質runner本体には、このnpm commandやpathを直書きしない。"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "test-command-plan.v1",
+  "planId": "ui-quality-ci-browser",
+  "workingDirectory": ".",
+  "stopOnFailure": true,
+  "resultPath": ".ui-quality-runs/ci-browser.command-result.json",
+  "maxOutputBytes": 500000,
+  "commands": [
+    {
+      "id": "ui-quality-final-gate",
+      "executable": "npm",
+      "args": [
+        "--prefix",
+        "harness_lab/todo_frontend",
+        "run",
+        "check:ui-quality"
+      ],
+      "timeoutSeconds": 360,
+      "expectedExitCode": 0
+    }
+  ]
+}

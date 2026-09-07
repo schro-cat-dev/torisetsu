@@ -115,6 +115,7 @@ export function TodoCreateForm({
           <FieldLabel formId={formId} field="title" />
           <input
             id={`${formId}-title`}
+            autoFocus
             value={form.title}
             aria-describedby={descriptionIds(formId, "title", errors.title)}
             aria-invalid={Boolean(errors.title)}

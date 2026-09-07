@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "ui-dom-capture-config.v1",
+  "captureId": "todo-frontend-live-dom",
+  "routePath": "/todos",
+  "waitForSelector": ".todo-list",
+  "outputPath": ".ui-quality-runs/manual/todo-frontend.dom-snapshot.json",
+  "infos": [
+    {
+      "id": "primaryTitle",
+      "selector": ".todo-item:first-child .todo-title"
+    },
+    {
+      "id": "currentStatus",
+      "selector": ".todo-item:first-child .badge[class*='status-']"
+    },
+    {
+      "id": "primaryAction",
+      "selector": ".todo-item:first-child .todo-summary-button"
+    },
+    {
+      "id": "description",
+      "selector": ".todo-item:first-child .todo-description"
+    },
+    {
+      "id": "metadata",
+      "selector": ".todo-item:first-child .todo-meta"
+    },
+    {
+      "id": "internalId",
+      "selector": "[data-internal-id], .internal-id"
+    },
+    {
+      "id": "debugInfo",
+      "selector": "[data-debug], .debug"
+    },
+    {
+      "id": "harnessVersion",
+      "selector": "[data-harness-version], .harness-version"
+    }
+  ],
+  "items": [
+    {
+      "selector": ".todo-item",
+      "primaryActionSelector": ".todo-summary-button, .todo-actions a, .todo-actions button"
+    }
+  ],
+  "elements": [
+    {
+      "ref": "todo.itemSummary",
+      "selector": ".todo-item .todo-summary-button",
+      "role": "button",
+      "variant": "summary",
+      "multiple": true
+    },
+    {
+      "ref": "todo.editAction",
+      "selector": ".todo-item .todo-actions a",
+      "role": "link",
+      "variant": "ghost",
+      "multiple": true
+    },
+    {
+      "ref": "todo.deleteAction",
+      "selector": ".todo-item .todo-actions button",
+      "role": "button",
+      "variant": "danger",
+      "multiple": true
+    }
+  ],
+  "consistencyGroups": [
+    {
+      "id": "todo-edit-actions",
+      "refPrefix": "todo.editAction[",
+      "expected": {
+        "role": "link",
+        "variant": "ghost",
+        "visible": true
+      }
+    },
+    {
+      "id": "todo-delete-actions",
+      "refPrefix": "todo.deleteAction[",
+      "expected": {
+        "role": "button",
+        "variant": "danger",
+        "visible": true
+      }
+    }
+  ]
+}

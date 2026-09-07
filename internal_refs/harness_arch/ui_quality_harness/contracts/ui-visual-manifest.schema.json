@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-visual-manifest.schema.json",
+  "title": "UI Visual Regression Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "manifestId", "thresholdPolicyRef", "cases"],
+  "properties": {
+    "schemaVersion": { "const": "ui-visual-manifest.v1" },
+    "manifestId": { "type": "string", "minLength": 1 },
+    "thresholdPolicyRef": { "type": "string", "minLength": 1 },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "routePath", "viewport", "ready", "intercepts", "actions", "screenshotName"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "routePath": { "type": "string", "minLength": 1 },
+          "viewport": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["width", "height"],
+            "properties": {
+              "width": { "type": "integer", "minimum": 1 },
+              "height": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "ready": { "type": "object" },
+          "intercepts": { "type": "array", "items": { "type": "object" } },
+          "actions": { "type": "array", "items": { "type": "object" } },
+          "screenshotName": { "type": "string", "pattern": "^[a-z0-9-]+\\.png$" }
+        }
+      }
+    }
+  }
+}

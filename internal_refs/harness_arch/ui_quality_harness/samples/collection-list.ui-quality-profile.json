@@ -1,0 +1,309 @@
+{
+  "schemaVersion": "ui-quality-harness-profile.v1",
+  "profileId": "collection-list-basic-ui-quality",
+  "qualityModel": {
+    "requiredGateIds": [
+      "baseAccessibility", "interactionPattern", "layoutConsistency", "componentConsistency", "domainSpecificTaste",
+      "purposeAndTaskFit", "informationContent", "informationDensity", "informationArchitecture",
+      "placementAndProximity", "interactionFlow", "stateAndRecovery"
+    ]
+  },
+  "target": {
+    "id": "collection-list",
+    "kind": "screen",
+    "entrypoint": "<set-by-environment>",
+    "scope": ["list", "detail", "edit", "delete"]
+  },
+  "gates": [
+    {
+      "id": "purposeAndTaskFit",
+      "label": "利用者の目的に合うか",
+      "blocking": false
+    },
+    {
+      "id": "informationContent",
+      "label": "必要な情報が載っているか",
+      "blocking": true
+    },
+    {
+      "id": "informationDensity",
+      "label": "情報量が多すぎない/少なすぎないか",
+      "blocking": false
+    },
+    {
+      "id": "informationArchitecture",
+      "label": "主情報、補足情報、操作情報の関係が正しいか",
+      "blocking": false
+    },
+    {
+      "id": "placementAndProximity",
+      "label": "関係する情報と操作が近いか",
+      "blocking": false
+    },
+    {
+      "id": "interactionFlow",
+      "label": "実際に触ったときの流れが成立するか",
+      "blocking": true
+    },
+    {
+      "id": "interactionPattern",
+      "label": "標準的な操作部品が期待どおり動くか",
+      "blocking": true
+    },
+    {
+      "id": "stateAndRecovery",
+      "label": "状態表示と復帰手段があるか",
+      "blocking": true
+    },
+    {
+      "id": "baseAccessibility",
+      "label": "読める、押せる、label/focus/keyboardがあるか",
+      "blocking": true
+    },
+    {
+      "id": "layoutConsistency",
+      "label": "余白、配置、responsiveが一貫しているか",
+      "blocking": true
+    },
+    {
+      "id": "componentConsistency",
+      "label": "同じ役割のUIが同じ見た目・文言・動きか",
+      "blocking": false
+    },
+    {
+      "id": "domainSpecificTaste",
+      "label": "業務らしさ、ブランド感、固有の味があるか",
+      "blocking": false
+    }
+  ],
+  "evidenceSources": [
+    {
+      "id": "domSnapshot",
+      "kind": "dom-snapshot",
+      "adapter": "dom"
+    },
+    {
+      "id": "browserFlow",
+      "kind": "browser-flow",
+      "adapter": "playwright",
+      "configRef": "adapters/playwright.tool.json"
+    },
+    {
+      "id": "accessibilityAudit",
+      "kind": "accessibility-audit",
+      "adapter": "axe",
+      "configRef": "adapters/axe.tool.json"
+    },
+    {
+      "id": "judgmentReview",
+      "kind": "judgment-review",
+      "adapter": "review-sheet"
+    }
+  ],
+  "rules": [
+    {
+      "id": "required-info-present",
+      "gateId": "informationContent",
+      "assertion": "requiredInfoPresent",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "requiredInfoIds": ["primaryTitle", "currentStatus", "primaryAction"]
+      }
+    },
+    {
+      "id": "unnecessary-info-hidden",
+      "gateId": "informationDensity",
+      "assertion": "hiddenUnlessExpanded",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "hiddenUnlessExpanded": ["internalId", "debugInfo", "changeHistory"],
+        "minVisibleTextLengthPerItem": 20,
+        "maxVisibleTextLengthPerItem": 140,
+        "minPrimaryActionsPerItem": 1,
+        "maxPrimaryActionsPerItem": 2
+      }
+    },
+    {
+      "id": "primary-info-before-secondary-info",
+      "gateId": "informationArchitecture",
+      "assertion": "primaryBeforeSecondary",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "primaryInfoIds": ["primaryTitle", "currentStatus"],
+        "secondaryInfoIds": ["description", "metadata"],
+        "orderMetric": "visualOrder"
+      }
+    },
+    {
+      "id": "related-actions-near-target",
+      "gateId": "placementAndProximity",
+      "assertion": "relatedActionsNearTarget",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot", "browserFlow"],
+      "params": {
+        "distanceMetric": "edgeGapPx",
+        "maxDistancePx": 240,
+        "relationPairs": [
+          {
+            "targetRef": "item.summary",
+            "actionRef": "item.editAction"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edit-flow-completes",
+      "gateId": "interactionFlow",
+      "assertion": "flowScenarioCompletes",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow"],
+      "scenarioIds": ["edit-item-flow"],
+      "params": {
+        "expectedCompletionState": "saveSuccessVisible"
+      }
+    },
+    {
+      "id": "interaction-pattern-baseline",
+      "gateId": "interactionPattern",
+      "assertion": "interactionPatternBaseline",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow"],
+      "params": {
+        "requiredPatterns": ["buttonActivation", "formValidation", "dialogOpenClose"]
+      }
+    },
+    {
+      "id": "state-and-recovery-paths-present",
+      "gateId": "stateAndRecovery",
+      "assertion": "stateRecoveryPathsPresent",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow", "domSnapshot"],
+      "scenarioIds": ["error-recovery-flow"],
+      "params": {
+        "requiredStates": ["loading", "empty", "error", "success", "disabled"],
+        "requiredRecoveryActions": ["cancel", "retry"]
+      }
+    },
+    {
+      "id": "keyboard-and-label-baseline",
+      "gateId": "baseAccessibility",
+      "assertion": "accessibilityBaseline",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["accessibilityAudit", "browserFlow"],
+      "params": {
+        "required": ["formLabel", "keyboardOperation", "visibleFocus", "dialogClose"]
+      }
+    },
+    {
+      "id": "layout-consistency-baseline",
+      "gateId": "layoutConsistency",
+      "assertion": "layoutConsistencyBaseline",
+      "checkKind": "auto",
+      "severity": "error",
+      "evidenceSourceIds": ["browserFlow"],
+      "params": {
+        "requiredChecks": ["horizontalOverflow", "mobileViewport", "desktopViewport"]
+      }
+    },
+    {
+      "id": "same-role-same-pattern",
+      "gateId": "componentConsistency",
+      "assertion": "sameRoleSamePattern",
+      "checkKind": "semi_auto",
+      "severity": "warning",
+      "evidenceSourceIds": ["domSnapshot"],
+      "params": {
+        "compareBy": ["role", "variant"],
+        "minimumComparedElements": 2
+      }
+    },
+    {
+      "id": "domain-taste-review",
+      "gateId": "domainSpecificTaste",
+      "assertion": "judgmentReview",
+      "checkKind": "judgment",
+      "severity": "review",
+      "evidenceSourceIds": ["judgmentReview"],
+      "params": {
+        "requiresRationale": true
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "edit-item-flow",
+      "kind": "flow",
+      "steps": [
+        {
+          "id": "open-detail",
+          "action": "click",
+          "targetRef": "item.summary"
+        },
+        {
+          "id": "open-edit",
+          "action": "click",
+          "targetRef": "item.editAction"
+        },
+        {
+          "id": "change-title",
+          "action": "type",
+          "targetRef": "form.primaryTitle",
+          "valueRef": "fixtures.updatedPrimaryTitle"
+        },
+        {
+          "id": "save",
+          "action": "click",
+          "targetRef": "form.saveAction"
+        }
+      ],
+      "expectedStates": ["detailVisible", "editModeVisible", "saveSuccessVisible"]
+    },
+    {
+      "id": "error-recovery-flow",
+      "kind": "flow",
+      "steps": [
+        {
+          "id": "force-error",
+          "action": "setFixture",
+          "valueRef": "fixtures.serverError"
+        },
+        {
+          "id": "submit",
+          "action": "click",
+          "targetRef": "form.saveAction"
+        },
+        {
+          "id": "retry",
+          "action": "click",
+          "targetRef": "error.retryAction"
+        }
+      ],
+      "expectedStates": ["errorVisible", "retryAvailable"]
+    }
+  ],
+  "reviewRubric": [
+    {
+      "id": "purpose-fit-review",
+      "gateId": "purposeAndTaskFit",
+      "question": "このUIは利用者がこの画面で達成したい主目的を邪魔していないか。",
+      "requiredEvidence": ["targetUser", "primaryTask", "screenBeforeAfter"]
+    },
+    {
+      "id": "domain-taste-review",
+      "gateId": "domainSpecificTaste",
+      "question": "土台品質を壊さず、業務らしさや固有の見た目が出ているか。",
+      "requiredEvidence": ["domainContext", "acceptedExample", "rejectedExample"]
+    }
+  ]
+}

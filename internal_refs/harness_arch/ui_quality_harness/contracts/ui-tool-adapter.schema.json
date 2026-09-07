@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-tool-adapter.schema.json",
+  "title": "UI Quality Tool Adapter Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "adapterId", "adapterKind", "capabilities", "execution", "inputContract", "outputContract"],
+  "properties": {
+    "schemaVersion": {
+      "const": "ui-quality-tool-adapter.v1"
+    },
+    "adapterId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adapterKind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "commands"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["external_command"]
+        },
+        "commands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "executable", "args", "workingDirectoryRef", "timeoutSeconds"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "executable": { "type": "string", "minLength": 1 },
+              "args": { "type": "array", "items": { "type": "string" } },
+              "workingDirectoryRef": { "type": "string", "minLength": 1 },
+              "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 3600 },
+              "requires": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "inputContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileRuleIds", "profileScenarioIds", "claims"],
+      "properties": {
+        "profileRuleIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "profileScenarioIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "claims": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "outputContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resultMode"],
+      "properties": {
+        "resultMode": { "type": "string", "enum": ["command_status", "result_file"] },
+        "resultFile": { "type": "string", "minLength": 1 }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

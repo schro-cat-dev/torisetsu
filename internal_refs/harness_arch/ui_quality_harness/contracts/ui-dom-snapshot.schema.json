@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-dom-snapshot.schema.json",
+  "title": "UI DOM Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "snapshotId", "capturedAt", "infos", "items", "elements"],
+  "properties": {
+    "schemaVersion": {
+      "const": "ui-dom-snapshot.v2"
+    },
+    "snapshotId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capturedAt": {
+      "type": "string"
+    },
+    "infos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "visible", "domOrder", "visualOrder"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "domOrder": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "visualOrder": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "textLength": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "visibleTextLength", "primaryActionCount"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visibleTextLength": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "primaryActionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref", "role", "visible", "boundingBox"],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "visibleLabel": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "boundingBox": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["x", "y", "width", "height"],
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 0
+              },
+              "height": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "consistencyGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "refs", "expected"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "refs": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "expected": {
+            "type": "object",
+            "minProperties": 1
+          }
+        }
+      }
+    }
+  }
+}

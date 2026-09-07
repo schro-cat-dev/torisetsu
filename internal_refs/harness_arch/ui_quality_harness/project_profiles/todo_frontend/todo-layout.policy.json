@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ui-layout-policy.v1",
+  "policyId": "todo-responsive-layout",
+  "cases": [
+    {
+      "id": "mobile",
+      "routePath": "/todos",
+      "viewport": { "width": 375, "height": 800 },
+      "waitForSelector": ".todo-list",
+      "noHorizontalOverflow": true,
+      "relations": [{
+        "targetSelector": ".todo-item:first-child .todo-summary-button",
+        "actionSelector": ".todo-item:first-child .todo-actions a",
+        "distanceMetric": "edgeGapPx",
+        "operator": "<=",
+        "maxDistancePx": 260,
+        "rationale": "対象行と編集操作が同じ画面領域にあり、viewport外や別sectionへ離れない上限。",
+        "boundaryCases": [
+          { "actual": 259, "expected": "passed" },
+          { "actual": 260, "expected": "passed" },
+          { "actual": 261, "expected": "failed" }
+        ]
+      }],
+      "screenshotName": "todo-mobile-layout.png"
+    },
+    {
+      "id": "desktop",
+      "routePath": "/todos",
+      "viewport": { "width": 1280, "height": 900 },
+      "waitForSelector": ".todo-list",
+      "noHorizontalOverflow": true,
+      "relations": [],
+      "screenshotName": "todo-desktop-layout.png"
+    }
+  ]
+}

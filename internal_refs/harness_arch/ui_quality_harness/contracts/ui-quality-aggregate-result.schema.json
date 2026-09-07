@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-quality-aggregate-result.schema.json",
+  "title": "UI Quality Aggregate Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "profileId", "checkedAt", "inputIdentity", "evidenceSources", "rules", "scenarios", "gates", "issues"],
+  "properties": {
+    "schemaVersion": { "const": "ui-quality-aggregate-result.v1" },
+    "status": { "type": "string", "enum": ["ok", "warning", "failed"] },
+    "profileId": { "type": "string", "minLength": 1 },
+    "checkedAt": { "type": "string", "minLength": 1 },
+    "inputIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileSha256"],
+      "properties": { "profileSha256": { "type": "string", "minLength": 1 } }
+    },
+    "evidenceSources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "adapterId", "status", "resultPath", "commands"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "adapterId": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["ok", "failed"] },
+          "resultPath": { "type": "string", "minLength": 1 },
+          "commands": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "commandText", "exitCode", "timedOut", "outcome", "failedDependencies"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "commandText": { "type": "string", "minLength": 1 },
+                "exitCode": { "type": "integer" },
+                "timedOut": { "type": "boolean" },
+                "outcome": { "type": "string", "enum": ["passed", "command_failed", "timed_out", "spawn_failed", "dependency_failed"] },
+                "failedDependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "gateId", "status", "message", "expectedEvidenceSourceIds", "receivedEvidenceSourceIds", "missingEvidenceSourceIds", "requiredClaims", "receivedClaims", "missingClaims", "scenarioIds", "coveredScenarioIds", "missingScenarioIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "gateId": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["passed", "warning", "failed"] },
+          "message": { "type": "string", "minLength": 1 },
+          "expectedEvidenceSourceIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "receivedEvidenceSourceIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "missingEvidenceSourceIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "requiredClaims": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "receivedClaims": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "missingClaims": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "scenarioIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "coveredScenarioIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "missingScenarioIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "linkedRuleIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["passed", "failed"] },
+          "linkedRuleIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "blocking", "status", "ruleIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "blocking": { "type": "boolean" },
+          "status": { "type": "string", "enum": ["passed", "warning", "failed"] },
+          "ruleIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "message"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

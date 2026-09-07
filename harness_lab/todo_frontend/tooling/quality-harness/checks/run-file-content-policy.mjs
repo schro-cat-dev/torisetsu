@@ -1,21 +1,18 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
-const root = process.cwd();
-const policyPath = process.argv[2];
+const { root, policyPath } = parseArgs(process.argv.slice(2));
 const outputDir = process.env.HARNESS_RUN_DIR;
-
-if (!policyPath) {
-  throw new Error("Usage: <file-content-policy-runner> <policy.json>");
-}
-
-const policy = JSON.parse(await readFile(join(root, policyPath), "utf8"));
+const policyFile = resolveInside(root, policyPath, "policy path");
+const policy = JSON.parse(await readFile(policyFile, "utf8"));
 validatePolicy(policy);
 
 const violations = [];
 
 for (const target of policy.targets) {
-  const files = await listFiles(join(root, target.dir), new Set(target.extensions));
+  const targetDirectory = resolveInside(root, target.dir, `target directory ${target.dir}`);
+  const excludedDirectories = new Set((target.excludeDirs ?? []).map((dir) => resolveInside(targetDirectory, dir, `excluded directory ${dir}`)));
+  const files = await listFiles(targetDirectory, new Set(target.extensions), excludedDirectories);
   for (const file of files) {
     await checkFile(file, target);
   }
@@ -54,14 +51,14 @@ async function checkFile(file, target) {
   }
 }
 
-async function listFiles(dir, extensions) {
+async function listFiles(dir, extensions, excludedDirectories) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
 
   for (const entry of entries) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) {
-      files.push(...(await listFiles(path, extensions)));
+      if (!excludedDirectories.has(path)) files.push(...(await listFiles(path, extensions, excludedDirectories)));
       continue;
     }
 
@@ -76,7 +73,8 @@ async function listFiles(dir, extensions) {
 async function writeResult(policyToWrite, violationsToWrite) {
   if (!outputDir) return;
 
-  await mkdir(outputDir, { recursive: true });
+  const resolvedOutputDirectory = resolveInside(root, outputDir, "result directory");
+  await mkdir(resolvedOutputDirectory, { recursive: true });
   const payload = {
     schemaVersion: "file-content-policy-result.v1",
     generatedAt: new Date().toISOString(),
@@ -87,7 +85,8 @@ async function writeResult(policyToWrite, violationsToWrite) {
     status: violationsToWrite.length === 0 ? "ok" : "failed",
     violations: violationsToWrite
   };
-  await writeFile(join(outputDir, policyToWrite.result.fileName), `${JSON.stringify(payload, null, 2)}\n`);
+  const resultFile = resolveInside(resolvedOutputDirectory, policyToWrite.result.fileName, "result file");
+  await writeFile(resultFile, `${JSON.stringify(payload, null, 2)}\n`);
 }
 
 function validatePolicy(policyToValidate) {
@@ -100,6 +99,7 @@ function validatePolicy(policyToValidate) {
   for (const [index, target] of policyToValidate.targets.entries()) {
     assert(typeof target.dir === "string" && target.dir, `targets[${index}].dir is required.`);
     assert(Array.isArray(target.extensions) && target.extensions.length > 0, `targets[${index}].extensions must be a non-empty array.`);
+    assert(target.excludeDirs === undefined || (Array.isArray(target.excludeDirs) && target.excludeDirs.every((item) => typeof item === "string" && item)), `targets[${index}].excludeDirs must contain non-empty strings.`);
   }
 
   for (const [index, rule] of policyToValidate.forbidden.entries()) {
@@ -122,4 +122,30 @@ function assert(value, message) {
   if (!value) {
     throw new Error(message);
   }
+}
+
+function parseArgs(argv) {
+  let root = process.cwd();
+  let policyPath;
+  for (let index = 0; index < argv.length; index += 1) {
+    if (argv[index] === "--root") {
+      if (!argv[index + 1]) throw new Error("--root requires a value");
+      root = resolve(process.cwd(), argv[index + 1]);
+      index += 1;
+      continue;
+    }
+    if (policyPath) throw new Error(`unknown argument: ${argv[index]}`);
+    policyPath = argv[index];
+  }
+  if (!policyPath) throw new Error("Usage: <file-content-policy-runner> [--root <dir>] <policy.json>");
+  return { root, policyPath };
+}
+
+function resolveInside(base, target, label) {
+  const resolved = isAbsolute(target) ? resolve(target) : resolve(base, target);
+  const relation = relative(base, resolved);
+  if (relation === ".." || relation.startsWith(`..${sep}`) || isAbsolute(relation)) {
+    throw new Error(`${label} must stay inside ${base}`);
+  }
+  return resolved;
 }

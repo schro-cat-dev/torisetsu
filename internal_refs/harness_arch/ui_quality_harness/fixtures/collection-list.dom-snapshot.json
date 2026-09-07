@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "ui-dom-snapshot.v2",
+  "snapshotId": "collection-list-sample-dom",
+  "capturedAt": "2026-09-07T00:00:00+09:00",
+  "infos": [
+    {
+      "id": "primaryTitle",
+      "visible": true,
+      "domOrder": 1,
+      "visualOrder": 1,
+      "textLength": 16
+    },
+    {
+      "id": "currentStatus",
+      "visible": true,
+      "domOrder": 2,
+      "visualOrder": 2,
+      "textLength": 6
+    },
+    {
+      "id": "primaryAction",
+      "visible": true,
+      "domOrder": 3,
+      "visualOrder": 3,
+      "textLength": 4
+    },
+    {
+      "id": "description",
+      "visible": true,
+      "domOrder": 4,
+      "visualOrder": 4,
+      "textLength": 48
+    },
+    {
+      "id": "metadata",
+      "visible": true,
+      "domOrder": 5,
+      "visualOrder": 5,
+      "textLength": 20
+    },
+    {
+      "id": "internalId",
+      "visible": false,
+      "domOrder": 6,
+      "visualOrder": 6,
+      "textLength": 0
+    },
+    {
+      "id": "debugInfo",
+      "visible": false,
+      "domOrder": 7,
+      "visualOrder": 7,
+      "textLength": 0
+    },
+    {
+      "id": "changeHistory",
+      "visible": false,
+      "domOrder": 8,
+      "visualOrder": 8,
+      "textLength": 0
+    }
+  ],
+  "items": [
+    {
+      "id": "item-1",
+      "visibleTextLength": 118,
+      "primaryActionCount": 2
+    }
+  ],
+  "elements": [
+    {
+      "ref": "item.summary",
+      "role": "article",
+      "visible": true,
+      "visibleLabel": "summary",
+      "variant": "default",
+      "boundingBox": {
+        "x": 40,
+        "y": 120,
+        "width": 480,
+        "height": 120
+      }
+    },
+    {
+      "ref": "item.editAction",
+      "role": "button",
+      "visible": true,
+      "visibleLabel": "編集",
+      "variant": "secondary",
+      "boundingBox": {
+        "x": 420,
+        "y": 140,
+        "width": 72,
+        "height": 36
+      }
+    },
+    {
+      "ref": "item.archiveAction",
+      "role": "button",
+      "visible": true,
+      "visibleLabel": "保管",
+      "variant": "secondary",
+      "boundingBox": {
+        "x": 420,
+        "y": 184,
+        "width": 72,
+        "height": 36
+      }
+    }
+  ],
+  "consistencyGroups": [
+    {
+      "id": "secondary-item-actions",
+      "refs": ["item.editAction", "item.archiveAction"],
+      "expected": {
+        "role": "button",
+        "variant": "secondary"
+      }
+    }
+  ]
+}

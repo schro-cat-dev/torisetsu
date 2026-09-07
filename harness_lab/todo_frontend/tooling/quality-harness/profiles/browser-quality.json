@@ -1,23 +1,19 @@
 {
   "schemaVersion": "quality-harness-profile.v1",
   "name": "browser-quality",
-  "description": "実ブラウザで主要操作とa11yを確認する。",
+  "description": "profile、全adapter、rule、scenario、gateを1つの最終判定へ集約する。",
   "stopOnFailure": true,
   "outputDir": "harness_runs",
   "commands": [
     {
-      "name": "browser-e2e",
+      "name": "ui-quality-final",
       "command": "npm",
-      "args": ["run", "check:browser-e2e"]
-    },
-    {
-      "name": "browser-a11y",
-      "command": "npm",
-      "args": ["run", "check:browser-a11y"]
+      "args": ["run", "check:ui-quality"]
     }
   ],
   "risks": [
     "Chromiumだけを対象にする。Safari/Firefox/mobile実機は対象外。",
-    "a11yはaxeの自動検出範囲であり、支援技術での手動確認は対象外。"
+    "a11yはaxeの自動検出範囲であり、支援技術での手動確認は対象外。",
+    "visual regressionはmanifestに列挙した全route/stateを対象にする。manifest外の動的組合せは対象外。"
   ]
 }

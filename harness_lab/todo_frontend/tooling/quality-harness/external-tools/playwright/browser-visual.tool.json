@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "external-tool-check.v1",
+  "name": "browser-visual",
+  "tool": "playwright",
+  "preflightFiles": [
+    "node_modules/@playwright/test/cli.js",
+    "tooling/quality-harness/external-tools/playwright/playwright.config.ts",
+    "tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts"
+  ],
+  "restoreFiles": [
+    "local-api/data/todos.json",
+    "local-api/data/categories.json"
+  ],
+  "command": {
+    "bin": "node",
+    "env": {
+      "PLAYWRIGHT_TODO_API_PORT": "4282",
+      "PLAYWRIGHT_TODO_WEB_PORT": "5282",
+      "PLAYWRIGHT_REUSE_EXISTING_SERVER": "0",
+      "UI_VISUAL_MANIFEST": "internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-visual.manifest.json"
+    },
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts",
+      "--config",
+      "tooling/quality-harness/external-tools/playwright/playwright.config.ts"
+    ]
+  },
+  "result": {
+    "fileName": "browser-visual.results.json",
+    "metadata": {
+      "browser": "chromium",
+      "manifest": "internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-visual.manifest.json",
+      "maxDiffPixelRatio": 0.01
+    }
+  }
+}

@@ -1,0 +1,48 @@
+name: UI Quality Harness
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  ui-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: harness_lab/todo_frontend/package-lock.json
+
+      - name: Install TODO frontend dependencies
+        run: npm ci
+        working-directory: harness_lab/todo_frontend
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: harness_lab/todo_frontend
+
+      - name: UI quality contract and negative tests
+        run: npm run check:ui-quality-contracts
+        working-directory: harness_lab/todo_frontend
+
+      - name: Typecheck TODO frontend
+        run: npm run typecheck
+        working-directory: harness_lab/todo_frontend
+
+      - name: UI quality final gate
+        run: npm run check:ui-quality
+        working-directory: harness_lab/todo_frontend
+
+      - name: Upload UI quality evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-quality-evidence
+          path: .ui-quality-runs/

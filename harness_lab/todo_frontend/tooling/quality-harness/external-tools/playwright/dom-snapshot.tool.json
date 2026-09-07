@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "external-tool-check.v1",
+  "name": "dom-snapshot",
+  "tool": "playwright",
+  "preflightFiles": [
+    "node_modules/@playwright/test/cli.js",
+    "tooling/quality-harness/external-tools/playwright/playwright.config.ts",
+    "tooling/quality-harness/external-tools/playwright/tests/todo-dom-snapshot.spec.ts"
+  ],
+  "restoreFiles": [
+    "local-api/data/todos.json",
+    "local-api/data/categories.json"
+  ],
+  "command": {
+    "bin": "node",
+    "env": {
+      "PLAYWRIGHT_TODO_API_PORT": "4281",
+      "PLAYWRIGHT_TODO_WEB_PORT": "5281",
+      "PLAYWRIGHT_REUSE_EXISTING_SERVER": "0",
+      "UI_DOM_CAPTURE_CONFIG": "internal_refs/harness_arch/ui_quality_harness/project_profiles/todo_frontend/todo-dom-capture.config.json",
+      "UI_DOM_SNAPSHOT_FILE": "todo-frontend.dom-snapshot.json"
+    },
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tooling/quality-harness/external-tools/playwright/tests/todo-dom-snapshot.spec.ts",
+      "--config",
+      "tooling/quality-harness/external-tools/playwright/playwright.config.ts"
+    ]
+  },
+  "result": {
+    "fileName": "dom-snapshot.results.json",
+    "metadata": {
+      "browser": "chromium",
+      "output": "UI_QUALITY_RUN_DIR/todo-frontend.dom-snapshot.json"
+    }
+  }
+}
