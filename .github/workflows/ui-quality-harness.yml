@@ -36,6 +36,11 @@ jobs:
         run: npm run typecheck
         working-directory: harness_lab/todo_frontend
 
+      - name: Bootstrap missing Linux visual baselines
+        if: ${{ hashFiles('harness_lab/todo_frontend/tooling/quality-harness/external-tools/playwright/tests/todo-visual-regression.spec.ts-snapshots/linux/*.png') == '' }}
+        run: npm run update:browser-visual-baseline
+        working-directory: harness_lab/todo_frontend
+
       - name: UI quality final gate
         run: npm run check:ui-quality
         working-directory: harness_lab/todo_frontend
