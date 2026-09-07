@@ -18,7 +18,7 @@
 - 実測結果: [verification/2026-09-07-completion-evidence.md](verification/2026-09-07-completion-evidence.md)
 - 元監査と是正対応: [2026-09-07-strict-audit.md](audits/2026-09-07-strict-audit.md)
 
-GitHub Actionsの実run、required check設定、Safari/Firefox、実機、screen reader手動確認はローカル完成範囲外で、未確認のまま残す。
+GitHub ActionsはUbuntu上の[実run 34070990440](https://github.com/schro-cat-dev/torisetsu/actions/runs/34070990440)で成功を確認した。required check設定、Safari/Firefox、実機、screen reader手動確認は未確認のまま残す。
 
 ## 最短実行
 

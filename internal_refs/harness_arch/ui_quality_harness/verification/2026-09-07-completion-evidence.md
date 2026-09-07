@@ -4,7 +4,7 @@
 
 ## 結論
 
-ローカル完成契約C-01〜C-22は完了。共有pre-push sampleを実行し、最終結果は`status: ok`だった。
+ローカル完成契約C-01〜C-22は完了。共有pre-push sampleを実行し、最終結果は`status: ok`だった。Ubuntu上のGitHub Actionsも[run 34070990440](https://github.com/schro-cat-dev/torisetsu/actions/runs/34070990440)で成功した。
 
 | 集約対象 | 実結果 |
 |---|---:|
@@ -29,6 +29,7 @@
 | a11y | `npm --prefix harness_lab/todo_frontend run check:browser-a11y` | 除外ruleなしで全pass | 5 / 5 pass |
 | layout | `npm --prefix harness_lab/todo_frontend run check:browser-layout` | 全pass | 2 / 2 pass |
 | visual | `npm --prefix harness_lab/todo_frontend run check:browser-visual` | baseline更新なしで全pass | 22 / 22 pass |
+| Ubuntu CI | GitHub Actions run `34070990440` | 全step成功 | success |
 | 生成物分離 | 最終実行前後の`git status --porcelain=v1 --untracked-files=all`比較 | 追加差分0 | 追加0、消失0 |
 | hook一致 | `cmp -s .git/hooks/pre-push internal_refs/harness_arch/ui_quality_harness/runbooks/pre-push-hook.sample.sh` | exit 0 | exit 0 |
 
@@ -46,7 +47,7 @@
 
 ## 未確認範囲
 
-- GitHub Actionsの実runとbranch protectionのrequired check設定。
+- branch protectionのrequired check設定。
 - Safari、Firefox、mobile実機。
 - screen readerによる手動確認。
 - 外部AI APIの自動呼び出し。

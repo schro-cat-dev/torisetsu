@@ -5,12 +5,12 @@
 本書の指摘は監査時点の履歴として残す。P0-01〜02、P1-01〜08、P2-01〜02はローカル実装で是正し、完成契約C-01〜C-22へ対応付けた。
 
 - 最終結果: 5 evidence source、13 rule、2 scenario、12 gateがすべてpassed。
-- visual: platform非依存名の22 baselineを更新なしで比較。
+- visual: macOS/Linux別の22 baselineを更新なしで比較。
 - 汎用性: TODO固有path、evidence ID、port、test pathの共通runner直書きをscanし0件。
 - 生成物: 最終実行前後の`git status`差分0件。
 - 詳細証跡: [../verification/2026-09-07-completion-evidence.md](../verification/2026-09-07-completion-evidence.md)
 
-GitHub Actions自体の実run、required check設定、Safari/Firefox、実機、screen reader手動確認は未実施であり、本監査のローカル是正完了とは分ける。
+GitHub Actionsは監査後の[run 34070990440](https://github.com/schro-cat-dev/torisetsu/actions/runs/34070990440)でUbuntu上の成功を確認した。required check設定、Safari/Firefox、実機、screen reader手動確認は未実施であり、本監査のローカル是正完了とは分ける。
 
 監査日: 2026-09-07
 

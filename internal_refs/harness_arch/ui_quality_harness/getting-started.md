@@ -104,11 +104,12 @@ node internal_refs/harness_arch/ui_quality_harness/tools/run-ui-quality-harness.
 - `.git/hooks/pre-push`は、typecheck後に同じ`check:ui-quality`を実行します。
 - 共有用hookは`runbooks/pre-push-hook.sample.sh`です。
 - GitHub Actionsは`.github/workflows/ui-quality-harness.yml`です。
+- Ubuntu上の実行は[run 34070990440](https://github.com/schro-cat-dev/torisetsu/actions/runs/34070990440)で成功確認済みです。
 - GitHub上で必須checkにするには、push後にworkflow実runを確認し、branch protectionを設定します。
 
 ## 自動確認しない範囲
 
-- GitHub Actionsの実runとrequired check設定。
+- branch protectionのrequired check設定。
 - Safari、Firefox、mobile実機。
 - screen readerによる手動確認。
 - 外部AI APIの自動呼び出し。

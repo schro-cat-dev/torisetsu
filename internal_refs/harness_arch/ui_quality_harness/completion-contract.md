@@ -29,7 +29,7 @@ GitHub上のrequired check設定、Safari/Firefox、実機、screen readerによ
 | C-15 | 完了 | 全routeと主要stateをvisual manifestへ列挙する | manifest completeness check |
 | C-16 | 完了 | manifestの全caseにmobile/desktop baselineがある | baseline inventory check |
 | C-17 | 完了 | visual thresholdのoperator、値、単位、scope、根拠、境界testがある | threshold policy + unit test |
-| C-18 | 完了 | Linux CIでbaseline fileを解決できる | platform非依存snapshot path + CI相当静的check |
+| C-18 | 完了 | Linux CIでbaseline fileを解決できる | OS別baseline + Ubuntu実run成功 |
 | C-19 | 完了 | generated resultとrun logがgit対象を汚さない | 実行前後のtracked/untracked対象差分が増えない |
 | C-20 | 完了 | 共通runnerがroot外pathを拒否し、失敗時もrestoreする | traversal/failure fixture test |
 | C-21 | 完了 | 共通runner、loader、formatterを含む汎用性scanが通る | 対象固有path、ID、port、test pathの直書き0件 |

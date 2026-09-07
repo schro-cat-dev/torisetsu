@@ -23,7 +23,7 @@
 | 状態 | 残り | 扱い |
 |---|---|---|
 | 運用判断待ち | 共有hook方式 | sampleは保存済み。husky等は未導入 |
-| 運用判断待ち | CI workflowは追加済みだが、branch名や必須check化は未確認 | GitHub側branch protectionで決める |
+| 運用判断待ち | Ubuntu上のCI実runは成功済み。必須check化は未確認 | GitHub側branch protectionで決める |
 | 対象外 | Safari/Firefox/mobile実機、支援技術による手動a11y確認 | 必要時に別gate化 |
 
 ## 初回実装時チェックリスト（監査前の判定履歴）
