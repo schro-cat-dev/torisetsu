@@ -130,6 +130,10 @@ AIもユーザーも、それぞれの認知モデルが行動しやすい環境
 
 - [AIハーネス・Skill外部統合参照](external_refs/ai_harness_skill_integration_references/README.md): Google、promptfoo、Inspect AI、Phoenix などの外部評価ハーネスやskillを、何を、なぜ、どの順で統合候補にするかを管理する入口。
 
+- [公開セキュリティハーネス参照](external_refs/security_harness_references/README.md): Nyx Foundation、OpenSSF、OWASP、pnpm、container、端末管理などの公開一次資料を管理する入口。内部チェックシートは含めない。
+
+- [技術調査・検証・数理・AIハーネス公開調査](external_refs/research_validation_math_ai_harness_references/README.md): 4領域の公式資料、確認できた事実、導入時の限界を管理する入口。内部skillと判断基準は含めない。
+
 ## 方向性を間違えないための仮説メモ
 
 次の内容は、別スレッドのAI側が提示した低確度の仮説メモであり、ユーザー自身の確定見解ではない。現時点で質の高い情報として扱わず、今後の実験で起こり得るズレを先に置いておくための参考メモとして扱う。

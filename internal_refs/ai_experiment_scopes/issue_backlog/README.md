@@ -54,6 +54,8 @@
 | IB-011 | `evaluation` | OSS LLMをColab無料枠とローカルで試す | 5 | Colab CPUでQwen3 0.6Bの基礎検証完了。0.6Bは長文構造化生成では不採用 | `benchmark_threshold_design/runbooks/2026-09-04-oss-llm-colab-local-runbook.md` |
 | IB-012 | `implementation` | 独自引用・ナレッジ取得ツールを実用化する | 5 | 方針メモ作成済み、実装未着手 | `skill_orchestration_harness/citation-knowledge-retrieval-productization.md` |
 | IB-013 | `handoff` | Field Lineage Harnessを非公開開発物として切り分ける | 5 | issue化済み、移設未着手 | `private-field-lineage-harness-workspace.md` |
+| IB-014 | `research` | 公開セキュリティハーネス参照を整備する | 5 | 初版調査・分類済み、内部skillとtool実行は非公開管理 | [公開セキュリティハーネス参照](../../../external_refs/security_harness_references/README.md) |
+| IB-015 | `research` | 技術調査・検証・数理・AIハーネスの公開調査を整備する | 5 | 公式資料の初版調査済み、内部skillとtool実行は非公開管理 | [4領域の公開調査](../../../external_refs/research_validation_math_ai_harness_references/README.md) |
 
 ## 見ることリスト
 
@@ -211,6 +213,25 @@
 - [ ] 外部送信禁止fieldを強制する。
 - [ ] 落語ケース練習を引用取得方式で再構成する。
 
+### IB-014 公開セキュリティハーネス参照
+
+- [x] Nyx Foundationのsecurity関連repositoryを特定した。
+- [x] supply chain、pnpm、CI/CD、container、Kubernetes、cloud、runtime、application、AI、情シスを分類した。
+- [x] source URL、確認できた事実、使える観点、限界を記録した。
+- [x] 公開source catalogと非公開チェックシートを分離した。
+- [x] 公開調査資料と非公開の実装計画を分離した。
+- [ ] 各toolの現行version、CLI、外部送信、licenseを導入候補ごとに再確認する。
+- [ ] 共通resultへ変換する最小pilotを1toolで実行する。
+- [ ] false positive、false negative、実行時間、resource使用量を実測する。
+
+### IB-015 技術調査・検証・数理・AIハーネス公開調査
+
+- [x] 4領域の公式資料と主要OSSを分類した。
+- [x] 確認できた事実、適用できる考え方、適用限界を記録した。
+- [x] 公開調査と非公開skill・暗黙知・チェックシートを分離した。
+- [ ] 非公開profileを1領域ずつGo runnerへ接続する。
+- [ ] fixtureでresult contractと証拠参照の往復を検証する。
+
 ## GitHub Issue化テンプレート
 
 ~~~markdown
@@ -248,19 +269,23 @@
 ## 次のおすすめ順
 
 1. IB-013: Field Lineage Harnessを非公開開発物として切り分ける。
-2. IB-010: root README導線を先に直す。
-3. IB-001: モデル調査レポートをユーザー確認しやすくする。
-4. IB-004: `ui.feature.add.v1` route card JSONを作る。
-5. IB-005: route card checkerを作る。
-6. IB-006: 小さいUIコンポーネントで試す。
-7. IB-007: API keyなしのfixture比較を整理する。
-8. IB-008: 費用上限を決めてからAPI keyあり実行へ進む。
-9. IB-012: 独自引用・ナレッジ取得ツールを実用化する。
-10. IB-011: 必要な場合だけ、Qwen3 4B / DeepSeek distill / SmolLM3などを同一caseで比較する。
+2. IB-014: 公開セキュリティ参照から最小pilot対象を1つ選ぶ。
+3. IB-015: 4領域のうち技術検証profileを最小pilotにする。
+4. IB-010: root README導線を先に直す。
+5. IB-001: モデル調査レポートをユーザー確認しやすくする。
+6. IB-004: `ui.feature.add.v1` route card JSONを作る。
+7. IB-005: route card checkerを作る。
+8. IB-006: 小さいUIコンポーネントで試す。
+9. IB-007: API keyなしのfixture比較を整理する。
+10. IB-008: 費用上限を決めてからAPI keyあり実行へ進む。
+11. IB-012: 独自引用・ナレッジ取得ツールを実用化する。
+12. IB-011: 必要な場合だけ、Qwen3 4B / DeepSeek distill / SmolLM3などを同一caseで比較する。
 
 理由:
 
 - Field Lineage Harnessは非公開開発物として育てるため、先に置き場所を固定する。
+- セキュリティハーネスは対象が広いため、公開source catalogから最小の読み取り専用pilotを選び、権限が必要な検査を後段へ分ける。
+- 4領域は、環境と期待値を固定しやすい技術検証からGo runnerへ接続すると、共通resultの妥当性を低コストで確認できる。
 - 先に導線を直すと、ユーザーが調査内容を確認しやすい。
 - route cardは、JSONとcheckerができるまで実用段階ではない。
 - API keyありの検証は、APIなしで価値が見えた後に進める。

@@ -1,5 +1,7 @@
 ideas/
 internal_refs/local_unmasked_chat_logs/
+internal_refs/private_harness_portfolio/
+.agents/skills/private-harness-suite/
 .agents/skills/tdd-slice-execution/
 .agents/skills/test-design-expert-judgment/
 tooling/go-test-harness/
