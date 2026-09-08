@@ -17,3 +17,7 @@ harness_lab/todo_frontend/harness_runs/
 harness_lab/todo_frontend/test-results/
 harness_lab/todo_frontend/playwright-report/
 internal_refs/harness_arch/ui_quality_harness/results/
+
+# Local user-specific AI calibration records
+.agents/skills/cognitive-model-calibration/references/cases/task-weight-calibration/priority-5/2026-09-08-principal-level-completion-estimate.md
+internal_refs/ai_experiment_scopes/ai_collaboration_cheatsheet/knowledge/2026-09-08-principal-level-completion-estimate.md
